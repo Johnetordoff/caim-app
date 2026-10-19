@@ -1,0 +1,4 @@
+{
+  "format": "native-ci-project-v1",
+  "checks": [{"name":"repository-integrity","command":["git","fsck","--no-dangling"],"timeout_seconds":120}]
+}
