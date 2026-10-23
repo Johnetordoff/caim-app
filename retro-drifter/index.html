@@ -2,52 +2,92 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<title>RETRO DRIFT // SAFARI FIDELITY</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no,maximum-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<title>RETRO DRIFT // CANVAS NATIVE</title>
 <style>
-html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#020407;color:#f4b95f;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;touch-action:none}canvas{display:block;width:100%;height:100%}.seg{position:fixed;border:1px solid #66491e;background:#070906d9;box-shadow:inset 0 0 12px #000,0 0 8px #5b351b55;padding:5px 8px;letter-spacing:.14em;text-shadow:0 0 7px currentColor;font-size:11px;z-index:5}.seg b{font-size:18px;font-weight:500}.speed{top:max(8px,env(safe-area-inset-top));left:max(8px,env(safe-area-inset-left));pointer-events:none}.mode{top:max(8px,env(safe-area-inset-top));right:max(8px,env(safe-area-inset-right));pointer-events:auto}.status{top:max(8px,env(safe-area-inset-top));left:50%;transform:translateX(-50%);pointer-events:none;text-align:center}.mode button,.tilt button{font:inherit;color:inherit;background:#080b08;border:1px solid #66491e;padding:6px}.tilt{top:56px;right:max(8px,env(safe-area-inset-right));pointer-events:auto}.hint{bottom:max(8px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);white-space:nowrap;pointer-events:none}.pedal{position:fixed;bottom:max(10px,env(safe-area-inset-bottom));width:min(25vw,110px);height:min(25vw,110px);border:1px solid #66491e;background:#07090655;color:#f4b95f;font:12px ui-monospace,monospace;letter-spacing:.12em;z-index:6}.brake{left:max(10px,env(safe-area-inset-left))}.gas{right:max(10px,env(safe-area-inset-right))}.boot{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:10;text-align:center;max-width:min(80vw,520px)}.boot.err{color:#ff9f7d;border-color:#8a3d2b}.hidden{display:none}@media(pointer:fine){.pedal,.tilt{display:none}}@media(max-width:500px) and (orientation:portrait){.hint{bottom:130px}.seg b{font-size:15px}.status{top:62px}.tilt{top:108px}}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#020407;touch-action:none;overscroll-behavior:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
+canvas{display:block;position:fixed;inset:0;width:100%;height:100%;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 </style>
 </head>
 <body>
-<div class="seg speed">SPD <b id="spd">000</b><br>GEAR <b id="gear">1</b></div>
-<div class="seg status" id="status">SAFARI // STARTING</div>
-<div class="seg mode"><button id="look">SOURCE</button></div>
-<div class="seg tilt" id="tiltWrap"><button id="tiltEnable">ENABLE TILT</button></div>
-<div class="seg hint">TILT / ← → · GAS ↑ · BRAKE ↓ · GAS+BRAKE+TURN = DRIFT</div>
-<button class="pedal brake" id="brake">BRAKE</button>
-<button class="pedal gas" id="gas">GAS</button>
-<div class="seg boot" id="boot">INITIALIZING SAFARI WEBGPU</div>
-<script type="module">
-const boot=document.getElementById('boot');
-const status=document.getElementById('status');
-if(!window.isSecureContext){boot.classList.add('err');boot.textContent='HTTPS REQUIRED // OPEN AS A REAL SAFARI WEBPAGE';throw new Error('Retro Drift WebGPU demo requires a secure HTTPS context.');}
-let THREE;
-try{THREE=await import('https://cdn.jsdelivr.net/npm/three@0.186.0/build/three.webgpu.js');}
-catch(error){boot.classList.add('err');boot.textContent='3D MODULE BLOCKED // THIS IS NOT A NORMAL SAFARI PAGE';status.textContent='MODULE LOAD FAILED';throw error;}
-const usingWebGPU=!!navigator.gpu;
-status.textContent=usingWebGPU?'SAFARI // WEBGPU':'SAFARI // WEBGL2 FALLBACK';
-const scene=new THREE.Scene();scene.background=new THREE.Color(0x02050a);scene.fog=new THREE.FogExp2(0x07101a,.018);
-const camera=new THREE.PerspectiveCamera(58,innerWidth/innerHeight,.1,260);camera.position.set(0,3.2,7.5);
-const renderer=new THREE.WebGPURenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=.9;document.body.prepend(renderer.domElement);
-try{await renderer.init();boot.classList.add('hidden');}catch(error){boot.classList.add('err');boot.textContent='GPU INIT FAILED // '+(usingWebGPU?'WEBGPU':'WEBGL2');status.textContent='GPU INIT FAILED';throw error;}
-const roadMat=new THREE.MeshPhysicalMaterial({color:0x11151a,roughness:.36,metalness:.2,clearcoat:.18,clearcoatRoughness:.35});const road=new THREE.Mesh(new THREE.PlaneGeometry(18,420),roadMat);road.rotation.x=-Math.PI/2;road.position.z=-175;road.receiveShadow=true;scene.add(road);
-const shoulderMat=new THREE.MeshStandardMaterial({color:0x202226,roughness:.9});for(const x of[-9.4,9.4]){const s=new THREE.Mesh(new THREE.BoxGeometry(.8,.22,420),shoulderMat);s.position.set(x,.1,-175);s.receiveShadow=true;scene.add(s)}
-const car=new THREE.Group();scene.add(car);car.position.y=.48;
-const paint=new THREE.MeshPhysicalMaterial({color:0x164d73,metalness:.62,roughness:.2,clearcoat:.8,clearcoatRoughness:.15});const dark=new THREE.MeshStandardMaterial({color:0x08090a,roughness:.3,metalness:.35});const glass=new THREE.MeshPhysicalMaterial({color:0x07131c,roughness:.1,metalness:.12,transmission:.2,transparent:true,opacity:.74});
-function box(w,h,d,m,x,y,z,rx=0){const q=new THREE.Mesh(new THREE.BoxGeometry(w,h,d,2,1,3),m);q.position.set(x,y,z);q.rotation.x=rx;q.castShadow=q.receiveShadow=true;car.add(q);return q}
-box(2.25,.48,4.25,paint,0,.42,0);box(2.08,.3,1.45,paint,0,.7,-1.2,-.06);box(1.75,.72,1.75,glass,0,.92,.25);box(1.62,.14,1.48,paint,0,1.3,.3);box(2.2,.18,.2,dark,0,.28,2.05);box(2.2,.18,.2,dark,0,.28,-2.05);
-const wheelGeo=new THREE.CylinderGeometry(.42,.42,.28,16);for(const x of[-1.1,1.1])for(const z of[-1.35,1.35]){const w=new THREE.Mesh(wheelGeo,dark);w.rotation.z=Math.PI/2;w.position.set(x,.35,z);w.castShadow=true;car.add(w)}
-const red=new THREE.MeshStandardMaterial({color:0x660000,emissive:0xff1208,emissiveIntensity:5});const warm=new THREE.MeshStandardMaterial({color:0xe8d9b2,emissive:0xffe3ad,emissiveIntensity:4});for(const x of[-.72,.72]){box(.55,.18,.06,red,x,.58,2.14);box(.48,.16,.06,warm,x,.56,-2.14);const h=new THREE.SpotLight(x<0?0xffdfaa:0xffe8bf,90,48,Math.PI/7,.6,1.35);h.position.set(x,.58,-2.1);h.target.position.set(x*.45,0,-32);car.add(h,h.target)}
-const moon=new THREE.DirectionalLight(0x7696c8,2.2);moon.position.set(-8,14,8);moon.castShadow=true;moon.shadow.mapSize.set(1024,1024);scene.add(moon);scene.add(new THREE.HemisphereLight(0x304b70,0x080606,.8));
-for(let z=10;z>-300;z-=30)for(const x of[-7.3,7.3]){const pole=new THREE.Mesh(new THREE.CylinderGeometry(.05,.07,5,6),dark);pole.position.set(x,2.5,z);scene.add(pole);const l=new THREE.PointLight(z%60===10?0xffc56b:0x8db8ff,22,20,2);l.position.set(x,4.8,z);scene.add(l);const bulb=new THREE.Mesh(new THREE.SphereGeometry(.11,8,6),new THREE.MeshBasicMaterial({color:l.color}));bulb.position.copy(l.position);scene.add(bulb)}
-const keys={};addEventListener('keydown',e=>keys[e.key]=true);addEventListener('keyup',e=>keys[e.key]=false);let gas=false,brake=false,tilt=0,speed=22,yaw=0,retro=false;
-function hold(id,set){const e=document.getElementById(id);e.addEventListener('pointerdown',ev=>{ev.preventDefault();try{e.setPointerCapture(ev.pointerId)}catch{}set(true)});for(const a of['pointerup','pointercancel'])e.addEventListener(a,()=>set(false))}hold('gas',v=>gas=v);hold('brake',v=>brake=v);
-function onOrientation(e){if(e.gamma!=null)tilt=THREE.MathUtils.clamp(e.gamma/28,-1,1)}
-const tiltWrap=document.getElementById('tiltWrap'),tiltEnable=document.getElementById('tiltEnable');
-if(typeof DeviceOrientationEvent!=='undefined'&&typeof DeviceOrientationEvent.requestPermission==='function'){tiltEnable.onclick=async()=>{try{const r=await DeviceOrientationEvent.requestPermission();if(r==='granted'){addEventListener('deviceorientation',onOrientation);tiltEnable.textContent='TILT ON'}else tiltEnable.textContent='TILT DENIED'}catch{tiltEnable.textContent='TILT ERROR'}}}else{addEventListener('deviceorientation',onOrientation);tiltWrap.classList.add('hidden')}
-document.getElementById('look').onclick=()=>{retro=!retro;document.getElementById('look').textContent=retro?'RETRO':'SOURCE';renderer.setPixelRatio(retro?Math.min(devicePixelRatio,.72):Math.min(devicePixelRatio,1.5));renderer.setSize(innerWidth,innerHeight)};
-let last=performance.now();function tick(t){const dt=Math.min(.04,(t-last)/1000);last=t;const throttle=gas||keys.ArrowUp?1:0,stop=brake||keys.ArrowDown?1:0;let steer=(keys.ArrowLeft?-1:0)+(keys.ArrowRight?1:0)+(matchMedia('(pointer:coarse)').matches?tilt:0);steer=THREE.MathUtils.clamp(steer,-1,1);const drift=keys.Shift||(throttle&&stop&&Math.abs(steer)>.2);speed+=throttle*18*dt-stop*28*dt-speed*.035*dt;speed=THREE.MathUtils.clamp(speed,4,48);yaw+=steer*(drift?1.8:.7)*dt*(.35+speed/48);car.rotation.y=yaw;car.position.x+=Math.sin(yaw)*speed*dt*.17;car.position.z-=Math.cos(yaw)*speed*dt*.17;car.position.x=THREE.MathUtils.clamp(car.position.x,-8.3,8.3);camera.position.lerp(new THREE.Vector3(car.position.x-Math.sin(yaw)*6.8,3.25,car.position.z+Math.cos(yaw)*6.8),.08);camera.lookAt(car.position.x,car.position.y+.35,car.position.z-Math.cos(yaw)*5);document.getElementById('spd').textContent=String(Math.round(speed*4.1)).padStart(3,'0');document.getElementById('gear').textContent=Math.min(5,Math.max(1,Math.ceil(speed/10)));renderer.render(scene,camera);requestAnimationFrame(tick)}requestAnimationFrame(tick);
-addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.fov=innerHeight>innerWidth?68:58;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
+<canvas id="game" aria-label="Retro Drift"></canvas>
+<script>
+'use strict';
+const canvas=document.getElementById('game');
+document.addEventListener('contextmenu',e=>e.preventDefault(),{passive:false});
+document.addEventListener('gesturestart',e=>e.preventDefault(),{passive:false});
+document.addEventListener('gesturechange',e=>e.preventDefault(),{passive:false});
+document.addEventListener('gestureend',e=>e.preventDefault(),{passive:false});
+const gl=canvas.getContext('webgl2',{alpha:false,antialias:true,depth:true,powerPreference:'high-performance',preserveDrawingBuffer:false});
+if(!gl){document.body.style.background='#210808';throw new Error('Retro Drift requires WebGL2 for this canvas-native spike.');}
+
+const VS=`#version 300 es
+in vec3 aPos;in vec3 aNormal;
+uniform mat4 uProj,uView,uModel;
+out vec3 vN;out float vD;
+void main(){vec4 w=uModel*vec4(aPos,1.0);vec4 q=uView*w;vN=mat3(uModel)*aNormal;vD=max(0.0,-q.z);gl_Position=uProj*q;}`;
+const FS=`#version 300 es
+precision highp float;
+in vec3 vN;in float vD;
+uniform vec3 uColor;uniform float uEmit;uniform vec3 uFog;
+out vec4 outColor;
+void main(){vec3 n=normalize(vN);vec3 sun=normalize(vec3(-.35,.88,.28));float d=max(dot(n,sun),0.0);float hemi=.30+.38*max(n.y,0.0);vec3 c=uColor*(.42+d*.70+hemi)+uColor*uEmit;float f=smoothstep(30.0,145.0,vD);c=mix(c,uFog,f);outColor=vec4(c,1.0);}`;
+function shader(type,src){const s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw Error(gl.getShaderInfoLog(s));return s;}
+const prog=gl.createProgram();gl.attachShader(prog,shader(gl.VERTEX_SHADER,VS));gl.attachShader(prog,shader(gl.FRAGMENT_SHADER,FS));gl.linkProgram(prog);if(!gl.getProgramParameter(prog,gl.LINK_STATUS))throw Error(gl.getProgramInfoLog(prog));gl.useProgram(prog);
+const A_POS=gl.getAttribLocation(prog,'aPos'),A_N=gl.getAttribLocation(prog,'aNormal');
+const U_PROJ=gl.getUniformLocation(prog,'uProj'),U_VIEW=gl.getUniformLocation(prog,'uView'),U_MODEL=gl.getUniformLocation(prog,'uModel'),U_COLOR=gl.getUniformLocation(prog,'uColor'),U_EMIT=gl.getUniformLocation(prog,'uEmit'),U_FOG=gl.getUniformLocation(prog,'uFog');
+gl.enable(gl.DEPTH_TEST);gl.enable(gl.CULL_FACE);gl.cullFace(gl.BACK);gl.uniform3f(U_FOG,.022,.040,.065);
+
+const cube=[
+-1,-1, 1,0,0,1, 1,-1, 1,0,0,1, 1, 1, 1,0,0,1,-1,-1, 1,0,0,1, 1, 1, 1,0,0,1,-1, 1, 1,0,0,1,
+ 1,-1,-1,0,0,-1,-1,-1,-1,0,0,-1,-1, 1,-1,0,0,-1,1,-1,-1,0,0,-1,-1, 1,-1,0,0,-1,1, 1,-1,0,0,-1,
+-1,-1,-1,-1,0,0,-1,-1, 1,-1,0,0,-1, 1, 1,-1,0,0,-1,-1,-1,-1,0,0,-1, 1, 1,-1,0,0,-1, 1,-1,-1,0,0,
+ 1,-1, 1,1,0,0, 1,-1,-1,1,0,0, 1, 1,-1,1,0,0, 1,-1, 1,1,0,0, 1, 1,-1,1,0,0, 1, 1, 1,1,0,0,
+-1, 1, 1,0,1,0, 1, 1, 1,0,1,0, 1, 1,-1,0,1,0,-1, 1, 1,0,1,0, 1, 1,-1,0,1,0,-1, 1,-1,0,1,0,
+-1,-1,-1,0,-1,0, 1,-1,-1,0,-1,0, 1,-1, 1,0,-1,0,-1,-1,-1,0,-1,0, 1,-1, 1,0,-1,0,-1,-1, 1,0,-1,0];
+const vb=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,vb);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(cube),gl.STATIC_DRAW);gl.enableVertexAttribArray(A_POS);gl.vertexAttribPointer(A_POS,3,gl.FLOAT,false,24,0);gl.enableVertexAttribArray(A_N);gl.vertexAttribPointer(A_N,3,gl.FLOAT,false,24,12);
+
+function ident(){return new Float32Array([1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1]);}
+function mul(a,b){const o=new Float32Array(16);for(let c=0;c<4;c++)for(let r=0;r<4;r++)o[c*4+r]=a[r]*b[c*4]+a[4+r]*b[c*4+1]+a[8+r]*b[c*4+2]+a[12+r]*b[c*4+3];return o;}
+function trans(x,y,z){const o=ident();o[12]=x;o[13]=y;o[14]=z;return o;}
+function scale(x,y,z){const o=ident();o[0]=x;o[5]=y;o[10]=z;return o;}
+function rotY(a){const o=ident(),c=Math.cos(a),s=Math.sin(a);o[0]=c;o[2]=-s;o[8]=s;o[10]=c;return o;}
+function perspective(fov,asp,n,f){const t=1/Math.tan(fov/2),o=new Float32Array(16);o[0]=t/asp;o[5]=t;o[10]=(f+n)/(n-f);o[11]=-1;o[14]=2*f*n/(n-f);return o;}
+function norm(v){const l=Math.hypot(v[0],v[1],v[2])||1;return[v[0]/l,v[1]/l,v[2]/l];}
+function lookAt(eye,at){const z=norm([eye[0]-at[0],eye[1]-at[1],eye[2]-at[2]]);const x=norm([z[2],0,-z[0]]);const y=[z[1]*x[2]-z[2]*x[1],z[2]*x[0]-z[0]*x[2],z[0]*x[1]-z[1]*x[0]];const o=ident();o[0]=x[0];o[1]=y[0];o[2]=z[0];o[4]=x[1];o[5]=y[1];o[6]=z[1];o[8]=x[2];o[9]=y[2];o[10]=z[2];o[12]=-(x[0]*eye[0]+x[1]*eye[1]+x[2]*eye[2]);o[13]=-(y[0]*eye[0]+y[1]*eye[1]+y[2]*eye[2]);o[14]=-(z[0]*eye[0]+z[1]*eye[1]+z[2]*eye[2]);return o;}
+function box(x,y,z,sx,sy,sz,yaw,color,emit=0){gl.uniformMatrix4fv(U_MODEL,false,mul(trans(x,y,z),mul(rotY(yaw),scale(sx,sy,sz))));gl.uniform3fv(U_COLOR,color);gl.uniform1f(U_EMIT,emit);gl.drawArrays(gl.TRIANGLES,0,36);}
+
+const C={road:[.055,.065,.078],shoulder:[.13,.13,.145],blue:[.045,.30,.70],blue2:[.025,.14,.36],glass:[.035,.085,.12],black:[.012,.014,.018],rim:[.48,.52,.58],red:[1,.025,.012],halogen:[1,.78,.48],lampWarm:[1,.46,.12],lampCool:[.26,.48,1],wall:[.075,.08,.105],shadow:[.002,.002,.003]};
+let px=0,pz=0,yaw=0,speed=20,steer=0,tilt=0,tiltState=0,crash=0;
+let gasIds=new Set(),brakeIds=new Set();
+const keys={};
+addEventListener('keydown',e=>{keys[e.key]=true;e.preventDefault();},{passive:false});
+addEventListener('keyup',e=>{keys[e.key]=false;e.preventDefault();},{passive:false});
+addEventListener('deviceorientation',e=>{if(e.gamma!=null){tilt=Math.max(-1,Math.min(1,e.gamma/26));tiltState=2;}},{passive:true});
+let permissionAsked=false;
+async function askTilt(){if(permissionAsked)return;permissionAsked=true;try{if(typeof DeviceOrientationEvent!=='undefined'&&typeof DeviceOrientationEvent.requestPermission==='function'){tiltState=1;const r=await DeviceOrientationEvent.requestPermission();tiltState=r==='granted'?2:-1;}else if(typeof DeviceOrientationEvent!=='undefined'){tiltState=2;}else tiltState=-1;}catch(_){tiltState=-1;}}
+function zoneFor(e){const r=canvas.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;if(y<r.height*.48)return null;return x<r.width*.5?'brake':'gas';}
+function down(e){e.preventDefault();askTilt();try{canvas.setPointerCapture(e.pointerId);}catch(_){}const z=zoneFor(e);if(z==='gas')gasIds.add(e.pointerId);if(z==='brake')brakeIds.add(e.pointerId);}
+function up(e){e.preventDefault();gasIds.delete(e.pointerId);brakeIds.delete(e.pointerId);}
+canvas.addEventListener('pointerdown',down,{passive:false});canvas.addEventListener('pointerup',up,{passive:false});canvas.addEventListener('pointercancel',up,{passive:false});canvas.addEventListener('pointermove',e=>e.preventDefault(),{passive:false});
+
+let W=0,H=0,DPR=1;
+function resize(){DPR=Math.min(devicePixelRatio||1,1.5);W=Math.max(1,Math.floor(innerWidth*DPR));H=Math.max(1,Math.floor(innerHeight*DPR));if(canvas.width!==W||canvas.height!==H){canvas.width=W;canvas.height=H;}gl.viewport(0,0,W,H);}
+addEventListener('resize',resize);resize();
+
+function drawRoad(){box(0,-.10,pz-120,9,.10,180,0,C.road);box(-9.55,.02,pz-120,.55,.18,180,0,C.shoulder);box(9.55,.02,pz-120,.55,.18,180,0,C.shoulder);for(let z=Math.floor((pz+16)/10)*10;z>pz-185;z-=10){box(-3.0,.025,z,.055,.025,.34,0,[.8,.72,.45],1.3);box(3.0,.025,z,.055,.025,.34,0,[.82,.82,.72],1.4);}for(let z=Math.floor((pz+24)/28)*28;z>pz-190;z-=28){for(const x of[-7.4,7.4]){box(x,2.35,z,.045,2.35,.045,0,C.black);const warm=((z/28)|0)%2===0;box(x,4.72,z,.14,.10,.14,0,warm?C.lampWarm:C.lampCool,4.0);box(x*.94,.025,z,1.0,.02,2.6,0,warm?[.28,.09,.02]:[.04,.10,.27],.35);}}for(let z=Math.floor((pz-15)/42)*42;z>pz-190;z-=42){box(-15,3.2,z,4.2,3.2,5.2,0,C.wall);box(15,4.0,z-15,5.0,4.0,6.0,0,[.06,.07,.09]);}}
+function drawCar(){const c=Math.cos(yaw),s=Math.sin(yaw);const part=(lx,ly,lz,sx,sy,sz,col,emit=0)=>box(px+c*lx+s*lz,ly,pz-s*lx+c*lz,sx,sy,sz,yaw,col,emit);part(0,.08,.22,1.24,.025,2.08,C.shadow);part(0,.48,0,1.12,.27,2.02,C.blue);part(0,.72,-1.08,1.02,.18,.82,C.blue2);part(0,.96,.18,.83,.34,.78,C.glass);part(0,1.30,.23,.76,.07,.70,C.blue);part(0,.55,1.82,1.05,.13,.24,C.blue2);for(const lx of[-1.08,1.08])for(const lz of[-1.25,1.22]){part(lx,.34,lz,.17,.40,.42,C.black);part(lx*1.012,.34,lz,.08,.22,.24,C.rim);}for(const lx of[-.70,.70]){part(lx,.61,2.05,.26,.10,.045,C.red,5.5+(brakeIds.size?2.8:0));part(lx,.60,-2.05,.23,.09,.045,C.halogen,5.0);}part(0,.39,-2.07,.45,.08,.04,[.35,.38,.42],.4);part(0,.28,2.08,.25,.07,.04,[.55,.58,.55],.2);box(px-.72,.025,pz-7.4,1.05,.018,4.8,yaw,C.halogen,.32);box(px+.72,.025,pz-7.4,1.05,.018,4.8,yaw,C.halogen,.32);}
+
+function clearRectPx(x,y,w,h,color){const bx=Math.round(x*DPR),by=Math.round((innerHeight-y-h)*DPR),bw=Math.max(1,Math.round(w*DPR)),bh=Math.max(1,Math.round(h*DPR));gl.scissor(bx,by,bw,bh);gl.clearColor(color[0],color[1],color[2],1);gl.clear(gl.COLOR_BUFFER_BIT);}
+const segMap={0:'abcdef',1:'bc',2:'abdeg',3:'abcdg',4:'bcfg',5:'acdfg',6:'acdefg',7:'abc',8:'abcdefg',9:'abcdfg'};
+function digit(x,y,s,n,on=[.95,.58,.20],off=[.08,.055,.025]){const t=Math.max(2,Math.round(s*.16)),w=s,h=s*1.7;const r={a:[x+t,y,w-2*t,t],b:[x+w-t,y+t,t,h/2-t],c:[x+w-t,y+h/2,t,h/2-t],d:[x+t,y+h-t,w-2*t,t],e:[x,y+h/2,t,h/2-t],f:[x,y+t,t,h/2-t],g:[x+t,y+h/2-t/2,w-2*t,t]};const set=segMap[n]||'';for(const k of 'abcdefg'){const q=r[k];clearRectPx(q[0],q[1],q[2],q[3],set.includes(k)?on:off);}}
+function drawUI(){gl.disable(gl.DEPTH_TEST);gl.enable(gl.SCISSOR_TEST);const w=innerWidth,h=innerHeight;const panel=[.025,.027,.018],amber=[.95,.56,.17],dim=[.11,.075,.025],red=[.75,.035,.018],green=[.22,.75,.34];clearRectPx(10,10,118,64,panel);const mph=Math.max(0,Math.min(999,Math.round(speed*4.1))),ds=20;digit(18,20,ds,Math.floor(mph/100));digit(45,20,ds,Math.floor(mph/10)%10);digit(72,20,ds,mph%10);const gear=Math.min(5,Math.max(1,Math.ceil(speed/10)));digit(100,27,13,gear,amber,dim);const p=tiltState===2?green:tiltState===-1?red:amber;for(let i=0;i<3;i++)clearRectPx(w/2-18+i*12,14,8,5,p);const pad=Math.max(14,Math.min(28,w*.035)),size=Math.max(70,Math.min(112,w*.23)),yy=h-size-pad;clearRectPx(pad,yy,size,size,panel);clearRectPx(w-pad-size,yy,size,size,panel);const bOn=brakeIds.size?red:dim,gOn=gasIds.size?green:dim;for(let i=0;i<5;i++){clearRectPx(pad+15+i*12,yy+size-18,8,5,bOn);clearRectPx(w-pad-size+15+i*12,yy+size-18,8,5,gOn);}for(let i=0;i<3;i++){clearRectPx(pad+16,yy+20+i*15,size-32,6,brakeIds.size?[.82,.08,.03]:dim);clearRectPx(w-pad-size+16,yy+20+i*15,size-32,6,gasIds.size?[.22,.82,.34]:dim);}gl.disable(gl.SCISSOR_TEST);gl.enable(gl.DEPTH_TEST);}
+
+let last=performance.now();
+function frame(t){const dt=Math.min(.04,(t-last)/1000);last=t;const gas=gasIds.size>0||keys.ArrowUp,brake=brakeIds.size>0||keys.ArrowDown;const keySteer=(keys.ArrowLeft?-1:0)+(keys.ArrowRight?1:0);steer=Math.max(-1,Math.min(1,keySteer+(Math.abs(keySteer)<.01?tilt:0)));const drift=(gas&&brake&&Math.abs(steer)>.18)||keys.Shift;speed+=(gas?23:0)*dt-(brake?34:0)*dt-speed*.045*dt;speed=Math.max(3.5,Math.min(55,speed));yaw+=steer*(drift?2.0:.78)*dt*(.30+speed/52);px+=Math.sin(yaw)*speed*dt*.17;pz-=Math.cos(yaw)*speed*dt*.17;if(Math.abs(px)>8.5){crash+=dt;speed*=Math.pow(.22,dt);if(crash>.55){px=0;yaw=0;speed=14;crash=0;}}else crash=0;resize();gl.clearColor(.008,.014,.026,1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);const back=innerHeight>innerWidth?5.7:6.2,eye=[px-Math.sin(yaw)*back,2.65,pz+Math.cos(yaw)*back],at=[px,.72,pz-Math.cos(yaw)*5.4];gl.useProgram(prog);gl.uniformMatrix4fv(U_VIEW,false,lookAt(eye,at));gl.uniformMatrix4fv(U_PROJ,false,perspective((innerHeight>innerWidth?65:56)*Math.PI/180,W/H,.1,240));drawRoad();drawCar();drawUI();requestAnimationFrame(frame);}
+requestAnimationFrame(frame);
 </script>
 </body>
 </html>
