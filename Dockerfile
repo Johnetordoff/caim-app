@@ -1,4 +1,4 @@
-FROM python:3.9.13-alpine3.16
+FROM python:3.15.2-alpine
 
 ENV PYTHONUNBUFFERED 1
 ENV PYTHONDONTWRITEBYTECODE 1
@@ -27,9 +27,6 @@ RUN set -ex \
         gcc\
         musl-dev\
         libffi-dev\
-        py3-pillow\
-        py3-cffi\
-        py3-brotli\
         python3-dev\
         py3-pip\
         zlib-dev\
