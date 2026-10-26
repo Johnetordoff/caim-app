@@ -8,7 +8,7 @@ BASE='https://cellbeat-mini-beta.onrender.com/'
 OUT=Path('cellbeat-beta-static-output')
 OVR=Path('cellbeat-beta-overrides')
 ORIGIN=urlparse(BASE).netloc
-SOURCE='c9016754969e12b5ef9862ab105fb62bdfb85591'
+SOURCE='573bc87be8ac896087c7ce7ac81bc26cd0158638'
 if OUT.exists():shutil.rmtree(OUT)
 seen=set();queue=[BASE]
 
@@ -56,7 +56,7 @@ tracker=(mini/'index.html').read_text()
 for src in mini.rglob('*'):
     if src.is_file():
         target=OUT/src.relative_to(mini);target.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(src,target)
-for name in ('instruments.js','tracker-contrast.css','bleak.js','beta-behavior.js'):
+for name in ('audio.js','instruments.js','tracker-contrast.css','bleak.js','beta-behavior.js'):
     if not (OVR/name).is_file():raise SystemExit('missing current beta override '+name)
     shutil.copy2(OVR/name,OUT/name)
 
