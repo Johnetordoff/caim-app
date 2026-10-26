@@ -1,0 +1,41 @@
+/* Compact hardware theme. Presentation only: no grid, clock or sound rules. */
+:root{color-scheme:dark;--bg:#10161b;--panel:#28323b;--ink:#f4f6ed;--muted:#c1cbd0;--line:#81909c;--accent:#ffd480}
+body{color:var(--ink);background:var(--bg)}
+/* No layout or control padding; the existing 44px touch targets stay intact. */
+html body :is(.wrap,header,.transport,.status,.grid-wrap,.panel,.panel h2,.column-ruler,.row-ruler,.check,.btn,select,input,.note,.channel-table th,.channel-table td,.channel-btn,.download,dialog,#programProgress,#advanced summary,footer,.gate-code,.portal-grid){padding:0}
+.wrap{margin-bottom:var(--safe);display:flex;flex-direction:column}
+header{order:-20}.transport{order:-10}.status{order:-30}.workspace{order:0}footer{order:10}
+header,.panel{background:var(--panel);border-color:#80909d #080e13 #080e13 #80909d;box-shadow:inset 0 0 0 1px #364550}
+.workspace{gap:2px}.panel{margin-bottom:2px}.transport{gap:2px}
+header a,.help a,.message a{color:#d3e8ff}
+.btn,select,.channel-btn{background:#414d58;color:#fffbed;border-color:#a0afb8 #101820 #101820 #a0afb8;text-shadow:0 1px #10161b}
+.btn.primary{background:#244e29;color:#f3ffe4;border-top-color:#9dca82}
+.btn.active,.btn:active{background:#17212a;color:#ffffff;border-color:#10161b #82939e #82939e #10161b}
+.btn:disabled{opacity:1;background:#222b33;color:#a1adb5;border-color:#4d5a63;cursor:default;text-shadow:none}
+.status,.column-ruler,.row-ruler,.panel h2,#programProgress{background:#090f13;color:#e8efdf;border-color:#64737e}
+.status{display:grid;grid-template-columns:minmax(110px,1fr) minmax(90px,.7fr) minmax(110px,.8fr) minmax(110px,.8fr);align-items:stretch;gap:0;border:2px inset #64737e;margin:0 0 3px;font-size:10px;line-height:1.1}
+.status>span{display:flex;align-items:center;min-height:38px;padding:4px 8px;border-right:1px solid #33414b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.status>span:nth-child(3),.status>span:nth-child(4){justify-content:space-between;gap:8px;letter-spacing:.04em}
+.status b{font-size:18px;line-height:1;color:#ffd480;font-variant-numeric:tabular-nums}
+#message{grid-column:1/-1;min-height:0!important;border-top:1px solid #33414b;border-right:0!important;color:#d6dde1;white-space:normal!important;overflow:visible!important;text-overflow:clip!important;font-size:11px;line-height:1.25}
+#message:empty{display:none!important}
+.status b,.panel h2{color:#ffd480}.message,.help,footer{color:var(--muted)}
+.grid-wrap{background:#060a0e;border-color:#8698a5}.cell{background:#18232d;border-color:#72818c;color:#ffffff}
+.cell[data-type="right"],.cell[data-type="left"],.cell[data-type^="reflect"],.cell[data-type^="face-"]{background:#4e5e42;color:#ffffff;border-color:#9ab484}
+.cell[data-type^="record"]{background:#792b40;color:#fff4f6;border-color:#f4a6b7}
+.cell[data-type="portal"]{background:#204e6a;color:#e8f7ff;border-color:#83c7f2}
+.cell[data-selected="true"]{outline:2px dashed #fff;outline-offset:-3px}.agent{border-color:#fff;box-shadow:0 0 0 1px #000,inset 0 0 0 1px #000}
+.gate-code,.portal-grid{background:#0a1016;color:#edffb6}
+.channel-table{background:#0c141b;color:#f4f6ed}.channel-table th{background:#35434f;color:#fff1c4}.channel-table th,.channel-table td{border-color:#7a8c99}.channel-table tr[data-selected="true"]{background:#314a5b}
+input[type="number"],input[type="text"]{background:#0b1218;color:#fffbed;border-color:#8f9fac}input[type="range"],input[type="checkbox"]{accent-color:#d6b66f}
+.download{background:#244e29;color:#f3ffe4}.check{border-color:#72818c}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid #ffe6a3;outline-offset:2px}
+dialog{background:#28323b;color:#f4f6ed}#message[data-error="true"],#programError{color:#ffbdb8}
+.agent::before{padding:0}
+/* Win95-style app label: keep the tracker chrome, lose the oversized boxed masthead. */
+header{background:transparent;border:0;box-shadow:none;min-height:22px}
+header h1{font-family:"MS Sans Serif",Tahoma,Arial,sans-serif;font-size:0;font-weight:400;line-height:1.2;letter-spacing:0}
+header h1::before{content:"Cellbeat Mini version B";font-family:"MS Sans Serif",Tahoma,Arial,sans-serif;font-size:12px;font-weight:400;letter-spacing:0}
+header h1 small{display:none}
+header a{font-family:"MS Sans Serif",Tahoma,Arial,sans-serif;font-size:11px}
+@media(max-width:560px){.status{grid-template-columns:1fr 1fr}.status>span:nth-child(2){border-right:0}.status>span:nth-child(3),.status>span:nth-child(4){border-top:1px solid #33414b}.status>span:nth-child(4){border-right:0}.status b{font-size:17px}}
