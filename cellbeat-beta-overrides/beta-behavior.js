@@ -37,7 +37,7 @@ function installGridTransport(){
 function installRobotMeters(){
   var table=document.getElementById("channels");if(!table)return;
   function wire(){Array.prototype.forEach.call(table.children,function(row){if(row.querySelector(".robot-wave"))return;var cell=row.children[4]||row.lastElementChild;if(!cell)return;var wave=document.createElement("span");wave.className="robot-wave";wave.setAttribute("aria-hidden","true");for(var i=0;i<7;i++){var bar=document.createElement("i");bar.style.animationDelay=(-i*.07)+"s";wave.appendChild(bar);}cell.appendChild(wave);});}
-  wire();if(window.MutationObserver)new MutationObserver(wire).observe(table,{childList:true,subtree:false});
+  wire();if(window.MutationObserver)new MutationObserver(wire).observe(table,{childList:true,subtree:true});
   setInterval(function(){Array.prototype.forEach.call(table.children,function(row){var wave=row.querySelector(".robot-wave");if(!wave)return;var status=(row.children[4]&&row.children[4].textContent||"");var note=(row.children[3]&&row.children[3].textContent||"");var sounding=note!=="---"&&status.indexOf("MUTE")<0&&status.indexOf("READY")<0;wave.dataset.active=String(sounding);});},100);
 }
 function compactStyle(){
