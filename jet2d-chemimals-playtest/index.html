@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Jet2D Top Down + Chemimals Playtest</title>
+<style>
+:root{color-scheme:dark;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#0b1112;color:#f2eed8}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 50% 0,#243938,#0b1112 58%);display:flex;justify-content:center}.wrap{width:min(100%,1000px);padding:12px;display:grid;gap:10px}.top{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap}.title{font-weight:800;letter-spacing:.08em}.modes{display:flex;gap:6px;flex-wrap:wrap}button{font:inherit;color:#f2eed8;background:#1c2928;border:1px solid #61716c;border-radius:8px;padding:9px 12px}button.active{background:#405a54;border-color:#bdd2c8}.screen{border:7px solid #283534;border-radius:16px;background:#101818;padding:7px;box-shadow:0 20px 60px #0008,inset 0 0 0 1px #60706a}canvas{display:block;width:100%;height:auto;aspect-ratio:16/9;background:#12191a;image-rendering:pixelated;border-radius:6px;touch-action:none}.hud{display:grid;grid-template-columns:1fr minmax(220px,.55fr);gap:8px}.box{min-height:56px;border:1px solid #4d625d;border-radius:7px;background:#14201f;padding:8px 10px;font-size:12px;line-height:1.35}.box b{color:#f1d88d}.keys{font-size:11px;color:#aabcb4}.touch{display:grid;grid-template-columns:repeat(3,56px) 82px;grid-template-rows:repeat(2,48px);gap:7px;justify-content:center;touch-action:none}.touch button{font-size:19px;user-select:none;-webkit-user-select:none}.up{grid-column:2}.left{grid-column:1;grid-row:2}.down{grid-column:2;grid-row:2}.right{grid-column:3;grid-row:2}.act{grid-column:4;grid-row:1/3;font-size:14px!important}.small{font-size:10px;color:#91a49d}@media(max-width:680px){.wrap{padding:7px}.hud{grid-template-columns:1fr}.screen{border-width:5px;padding:5px}.top{align-items:flex-start}.modes{width:100%}.modes button{flex:1}.touch{grid-template-columns:repeat(3,52px) 76px}.keys{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><div class="title">JET PLAYTEST LAB</div><div class="modes"><button id="jetBtn">Jet2D Top Down</button><button id="chemBtn" class="active">Chemimals</button></div></div>
+  <div class="screen"><canvas id="game" width="640" height="360" aria-label="Playable Jet2D and Chemimals demo"></canvas></div>
+  <div class="hud"><div id="msg" class="box"></div><div id="obj" class="box"></div></div>
+  <div class="keys">Keyboard: WASD / arrows · E or Enter interact · R restart · 1/2/3 battle moves</div>
+  <div class="touch">
+    <button class="up" data-dir="up">↑</button><button class="left" data-dir="left">←</button><button class="down" data-dir="down">↓</button><button class="right" data-dir="right">→</button><button class="act" id="actBtn">ACTION</button>
+  </div>
+  <div class="small">Hosted playtest build · no external assets · touch and keyboard enabled</div>
+</div>
+<script>
+'use strict';
+const c=document.getElementById('game'),x=c.getContext('2d');x.imageSmoothingEnabled=false;
+const msg=document.getElementById('msg'),obj=document.getElementById('obj'),jetBtn=document.getElementById('jetBtn'),chemBtn=document.getElementById('chemBtn');
+const W=c.width,H=c.height,T=32,keys=new Set();let mode='chem',lastMove=0;
+const DIR={up:[0,-1],down:[0,1],left:[-1,0],right:[1,0]};
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+function box(px,py,w,h,col){x.fillStyle=col;x.fillRect(Math.round(px),Math.round(py),Math.round(w),Math.round(h))}
+function text(s,px,py,col='#f4eed3',size=14,align='left'){x.fillStyle=col;x.font=`${size}px ui-monospace,monospace`;x.textAlign=align;x.fillText(s,px,py)}
+function line(a,b,d,e,col,w=1){x.strokeStyle=col;x.lineWidth=w;x.beginPath();x.moveTo(a,b);x.lineTo(d,e);x.stroke()}
+function seedRand(seed){let a=2166136261;for(const ch of seed)a=Math.imul(a^ch.charCodeAt(0),16777619);return()=>{a^=a<<13;a^=a>>>17;a^=a<<5;return(a>>>0)/4294967296}}
+function keyDir(k){if(k==='ArrowUp'||k==='w'||k==='W')return'up';if(k==='ArrowDown'||k==='s'||k==='S')return'down';if(k==='ArrowLeft'||k==='a'||k==='A')return'left';if(k==='ArrowRight'||k==='d'||k==='D')return'right';return null}
+window.addEventListener('keydown',e=>{const d=keyDir(e.key);if(d){keys.add(d);e.preventDefault()}if(e.key==='e'||e.key==='E'||e.key==='Enter'){interact();e.preventDefault()}if(e.key==='r'||e.key==='R'){resetMode()}if(mode==='chem'&&chem.battle&&['1','2','3'].includes(e.key))battleMove(+e.key-1)});
+window.addEventListener('keyup',e=>{const d=keyDir(e.key);if(d)keys.delete(d)});
+for(const b of document.querySelectorAll('[data-dir]')){const d=b.dataset.dir;const on=e=>{e.preventDefault();keys.add(d)};const off=e=>{e.preventDefault();keys.delete(d)};b.addEventListener('pointerdown',on);b.addEventListener('pointerup',off);b.addEventListener('pointercancel',off);b.addEventListener('pointerleave',off)}
+document.getElementById('actBtn').addEventListener('pointerdown',e=>{e.preventDefault();interact()});
+jetBtn.onclick=()=>setMode('jet');chemBtn.onclick=()=>setMode('chem');
+function setMode(m){mode=m;keys.clear();jetBtn.classList.toggle('active',m==='jet');chemBtn.classList.toggle('active',m==='chem');resetMode()}
+
+const jetRooms=[
+ {name:'Engine Test Room A',blocked:new Set(['0,0','1,0','2,0','3,0','4,0','5,0','6,0','7,0','8,0','9,0','10,0','11,0','12,0','13,0','14,0','15,0','16,0','17,0','18,0','19,0','0,10','1,10','2,10','3,10','4,10','5,10','6,10','7,10','8,10','9,10','10,10','11,10','12,10','13,10','14,10','15,10','16,10','17,10','18,10','19,10','0,1','0,2','0,3','0,4','0,5','0,6','0,7','0,8','0,9','19,1','19,2','19,3','19,4','19,6','19,7','19,8','19,9','7,3','7,4','7,5','7,6','11,4','12,4','13,4']),trigger:[5,5],terminal:[15,7],exit:[18,5]},
+ {name:'Engine Test Room B',blocked:new Set(['0,0','1,0','2,0','3,0','4,0','5,0','6,0','7,0','8,0','9,0','10,0','11,0','12,0','13,0','14,0','15,0','16,0','17,0','18,0','19,0','0,10','1,10','2,10','3,10','4,10','5,10','6,10','7,10','8,10','9,10','10,10','11,10','12,10','13,10','14,10','15,10','16,10','17,10','18,10','19,10','0,1','0,2','0,3','0,4','0,6','0,7','0,8','0,9','19,1','19,2','19,3','19,4','19,5','19,6','19,7','19,8','19,9','4,2','5,2','6,2','13,7','14,7','15,7']),trigger:[10,3],terminal:[10,8],exit:[1,5]}
+];
+let jet={room:0,x:3,y:5,facing:'right',steps:0,triggered:false,note:'Walk into walls, triggers, and the room exit.'};
+function resetJet(){jet={room:0,x:3,y:5,facing:'right',steps:0,triggered:false,note:'Walk into walls, triggers, and the room exit.'}}
+function jetWalk(d){const [dx,dy]=DIR[d],r=jetRooms[jet.room],nx=jet.x+dx,ny=jet.y+dy;jet.facing=d;if(r.blocked.has(`${nx},${ny}`)){jet.note='Collision rejected: blocked cell.';return}jet.x=nx;jet.y=ny;jet.steps++;if(nx===r.trigger[0]&&ny===r.trigger[1]){jet.triggered=true;jet.note='Authored floor trigger fired.'}if(nx===r.exit[0]&&ny===r.exit[1]){jet.room=1-jet.room;jet.x=jet.room?2:17;jet.y=5;jet.note='Room transition succeeded; state preserved.'}}
+function jetInteract(){const r=jetRooms[jet.room],[dx,dy]=DIR[jet.facing],tx=jet.x+dx,ty=jet.y+dy;if(tx===r.terminal[0]&&ty===r.terminal[1])jet.note=`Entity interaction OK. room=${jet.room} steps=${jet.steps} trigger=${jet.triggered}`;else jet.note='Nothing interactive in front of you.'}
+function drawJet(){const r=jetRooms[jet.room];box(0,0,W,H,'#142021');for(let gy=0;gy<11;gy++)for(let gx=0;gx<20;gx++){const blocked=r.blocked.has(`${gx},${gy}`);box(gx*T,gy*T,T,T,blocked?'#2b3a3b':((gx+gy)%2?'#65766b':'#708176'));line(gx*T,gy*T,(gx+1)*T,gy*T,'#1b292733');line(gx*T,gy*T,gx*T,(gy+1)*T,'#1b292733')}box(r.trigger[0]*T+6,r.trigger[1]*T+6,20,20,jet.triggered?'#e0c15f':'#a58f48');box(r.terminal[0]*T+5,r.terminal[1]*T+5,22,22,'#5fb3bd');box(r.exit[0]*T+4,r.exit[1]*T+4,24,24,'#b57dce');drawPlayer(jet.x,jet.y,jet.facing,'#f4de79');text(r.name,12,22,'#f5efd8',15);text('gold=trigger  cyan=entity  violet=room exit',12,344,'#bdccc6',11);msg.innerHTML=`<b>ENGINE</b><br>${jet.note}`;obj.innerHTML=`<b>STATE</b><br>room ${jet.room+1}/2 · steps ${jet.steps} · trigger ${jet.triggered?'ON':'off'}`}
+
+const screens=[
+ {id:'apartment',name:'12F Apartment',kind:'inside',objective:'Leave the apartment and head downstairs.'},
+ {id:'hall',name:'12th Floor Hall',kind:'inside',objective:'Reach the elevator lobby.'},
+ {id:'lobby',name:'Building Lobby',kind:'inside',objective:'Go outside toward the waterfront.'},
+ {id:'astoria',name:'Astoria Waterfront',kind:'street',objective:'Follow the waterfront west.'},
+ {id:'socrates',name:'Socrates Sculpture Park',kind:'park',objective:'Cross the park toward Hallets Cove.'},
+ {id:'cove',name:'Hallets Cove',kind:'water',objective:'Continue north to Hallets Point.'},
+ {id:'point',name:'Hallets Point',kind:'water',objective:'Use restoration, then meet Chlorocat.'}
+];
+let chem={screen:0,x:2,y:7,facing:'right',hp:18,maxHp:18,flags:new Set(),note:'Walk right through the apartment. Interact with things you face.',battle:null};
+function resetChem(){chem={screen:0,x:2,y:7,facing:'right',hp:18,maxHp:18,flags:new Set(),note:'Walk right through the apartment. Interact with things you face.',battle:null}}
+function chemBlocked(nx,ny){if(nx<1||nx>18||ny<2||ny>9)return true;const s=screens[chem.screen];if(s.kind==='inside'&&((nx===7&&ny>=3&&ny<=6)||(nx===13&&ny>=5&&ny<=8)))return true;if(s.id==='socrates'&&nx===10&&ny>=4&&ny<=7)return true;if(s.id==='point'&&nx===12&&ny>=3&&ny<=5)return true;return false}
+function chemWalk(d){if(chem.battle){if(d==='up')chem.battle.sel=(chem.battle.sel+2)%3;if(d==='down')chem.battle.sel=(chem.battle.sel+1)%3;return}const [dx,dy]=DIR[d];chem.facing=d;let nx=chem.x+dx,ny=chem.y+dy;if(nx>18){if(chem.screen<screens.length-1){chem.screen++;chem.x=2;chem.y=7;chem.note=`Entered ${screens[chem.screen].name}.`;return}nx=18}if(nx<1){if(chem.screen>0){chem.screen--;chem.x=17;chem.y=7;chem.note=`Backtracked to ${screens[chem.screen].name}.`;return}nx=1}if(chemBlocked(nx,ny)){chem.note='Something solid blocks the way.';return}chem.x=nx;chem.y=ny}
+function near(tx,ty){return Math.abs(chem.x-tx)+Math.abs(chem.y-ty)<=1}
+function chemInteract(){if(chem.battle){battleMove(chem.battle.sel);return}const s=screens[chem.screen];if(s.id==='apartment'&&near(4,4)){chem.note='A chemistry notebook: “Every bond has a cost.”';return}if(s.id==='socrates'&&near(9,5)){chem.note='The sculpture hums faintly beside the river.';return}if(s.id==='point'&&near(7,6)){chem.hp=chem.maxHp;chem.flags.add('restored');chem.note='Restoration complete. Team energy fully recovered.';return}if(s.id==='point'&&near(15,6)){chem.battle={enemyHp:16,enemyMax:16,sel:0,log:'Wild Chlorocat blocks the garden path.'};chem.note='1v1 encounter started.';return}chem.note='You inspect the area. Nothing reacts yet.'}
+function battleMove(i){if(!chem.battle)return;const b=chem.battle,moves=[['Electron Shift',6],['Bond Pulse',5],['Neutralize',4]],m=moves[i];b.enemyHp=Math.max(0,b.enemyHp-m[1]);b.log=`You used ${m[0]} for ${m[1]}.`;if(b.enemyHp<=0){chem.flags.add('chlorocat');chem.battle=null;chem.note='Chlorocat encounter cleared. Demo objective complete.';return}const hit=3;chem.hp=Math.max(1,chem.hp-hit);b.log+=` Chlorocat counters for ${hit}.`;b.sel=(i+1)%3}
+function drawPlayer(gx,gy,facing,col){const px=gx*T+16,py=gy*T+18;box(px-8,py-10,16,18,col);box(px-5,py-15,10,7,'#f2d7b5');const [dx,dy]=DIR[facing];box(px+dx*8-2,py-5+dy*8,4,4,'#172020')}
+function drawChem(){const s=screens[chem.screen];drawChemWorld(s);drawPlayer(chem.x,chem.y,chem.facing,'#f0d56f');text(s.name,12,22,'#fff1c8',15);text(`HP ${chem.hp}/${chem.maxHp}`,625,22,'#f3d58c',13,'right');if(chem.battle)drawBattle();msg.innerHTML=`<b>CHEMIMALS</b><br>${chem.battle?chem.battle.log:chem.note}`;obj.innerHTML=`<b>OBJECTIVE</b><br>${chem.flags.has('chlorocat')?'Playtest complete — Chlorocat cleared.':s.objective}`}
+function drawChemWorld(s){const pal=s.kind==='inside'?['#3f5550','#9b8d72','#796d59']:s.kind==='park'?['#3f5947','#7c8b5a','#a9a78c']:s.kind==='water'?['#345e68','#9d9a83','#556158']:['#5e514b','#a7a18a','#4d5656'];box(0,0,W,H,pal[0]);if(s.kind!=='inside'){box(0,0,W,76,s.kind==='water'||s.id==='socrates'?'#3b6f7c':'#5b5551');if(s.kind==='water'||s.id==='socrates'){for(let i=0;i<15;i++)line(i*49,24+(i%4)*9,i*49+25,24+(i%4)*9,'#74a1a5')}box(0,76,W,130,pal[1]);box(0,206,W,154,pal[2]);for(let i=0;i<12;i++){box(i*59,270,27,4,'#d2bd65');box(i*67+12,105,3,63,'#605f55')}}else{box(0,44,W,300,pal[1]);box(0,44,W,10,pal[0]);for(let gy=2;gy<10;gy++)for(let gx=1;gx<19;gx++)if((gx+gy)%2===0)box(gx*T,gy*T,T,T,'#ffffff0b');box(7*T,3*T,32,128,pal[2]);box(13*T,5*T,32,128,pal[2])}const r=seedRand(s.id);for(let i=0;i<14;i++){const px=25+r()*575,py=(s.kind==='inside'?75:92)+r()*185,w=7+r()*20,h=6+r()*15;box(px,py,w,h,i%3===0?'#c3a86f':i%3===1?'#586e61':'#6e6252')}if(s.id==='apartment'){box(80,80,110,46,'#70584c');box(390,84,125,42,'#5c4a40');box(4*T,4*T+5,22,22,'#87a4a0')}if(s.id==='socrates'){box(9*T,5*T,32,96,'#8c735e');line(9*T+2,5*T+90,10*T+31,5*T+5,'#c3b078',4)}if(s.id==='point'){box(7*T+5,6*T+5,22,22,'#68c8bb');text('+',7*T+16,6*T+23,'#102423',18,'center');box(15*T+4,6*T+4,24,24,'#a6d46e');text('C',15*T+16,6*T+22,'#16331e',15,'center')}text('→',610,190,'#f4e3a3',24,'center');if(chem.screen>0)text('←',28,190,'#f4e3a3',24,'center')}
+function drawBattle(){const b=chem.battle;box(54,55,532,250,'#0f1818e8');x.strokeStyle='#8ca098';x.strokeRect(54,55,532,250);text('1v1 · WILD CHLOROCAT',72,82,'#e8efc5',17);box(340,104,150,16,'#333');box(340,104,150*(b.enemyHp/b.enemyMax),16,'#7db66b');text(`CHLOROCAT ${b.enemyHp}/${b.enemyMax}`,340,98,'#cfe5b3',12);box(147,132,54,42,'#a5cf68');box(158,116,31,25,'#8fba5b');text('⚗',174,160,'#213320',24,'center');const moves=['Electron Shift','Bond Pulse','Neutralize'];for(let i=0;i<3;i++){const yy=210+i*25;text(`${i===b.sel?'▶':' '} ${i+1}. ${moves[i]}`,100,yy,i===b.sel?'#f1d77b':'#d4ddd5',13)}text('↑/↓ choose · ACTION or 1/2/3 use move',320,291,'#9fb0aa',11,'center')}
+function resetMode(){lastMove=0;if(mode==='jet')resetJet();else resetChem()}
+function interact(){if(mode==='jet')jetInteract();else chemInteract()}
+function step(t){if(t-lastMove>120&&keys.size){const d=[...keys][0];if(mode==='jet')jetWalk(d);else chemWalk(d);lastMove=t}}
+function frame(t){step(t);x.clearRect(0,0,W,H);if(mode==='jet')drawJet();else drawChem();requestAnimationFrame(frame)}
+resetMode();requestAnimationFrame(frame);
+</script>
+</body>
+</html>
