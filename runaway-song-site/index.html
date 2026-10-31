@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#151515">
+<title>Halloween Dark Club — Runaway Verses 90 | Cellbeat</title>
+<style>
+:root{color-scheme:dark;--bg:#151515;--panel:#242424;--panel2:#303030;--line:#656565;--ink:#eee;--muted:#aaa;--hot:#e9e9e9}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+main{max-width:850px;margin:auto;padding:14px 12px 28px}header{border:2px outset #777;background:#363636;padding:10px 12px;margin-bottom:10px}
+h1{font-size:22px;margin:0 0 5px}header p{margin:0;color:#bbb;font-size:12px}
+.panel{border:2px outset #777;background:var(--panel);padding:10px;margin:8px 0}.transport{display:grid;grid-template-columns:2fr 1fr 1fr;gap:6px}
+button{min-height:46px;border:2px outset #888;background:#484848;color:#fff;font:inherit;font-weight:700;cursor:pointer;padding:8px}
+button:active{border-style:inset;background:#333}.primary{background:#5a694a}.status{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;background:#0e0e0e;border:2px inset #555;padding:9px;margin-top:8px}
+.time{font-size:20px;font-weight:800}.muted{color:var(--muted)}
+input[type=range]{width:100%;accent-color:#ddd;min-height:38px}.sections{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+.sections button{font-size:12px;min-height:42px}.parts{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}
+.part{display:flex;align-items:center;justify-content:center;gap:6px;border:1px solid #666;background:#1c1c1c;min-height:48px;padding:6px;font-size:12px}
+.part input{width:20px;height:20px}.meter{height:11px;border:1px inset #555;background:#080808;overflow:hidden;margin-top:7px}.meter>div{height:100%;width:0;background:#ddd;transition:width .05s linear}
+.legend{font-size:11px;line-height:1.55;color:#bbb;margin:8px 0 0}.error{color:#ff9d97}
+@media(max-width:600px){.transport{grid-template-columns:1fr 1fr}.transport .primary{grid-column:1/-1}.sections{grid-template-columns:1fr 1fr}.parts{grid-template-columns:1fr 1fr}.part:last-child{grid-column:1/-1}h1{font-size:19px}}
+</style>
+</head>
+<body>
+<main id="app">
+<header>
+  <h1>Halloween Dark Club — Runaway Verses 90</h1>
+  <p>CELLBEAT MINI / playable song / 90 seconds</p>
+</header>
+
+<section class="panel">
+  <div class="transport">
+    <button id="play" class="primary" type="button">▶ PLAY</button>
+    <button id="stop" type="button">■ STOP</button>
+    <button id="restart" type="button">↺ RESTART</button>
+  </div>
+  <div class="status">
+    <span id="state">loading song…</span>
+    <span class="time"><span id="clock">0:00.0</span> / 1:30.0</span>
+  </div>
+  <input id="seek" type="range" min="0" max="90" step="0.01" value="0" aria-label="Song position">
+  <div class="meter"><div id="meterFill"></div></div>
+</section>
+
+<section class="panel">
+  <strong>JUMP TO SECTION</strong>
+  <div class="sections" id="sections"></div>
+</section>
+
+<section class="panel">
+  <strong>PARTS</strong>
+  <div class="parts">
+    <label class="part"><input type="checkbox" data-part="piano" checked> Piano</label>
+    <label class="part"><input type="checkbox" data-part="bass" checked> Bass</label>
+    <label class="part"><input type="checkbox" data-part="drums" checked> Drums</label>
+    <label class="part"><input type="checkbox" data-part="rave" checked> Rave</label>
+    <label class="part"><input type="checkbox" data-part="noise" checked> Noise</label>
+  </div>
+  <p class="legend">Turn parts on/off while playing to hear the song as stems. Section buttons jump directly into each verse and the accelerating runaway sequence.</p>
+</section>
+<p id="msg" class="muted">Preparing embedded Cellbeat arrangement…</p>
+</main>
+
+<script src="player.js"></script>
+</body>
+</html>
