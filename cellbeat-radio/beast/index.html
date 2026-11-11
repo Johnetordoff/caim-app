@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0c0716">
+<meta name="description" content="bEAST — the soap faced killa. Four original synthetic bangers made with new Cellbeat Mini instrument patches. No performer. Just ones and zeros.">
+<title>bEAST — the soap faced killa | Cellbeat Mini</title>
+<style>
+:root{color-scheme:dark;--pink:#ff2b9d;--blue:#50f5ff;--ink:#f5f5ff;--dim:#c2b8d6}
+*{box-sizing:border-box}
+html{background:#08060e}
+body{margin:0;min-height:100vh;color:var(--ink);font:14px/1.5 'Courier New',monospace;
+background:radial-gradient(ellipse at 23% 15%,#2c123f 0%,transparent 45%),radial-gradient(ellipse at 85% 70%,#142b48,transparent 57%),#08060e}
+button{cursor:pointer;touch-action:manipulation}button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #d8feff;outline-offset:3px}
+a{color:var(--blue)}
+main{max-width:1190px;margin:auto;padding:23px 16px 42px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;border-bottom:1px solid #97559b;padding-bottom:13px}
+.logo{font:bold italic 23px Arial,sans-serif;letter-spacing:-.07em}
+.logo span{font:700 12px 'Courier New',monospace;letter-spacing:.13em;vertical-align:middle;margin-left:9px}
+.top a{text-decoration:none;font-size:12px}
+.hero{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:23px;margin-top:26px;align-items:center}
+.intro small{font:bold 11px 'Courier New',monospace;letter-spacing:.2em;color:#d1d4e2}
+h1{margin:8px 0 0;font:italic 1000 clamp(65px,13vw,173px)/.92 Arial,Helvetica,sans-serif;letter-spacing:-.12em;
+color:var(--pink);text-shadow:-5px 4px #722c94,0 0 20px #d829b554}
+.subhead{font:bold clamp(14px,2.2vw,25px) 'Courier New',monospace;color:#fbf5ff;letter-spacing:.03em}
+.tagline{border-left:4px solid var(--blue);padding:2px 0 2px 14px;color:var(--dim);max-width:450px;font:12px/1.8 'Courier New',monospace;margin:22px 0}
+.bits{margin:14px 0;font:11px 'Courier New',monospace;letter-spacing:.15em;color:var(--blue);word-break:break-all}
+.micro{font:bold 10px 'Courier New',monospace;letter-spacing:.1em;color:#e0a9e6}
+.logo-art{position:relative;min-height:330px;border:1px solid #793f85;border-radius:12px;
+background:radial-gradient(ellipse at center,#521472,#0b0718 66%);box-shadow:inset 0 0 80px #090214,0 0 30px #ec27961c;
+overflow:hidden}
+.logo-art:before{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,transparent 0 3px,#0007 4px 5px);z-index:2}
+.soap{width:100%;height:330px;display:block;filter:drop-shadow(0 0 25px #ff41da)}
+.glow{animation:glow 3s ease-in-out infinite alternate}
+@keyframes glow{to{opacity:.64;filter:blur(.4px)}}
+.tracks{margin-top:30px;display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.card{position:relative;display:flex;flex-direction:column;gap:9px;padding:18px;border:1px solid #8e4189;border-radius:7px;background:linear-gradient(140deg,#220c2b,#10101d 72%);box-shadow:inset 0 1px #ffb5e622}
+.card[data-active=true]{border-color:#71eeff;box-shadow:0 0 16px #2feaff44,inset 0 0 18px #26bfff12}
+.card-top{display:flex;align-items:center;justify-content:space-between;gap:8px;color:var(--blue);font:700 11px 'Courier New',monospace}
+.card h2{font:bold clamp(21px,3vw,31px)/1.12 Arial,sans-serif;margin:3px 0;letter-spacing:-.025em}
+.card p{margin:0;color:#c9c2d8;font-size:12px;line-height:1.6}
+.genre{color:#f591d1!important;text-transform:uppercase;letter-spacing:.08em}
+.play-track{min-height:42px;align-self:flex-start;border:1px solid #ff80c8;border-bottom-width:3px;border-radius:4px;
+background:linear-gradient(#f631aa,#9c176a);color:#fff;padding:9px 15px;font:bold 12px 'Courier New',monospace}
+.play-track:active{transform:translateY(2px);border-bottom-width:1px}
+.live-link{font:11px 'Courier New',monospace;color:var(--blue)}
+.player{position:sticky;bottom:9px;z-index:9;margin-top:28px;padding:16px;border:2px solid #4edcf5;border-radius:9px;background:#0e101deF;backdrop-filter:blur(12px);
+box-shadow:0 0 22px #3deeff2b;display:grid;grid-template-columns:1fr minmax(0,380px);gap:12px;align-items:center}
+.player strong{display:block;font:800 17px Arial,sans-serif}
+.player small{color:var(--blue);letter-spacing:.12em;font:10px 'Courier New',monospace}
+audio{width:100%;min-width:0;height:45px}
+.instrument-bank{margin-top:35px;padding:17px;border-top:1px solid #a74b99}
+.instrument-bank h2{font:800 13px 'Courier New',monospace;letter-spacing:.15em;margin:0 0 12px;color:var(--blue)}
+.patches{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.patch{border:1px solid #5a4b83;padding:12px;border-radius:4px;background:#161326;color:#edcdea;font:700 11px 'Courier New',monospace}
+.patch i{font:900 16px Arial,sans-serif;color:var(--pink);font-style:normal;display:block;margin-bottom:4px}
+footer{margin-top:26px;border-top:1px solid #443253;padding-top:17px;color:#aa9cbe;font-size:11px;line-height:1.8}
+@media(max-width:760px){.hero,.tracks,.player{grid-template-columns:1fr}.logo-art{min-height:260px}.soap{height:270px}.player{position:static}.patches{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:410px){.patches{grid-template-columns:1fr}.logo-art{min-height:220px}.soap{height:220px}h1{font-size:83px}}
+@media(prefers-reduced-motion:reduce){.glow{animation:none}}
+</style></head>
+<body><main>
+<div class="top"><div class="logo">CELLBEAT <span>MINI / ARTIST SERIES / DIGITAL ORIGINALS</span></div>
+<a href="/">← RADIO MAIN DECK</a></div>
+<div class="hero">
+<section class="intro">
+<small>AI MUSIC SYSTEM // NO HUMAN PERFORMER // 100% SYNTH</small>
+<h1>bEAST</h1>
+<div class="subhead">the soap faced killa</div>
+<div class="tagline">NOT A PERSON.<br>NOT A MASK ON A PERSON.<br>THE ARTIST IS THE SOUND.<br>THE FACE IS A SOAP GLITCH.<br>THE PERFORMANCE IS ONES AND ZEROS.</div>
+<div class="bits" aria-hidden="true">01100010 01000101 01000001 01010011 01010100</div>
+<p class="micro">HARD HOOKS // NASTY BASS // SYNTHETIC POP // CLEAN DIRTY SIGNAL</p>
+</section>
+<div class="logo-art" role="img" aria-label="Nonhuman emblem: an angry neon cyan and magenta soap brick with sharp geometric eyes, bubbles, and CRT scanlines.">
+<svg class="soap" viewBox="0 0 630 360" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+<defs>
+<linearGradient id="soapbody" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a0ffff"/><stop offset=".28" stop-color="#b258ff"/><stop offset=".58" stop-color="#5adfff"/><stop offset="1" stop-color="#ff2ea0"/></linearGradient>
+<linearGradient id="soaptop" x1="0" x2="1"><stop stop-color="#e5ffff"/><stop offset=".6" stop-color="#7ffbff"/><stop offset="1" stop-color="#fb81e0"/></linearGradient>
+<filter id="lit"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<g class="glow" fill="none" stroke="#fa4bdb" stroke-width="3" opacity=".8">
+<circle cx="90" cy="80" r="19"/><circle cx="530" cy="80" r="25"/><circle cx="556" cy="224" r="12"/><circle cx="104" cy="248" r="14"/><circle cx="476" cy="320" r="8"/>
+<path d="M80 160 L36 182 L92 188 M525 150 L582 120 L560 171"/>
+</g>
+<g transform="translate(101 52) rotate(-7 220 125)">
+<path d="M52 32 L369 12 Q412 11 430 57 L457 201 Q459 241 416 252 L105 269 Q60 267 47 230 L17 84 Q12 50 52 32Z" fill="#10091c" stroke="#ff66c5" stroke-width="13"/>
+<path d="M55 40 L368 23 Q404 24 416 55 L443 200 Q446 225 411 238 L111 254 Q78 249 66 216 L30 86 Q23 57 55 40Z" fill="url(#soapbody)" opacity=".92"/>
+<path d="M55 40 L365 23 Q405 22 415 56 L402 78 L80 103 L30 84 Q27 60 55 40Z" fill="url(#soaptop)" opacity=".85"/>
+<g fill="#080715" stroke="#e4faff" stroke-width="5">
+<path d="M99 123 L193 146 L166 183 L123 160Z"/>
+<path d="M328 111 L239 150 L265 178 L318 145Z"/>
+<path d="M151 198 L222 214 L231 196 L255 213 L276 186 L295 202 L333 172 L311 230 L191 238Z"/>
+</g>
+<path d="M77 92 Q195 65 325 78" fill="none" stroke="#fff" opacity=".5" stroke-width="10"/>
+<path d="M96 238 Q155 258 185 247 M343 216 Q386 194 400 177" fill="none" stroke="#77ffff" stroke-width="8" opacity=".75"/>
+</g>
+<g fill="#c2ffff" opacity=".75" stroke="#60cffa" stroke-width="2">
+<circle cx="183" cy="62" r="9"/><circle cx="470" cy="112" r="11"/><circle cx="104" cy="294" r="18"/><circle cx="508" cy="288" r="15"/><circle cx="553" cy="190" r="6"/>
+</g>
+</svg></div>
+</div>
+<div class="tracks" id="tracks">
+<article class="card" data-active="true" id="track7">
+<div class="card-top"><span>01 / CB-07</span><span>152 BPM</span></div><h2>BANG SWITCH</h2><p class="genre">industrial bass pop</p>
+<p>Dirty low-end, chant-sized synth hook, detonating drops.</p>
+<button class="play-track" data-id="7">▶ PLAY TRACK</button><a class="live-link" href="/live/7.mp3">TUNE INTO LIVE BROADCAST · CH 07</a></article>
+<article class="card" id="track8">
+<div class="card-top"><span>02 / CB-08</span><span>128 BPM</span></div><h2>PLASTIC HEAVEN</h2><p class="genre">neon hyperpop</p>
+<p>Shimmering synthetic sweetness with a sharp club kick.</p>
+<button class="play-track" data-id="8">▶ PLAY TRACK</button><a class="live-link" href="/live/8.mp3">TUNE INTO LIVE BROADCAST · CH 08</a></article>
+<article class="card" id="track9">
+<div class="card-top"><span>03 / CB-09</span><span>146 BPM</span></div><h2>KILLA KLEAN</h2><p class="genre">industrial electro rock</p>
+<p>Distorted synth riffs, hard snares, and machine-room swagger.</p>
+<button class="play-track" data-id="9">▶ PLAY TRACK</button><a class="live-link" href="/live/9.mp3">TUNE INTO LIVE BROADCAST · CH 09</a></article>
+<article class="card" id="track10">
+<div class="card-top"><span>04 / CB-10</span><span>116 BPM</span></div><h2>HEARTDRIVE</h2><p class="genre">dark synthpop anthem</p>
+<p>A towering cinematic chorus from nothing but oscillators.</p>
+<button class="play-track" data-id="10">▶ PLAY TRACK</button><a class="live-link" href="/live/10.mp3">TUNE INTO LIVE BROADCAST · CH 10</a></article>
+</div>
+<section class="player" aria-label="bEAST music player">
+<div><small id="status">READY // SELECT A TRACK</small><strong id="now">BANG SWITCH</strong>
+<a id="download" href="/clips/7.mp3" download="bEAST-bang-switch.mp3" style="font-size:11px">GET MP3 FILE</a></div>
+<audio id="audio" controls preload="none" playsinline src="/clips/7.mp3"></audio></section>
+<section class="instrument-bank"><h2>SIGNATURE CELLBEAT MINI SYNTH PATCHES</h2>
+<div class="patches">
+<div class="patch"><i>01</i>BUBBLE BASS</div><div class="patch"><i>02</i>SOAP SYNTH</div>
+<div class="patch"><i>03</i>CLEAN PLUCK</div><div class="patch"><i>04</i>FOAM LEAD</div>
+<div class="patch"><i>05</i>RINSE PAD</div><div class="patch"><i>06</i>GLASS STAB</div>
+<div class="patch"><i>07</i>KILLA KICK</div><div class="patch"><i>08</i>KILLA SNARE</div>
+<div class="patch"><i>09</i>KILLA HAT</div>
+</div></section>
+<footer>ORIGINAL CELLBEAT MUSIC // bEAST IS THE ALGORITHM AND THE SOUND DESIGN, NOT A HUMAN ACTOR, IMAGE, OR VOCAL IMITATION.
+<br>Four distinct, composed synthetic tracks with sections, hooks, transitions and choruses. Each can be played from the beginning or tuned into as a synchronized live channel.
+<br>All audio and imagery here are original project work; no sampled commercial songs. <a href="/">RETURN TO THE SIX-STATION RADIO RECEIVER</a>.</footer>
+</main>
+<script>
+(function(){
+"use strict";
+const tracks={
+7:["BANG SWITCH","bang-switch"],8:["PLASTIC HEAVEN","plastic-heaven"],
+9:["KILLA KLEAN","killa-klean"],10:["HEARTDRIVE","heartdrive"]
+};
+let chosen=7;
+const audio=document.getElementById("audio"),now=document.getElementById("now"),status=document.getElementById("status"),dl=document.getElementById("download");
+function select(id){
+ chosen=id;const info=tracks[id];if(!info)return;
+ audio.pause();audio.src="/clips/"+id+".mp3";audio.load();
+ now.textContent=info[0];status.textContent="CH "+id+" // LOADED / CLICK PLAY";
+ dl.href="/clips/"+id+".mp3";dl.download="bEAST-"+info[1]+".mp3";
+ Object.keys(tracks).forEach(n=>{document.getElementById("track"+n).dataset.active=String(Number(n)===chosen)});
+}
+document.querySelectorAll(".play-track").forEach(b=>b.addEventListener("click",()=>{
+ let id=Number(b.dataset.id);if(id!==chosen)select(id);
+ audio.play().then(()=>{status.textContent="PLAYING // "+tracks[id][0]}).catch(e=>{status.textContent="AUDIO ERROR: "+e.message});
+ document.querySelector(".player").scrollIntoView({block:"nearest",behavior:"smooth"})
+}));
+audio.addEventListener("playing",()=>{status.textContent="NOW PLAYING // "+tracks[chosen][0]});
+audio.addEventListener("pause",()=>{if(!audio.ended)status.textContent="PAUSED // "+tracks[chosen][0]});
+audio.addEventListener("ended",()=>{status.textContent="END OF TRACK // "+tracks[chosen][0]});
+audio.addEventListener("error",()=>{status.textContent="STREAM UNAVAILABLE // TRY AGAIN"});
+})();
+</script>
+</body></html>
