@@ -8,4 +8,4 @@ COPY radio/ ./radio/
 COPY beast/ ./beast/
 RUN python3 -m py_compile radio/broadcast/build_audio.py radio/broadcast/server.py beast/build_album.py
 EXPOSE 10000
-CMD ["sh","-c","python3 radio/broadcast/build_audio.py && exec python3 beast/build_album.py && exec python3 radio/broadcast/server.py"]
+CMD ["sh","-c","python3 radio/broadcast/build_audio.py && python3 beast/build_album.py && exec python3 radio/broadcast/server.py"]
