@@ -243,7 +243,7 @@ def create_score(song):
                          pan=(-.4 if i%2 else .4),bend=(-7,0,.56,18) if i%2==0 else (0,5,.42,0),
                          echo=.54 if i==len(times)-1 else .23)
             if is_peak:
-                emit(measure+3.25,"water-bell",motif[(bar+3)%8]+12,strength*.26,.7,.0,.36)
+                emit(measure+3.25,"water-bell",motif[(bar+3)%8]+12,strength*.26,.7,echo=.36)
         elif family=="broken-jazz":
             # 11th/13th keyboard chord answers, asymmetrical trumpet/jazz solo.
             times=[0,.75,1.75,2.5,3.25] if not is_bridge else [0,1.25,2.75,3.5]
