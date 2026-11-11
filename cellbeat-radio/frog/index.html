@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#061a17"><meta name="description" content="LAI-Z FR0g: original psychedelic reggae, late-night electronic jazz odysseys, and sonic fables. Four synthetic tracks, streamable on Cellbeat Radio.">
+<title>LAI-Z FR0g — After Hours at the Lily Exchange</title>
+<style>
+:root{color-scheme:dark;--mint:#b9ff7b;--teal:#6ffbe2;--gold:#f8d78c;--ink:#f5f6dc;--dim:#abbcbb}
+*{box-sizing:border-box}html{background:#06110f}body{margin:0;min-height:100vh;color:var(--ink);background:radial-gradient(ellipse at 32% 14%,#17453d,transparent 40%),radial-gradient(ellipse at 90% 45%,#40334c,transparent 45%),linear-gradient(#050d12,#08120e 72%,#03070a);font:14px/1.6 'Courier New',monospace}
+a{color:var(--teal)}button{cursor:pointer;touch-action:manipulation}button:focus-visible,a:focus-visible,audio:focus-visible{outline:2px solid var(--mint);outline-offset:4px}
+.wrap{max-width:1120px;margin:0 auto;padding:20px 17px 48px}
+nav{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding-bottom:14px;border-bottom:1px solid #658e7277}
+nav .micro{font:bold 11px 'Courier New',monospace;letter-spacing:.15em;color:var(--gold)}
+nav a{font-size:11px;text-decoration:none}
+.hero{display:grid;grid-template-columns:1fr 1.02fr;align-items:center;gap:25px;padding:26px 0 19px}
+.eyebrow{font:800 11px 'Courier New',monospace;letter-spacing:.22em;color:var(--gold)}
+h1{font:italic 900 clamp(46px,8vw,98px)/1.03 Arial,Helvetica,sans-serif;letter-spacing:-.1em;color:var(--mint);margin:7px 0;text-shadow:-4px 3px #073f49,0 0 25px #adff6155}
+h1 em{color:var(--teal);font-style:italic}
+.subtitle{font:800 clamp(15px,2.5vw,25px) 'Courier New',monospace;color:#fff8cd;letter-spacing:.02em}
+.tagline{border-left:3px solid #d0ff86;padding:5px 0 5px 13px;color:#c6e5cb;margin:23px 0;font-size:12px;line-height:2}
+.binary{font-size:10px;color:#8ecea1;letter-spacing:.22em;word-break:break-all}
+.art{min-height:375px;border:1px solid #587f71;border-radius:11px;overflow:hidden;position:relative;background:radial-gradient(ellipse at 50% 48%,#28655f,#0b1f27 48%,#080c1d 92%);box-shadow:inset 0 0 70px #03090b,0 0 19px #43e6a020}
+.art:before{content:"";position:absolute;inset:0;z-index:3;pointer-events:none;background:repeating-linear-gradient(0deg,transparent 0 3px,#0005 4px 5px)}
+.art:after{content:"";position:absolute;inset:0;z-index:3;pointer-events:none;background:linear-gradient(165deg,#ffffff1b,transparent 22%,transparent 68%,#93ffc114)}
+.logo-art{width:100%;height:375px;display:block}
+.moon{animation:breathe 4.5s ease-in-out infinite alternate;transform-origin:50% 50%}
+@keyframes breathe{to{opacity:.53;transform:translateY(4px) scale(1.01)}}
+.section-head{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;border-bottom:1px solid #6b8d6d77;padding:17px 0 11px;margin-bottom:17px}
+.section-head h2{font:900 clamp(16px,2.8vw,23px) 'Courier New',monospace;color:var(--mint);margin:0;letter-spacing:.04em}
+.section-head small{font-size:10px;color:var(--gold);letter-spacing:.09em}
+.tracks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.track{display:flex;flex-direction:column;gap:10px;padding:17px;border:1px solid #517e72;border-radius:7px;background:linear-gradient(140deg,#15332d,#111823 80%);box-shadow:inset 0 1px #b3ff8a1c}
+.track[data-current=true]{border-color:var(--mint);box-shadow:inset 0 0 16px #81ff6022,0 0 16px #56ce7d33}
+.t-top{display:flex;justify-content:space-between;gap:10px;color:var(--gold);font:bold 11px monospace}
+.track h3{font:800 clamp(18px,2.7vw,27px)/1.18 Arial,sans-serif;letter-spacing:-.025em;margin:0;color:#edfbd3}
+.genre{color:var(--teal);font:700 10px 'Courier New',monospace;letter-spacing:.11em;text-transform:uppercase}
+.track p{color:#cfdbd2;font:12px/1.7 Georgia,serif;margin:0;flex:1;font-style:italic}
+.sound-note{font-size:11px;color:#b5d2d1}
+.track-buttons{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.track-buttons button{min-height:43px;border:1px solid #b6f497;border-bottom:3px solid #447853;border-radius:4px;background:linear-gradient(#baff79,#4d9472);color:#061d18;font:900 11px 'Courier New',monospace;padding:8px 13px}
+.track-buttons button:active{transform:translateY(2px);border-bottom-width:1px}
+.track-buttons a{font:700 11px 'Courier New',monospace}
+.player{display:grid;grid-template-columns:1fr 1.1fr;align-items:center;gap:16px;position:sticky;bottom:10px;margin:22px 0;padding:14px 18px;z-index:6;background:#081d1ded;border:2px solid #8bed97;border-radius:8px;box-shadow:0 0 24px #37de8f2b;backdrop-filter:blur(10px)}
+.player strong{display:block;font:900 17px Arial,sans-serif;line-height:1.35;margin:4px 0}
+.player small{font:10px 'Courier New',monospace;letter-spacing:.1em;color:var(--gold)}
+.player a{font-size:11px}
+audio{width:100%;min-width:0;height:46px}
+.instruments{margin-top:25px}.patches{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
+.patch{min-height:67px;padding:12px;border-radius:5px;border:1px solid #416b65;background:#0d221d;color:#b7fff1;font:bold 11px/1.5 'Courier New',monospace}
+.patch span{display:block;font:700 10px 'Courier New',monospace;color:#9fca99;margin-bottom:4px}
+footer{border-top:1px solid #5a827a99;padding:17px 0;margin-top:27px;color:#a8c2b4;font-size:11px;line-height:1.9}
+@media(max-width:780px){.hero,.tracks,.player{grid-template-columns:1fr}.art{min-height:285px}.logo-art{height:285px}.patches{grid-template-columns:repeat(2,minmax(0,1fr))}.player{position:static}}
+@media(max-width:380px){h1{font-size:51px}.patches{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.moon{animation:none}}
+</style></head>
+<body><main class="wrap">
+<nav><span class="micro">CELLBEAT MINI // AFTER HOURS / SIGNAL 011</span>
+<div><a href="/">← MAIN RADIO</a> &nbsp; <a href="/api/stations">LIVE STATION INDEX</a></div></nav>
+<div class="hero">
+<section>
+<div class="eyebrow">A NONHUMAN ELECTRONIC ARTIST · ORIGINAL SIGNALS ONLY</div>
+<h1>LAI-Z <em>FR0g</em></h1>
+<div class="subtitle">AFTER HOURS AT THE LILY EXCHANGE</div>
+<p class="tagline">REGGAE IN ZERO GRAVITY.<br>JAZZ IN A RAIN-SLICKED CIRCUIT.<br>PSYCHEDELIA AT 03:17 AM.<br>FOUR FABLES FOR A CITY THAT WON'T SLEEP.</p>
+<div class="binary">01001100 01000001 01001001 00101101 01011010 00100000 01000110 01010010 00110000 01100111</div>
+</section>
+<div class="art" role="img" aria-label="A geometric neon-green electronic frog-like glyph above a lily-pad turntable under a huge violet moon. Stylized nonhuman synth signal artwork.">
+<svg class="logo-art" viewBox="0 0 640 420" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+<defs><radialGradient id="moon-grad"><stop stop-color="#ecedc4"/><stop offset=".5" stop-color="#a6c1db"/><stop offset="1" stop-color="#715d94"/></radialGradient>
+<radialGradient id="frog-grad"><stop stop-color="#b8ff80"/><stop offset=".64" stop-color="#4ff0c8"/><stop offset="1" stop-color="#166e60"/></radialGradient>
+<linearGradient id="water-grad" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#48fbe0"/><stop offset="1" stop-color="#142c4a"/></linearGradient>
+<filter id="green-glow"><feGaussianBlur stdDeviation="7" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+<g class="moon"><circle cx="412" cy="143" r="99" fill="url(#moon-grad)" opacity=".7"/><circle cx="412" cy="143" r="126" fill="none" stroke="#a2a9d2" stroke-width="1" opacity=".35"/>
+<circle cx="412" cy="143" r="152" fill="none" stroke="#98bce4" stroke-width="1" opacity=".2"/></g>
+<g stroke="#91fac8" stroke-opacity=".45" stroke-width="1.3" fill="none">
+<path d="M0 350 C154 260 255 360 374 321 S510 280 640 350"/>
+<path d="M0 373 C174 293 270 378 382 346 S515 311 640 379"/>
+<path d="M0 393 C130 354 255 415 389 366 S522 347 640 413"/>
+<path d="M38 35 L88 61 M575 45 L605 74 M90 159 L121 159 M547 227 L600 211"/>
+<path d="M70 275 L92 262 L118 273 M524 299 L547 286 L574 301"/>
+</g>
+<g filter="url(#green-glow)">
+<ellipse cx="313" cy="335" rx="203" ry="37" fill="#122e39" stroke="#40ffcc" stroke-width="5"/>
+<path d="M127 322 Q267 264 473 317 L371 335 Q260 348 135 341Z" fill="url(#water-grad)" stroke="#afff8a" stroke-width="3"/>
+<circle cx="306" cy="324" r="23" fill="#090e16" stroke="#d6ff9c" stroke-width="3"/>
+<path d="M238 256 L220 215 Q221 169 273 155 L355 155 Q401 169 407 214 L386 255 L344 296 L262 295Z" fill="url(#frog-grad)" stroke="#d8ffc6" stroke-width="6"/>
+<path d="M240 176 L205 148 L223 111 L268 115 L276 155 M360 157 L376 110 L422 107 L445 143 L396 178" fill="#64ffba" stroke="#bcff9f" stroke-width="5"/>
+<circle cx="246" cy="143" r="18" fill="#071e1f" stroke="#f6ffc3" stroke-width="6"/>
+<circle cx="397" cy="138" r="18" fill="#071e1f" stroke="#f6ffc3" stroke-width="6"/>
+<path d="M270 224 Q315 247 361 219" stroke="#0c4d48" stroke-width="10" fill="none"/>
+<path d="M288 259 L327 264 L352 252" stroke="#d2ffa8" stroke-width="4" fill="none"/>
+<path d="M184 263 L120 249 L157 220 M438 261 L508 244 L473 213" fill="none" stroke="#7cf4c3" stroke-width="8"/>
+</g>
+<g fill="#e1ffb4" opacity=".9"><circle cx="140" cy="106" r="3"/><circle cx="181" cy="79" r="4"/><circle cx="535" cy="173" r="5"/><circle cx="553" cy="111" r="2"/><circle cx="82" cy="226" r="4"/><circle cx="494" cy="47" r="3"/></g>
+<text x="320" y="396" font-size="17" text-anchor="middle" font-family="monospace" fill="#beffba" letter-spacing="3">RIDDIM // REVERB // RIVER</text>
+</svg></div>
+</div>
+<section>
+<div class="section-head"><h2>THE FOUR MIDNIGHT FABLES</h2><small>ACT I — ACT IV // LIVE SIGNAL 011—014</small></div>
+<div class="tracks">
+<article class="track" id="track11" data-current="true">
+<div class="t-top"><span>FABLE 01 / CH 11</span><span>80 BPM</span></div>
+<h3>THE FROG WHO BORROWED MIDNIGHT</h3><div class="genre">Psychedelic one-drop dub / bass nocturne</div>
+<p>A frog borrows midnight from a clockmaker and must repay it with seven echoes.</p>
+<div class="sound-note">Deep skank organ · sub-bass slides · long tape-delay calls</div>
+<div class="track-buttons"><button type="button" data-play="11">▶ PLAY THE FABLE</button><a href="/live/11.mp3" target="_blank" rel="noopener noreferrer">TUNE LIVE 11</a></div>
+</article>
+<article class="track" id="track12">
+<div class="t-top"><span>FABLE 02 / CH 12</span><span>106 BPM</span></div>
+<h3>NEON LILY TAXI</h3><div class="genre">Late-night broken beat / electric jazz skank</div>
+<p>A taxi drives fireflies across a sleeping city, charging each passenger one memory.</p>
+<div class="sound-note">13th-chord Rhodes-style keys · lopsided kicks · muted synth horn</div>
+<div class="track-buttons"><button type="button" data-play="12">▶ PLAY THE FABLE</button><a href="/live/12.mp3" target="_blank" rel="noopener noreferrer">TUNE LIVE 12</a></div>
+</article>
+<article class="track" id="track13">
+<div class="t-top"><span>FABLE 03 / CH 13</span><span>88 BPM</span></div>
+<h3>THE MOON OWED THE RIVER A SONG</h3><div class="genre">Psychedelic space reggae / modal jazz odyssey</div>
+<p>The moon trades its reflection to the river for a song that only rain can remember.</p>
+<div class="sound-note">Space-reggae one-drop · gliding water bells · rain echoes</div>
+<div class="track-buttons"><button type="button" data-play="13">▶ PLAY THE FABLE</button><a href="/live/13.mp3" target="_blank" rel="noopener noreferrer">TUNE LIVE 13</a></div>
+</article>
+<article class="track" id="track14">
+<div class="t-top"><span>FABLE 04 / CH 14</span><span>112 BPM</span></div>
+<h3>LAST CALL AT THE NEPTUNE DINER</h3><div class="genre">Dub-jazz two-step / psychedelic after-hours</div>
+<p>At a diner beyond Neptune, a mechanical frog serves yesterday in blue cups.</p>
+<div class="sound-note">Two-step dub percussion · electric piano · cosmic horn countermelodies</div>
+<div class="track-buttons"><button type="button" data-play="14">▶ PLAY THE FABLE</button><a href="/live/14.mp3" target="_blank" rel="noopener noreferrer">TUNE LIVE 14</a></div>
+</article>
+</div>
+</section>
+<section class="player" aria-label="LAI-Z FR0g audio player">
+<div><small id="playing-status" role="status">LOADED // FABLE 01</small><strong id="now-playing">THE FROG WHO BORROWED MIDNIGHT</strong>
+<a id="mp3-download" href="/clips/11.mp3" download="LAI-Z-FR0g-frog-who-borrowed-midnight.mp3">SAVE ORIGINAL MP3</a></div>
+<audio id="fr0g-audio" controls playsinline preload="none" src="/clips/11.mp3"></audio>
+</section>
+<section class="instruments">
+<div class="section-head"><h2>THE FROG SYNTHESIS LAB</h2><small>12 PATCHES · 0 SAMPLED RECORDINGS</small></div>
+<div class="patches">
+<div class="patch"><span>01 / BASS</span>FROG SUB</div><div class="patch"><span>02 / OFFBEAT</span>MOSS ORGAN</div>
+<div class="patch"><span>03 / KEYS</span>PHOSPHOR KEYS</div><div class="patch"><span>04 / HORN</span>MIDNIGHT HORN</div>
+<div class="patch"><span>05 / MALLET</span>LILYPAD PLUCK</div><div class="patch"><span>06 / HARMONY</span>NEBULA PAD</div>
+<div class="patch"><span>07 / BELL</span>WATER BELL</div><div class="patch"><span>08 / LEAD</span>CROAK LEAD</div>
+<div class="patch"><span>09 / DRUM</span>DUB KICK</div><div class="patch"><span>10 / SNARE</span>RIM CLACK</div>
+<div class="patch"><span>11 / SHAKER</span>SILVER SHAKER</div><div class="patch"><span>12 / ATMOSPHERE</span>RAIN HISS</div>
+</div>
+</section>
+<footer>
+LAI-Z FR0g IS A SYNTHETIC MUSICAL IDENTITY, NOT A PERSON, HUMAN VOCALIST, OR FICTIONAL HUMAN LIFE.
+The fables are written in titles, musical progression and short narratives; the performances are original, purely synthesized instrumentals.
+The sound draws on reggae's one-drop and offbeat rhythmic vocabulary, modal jazz harmonies, and psychedelic dub mixing—without sampling or reproducing another recording.
+<br><a href="/">← BACK TO THE FULL CELLBEAT RADIO STATION DIAL</a>
+</footer>
+</main>
+<script>
+(function(){
+ "use strict";
+ const songs={
+  11:["THE FROG WHO BORROWED MIDNIGHT","frog-who-borrowed-midnight"],
+  12:["NEON LILY TAXI","neon-lily-taxi"],
+  13:["THE MOON OWED THE RIVER A SONG","moon-owed-river"],
+  14:["LAST CALL AT THE NEPTUNE DINER","last-call-neptune-diner"]
+ };
+ let current=11;
+ const audio=document.getElementById("fr0g-audio");
+ const status=document.getElementById("playing-status");
+ function select(id){
+  const song=songs[id];if(!song)return;
+  current=id;audio.pause();audio.src="/clips/"+id+".mp3";audio.load();
+  document.getElementById("now-playing").textContent=song[0];
+  const link=document.getElementById("mp3-download");link.href="/clips/"+id+".mp3";
+  link.download="LAI-Z-FR0g-"+song[1]+".mp3";
+  status.textContent="TUNED // FABLE "+String(id-10).padStart(2,"0");
+  for(const n of [11,12,13,14])document.getElementById("track"+n).dataset.current=String(n===id)
+ }
+ document.querySelectorAll("[data-play]").forEach(button=>button.addEventListener("click",()=>{
+  const id=Number(button.dataset.play);if(id!==current)select(id);
+  audio.play().then(()=>{status.textContent="PLAYING // FABLE "+String(id-10).padStart(2,"0")})
+   .catch(e=>{status.textContent="AUDIO ERROR // "+e.message});
+  document.querySelector(".player").scrollIntoView({block:"nearest",behavior:"smooth"})
+ }));
+ audio.addEventListener("playing",()=>{status.textContent="PLAYING // "+songs[current][0]});
+ audio.addEventListener("pause",()=>{if(!audio.ended)status.textContent="PAUSED // "+songs[current][0]});
+ audio.addEventListener("ended",()=>{status.textContent="FABLE ENDED // "+songs[current][0]});
+ audio.addEventListener("error",()=>{status.textContent="STREAM UNAVAILABLE // RETRY"});
+})();
+</script>
+</body></html>
