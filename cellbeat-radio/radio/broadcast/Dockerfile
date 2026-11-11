@@ -6,6 +6,7 @@ RUN pip install --no-cache-dir "numpy==2.2.6"
 WORKDIR /app
 COPY radio/ ./radio/
 COPY beast/ ./beast/
-RUN python3 -m py_compile radio/broadcast/build_audio.py radio/broadcast/server.py beast/build_album.py
+COPY frog/ ./frog/
+RUN python3 -m py_compile radio/broadcast/build_audio.py radio/broadcast/server.py beast/build_album.py frog/build_album.py
 EXPOSE 10000
-CMD ["sh","-c","python3 radio/broadcast/build_audio.py && python3 beast/build_album.py && exec python3 radio/broadcast/server.py"]
+CMD ["sh","-c","python3 radio/broadcast/build_audio.py && python3 beast/build_album.py && python3 frog/build_album.py && exec python3 radio/broadcast/server.py"]
