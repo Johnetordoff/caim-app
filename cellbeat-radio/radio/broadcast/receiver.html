@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0e0e19"><meta name="description" content="Listen to six original Cellbeat radio stations broadcasting MP3 audio on a shared UTC timeline.">
+<title>Cellbeat Radio — 6 Live Stations</title>
+<style>
+:root{color-scheme:dark;--glow:#79dfff;--c2:#aa81ef;--ink:#edf1f5}
+*{box-sizing:border-box}
+html{background:#0b0d12}body{margin:0;color:var(--ink);background:radial-gradient(ellipse at 50% 14%,#38354a,#181823 47%,#090a0e 100%);min-height:100vh;padding:clamp(15px,4vw,40px) 12px 50px;font:14px/1.5 Arial,sans-serif}
+button,input{font:inherit}button{cursor:pointer;touch-action:manipulation}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid #bfffff;outline-offset:3px}
+main{max-width:1000px;margin:auto}.intro{text-align:center;margin-bottom:23px;color:#c2bacc;letter-spacing:.21em;font:700 11px 'Courier New',monospace}
+h1{margin:0;color:#f5f5f9;font:italic 900 clamp(28px,6vw,47px) Arial,sans-serif;letter-spacing:-.045em;text-shadow:0 2px #000}
+.mast{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.live-label{display:flex;align-items:center;gap:7px;font:700 11px 'Courier New',monospace;letter-spacing:.12em;color:#e0ecf3}
+.live-dot{height:9px;width:9px;background:#59fc94;border-radius:50%;box-shadow:0 0 12px #4fff77}
+.radio{position:relative;padding:19px 22px 20px;border:2px solid #8a8d9a;border-radius:18px;background:linear-gradient(#aaabb4 0%,#5e5e6b 3%,#272831 10%,#20212c 86%,#7b7f8b 97%,#343541);box-shadow:inset 0 2px #e5e6ed,0 9px #13141b,0 23px 28px #000b}
+.radio:before{content:"";position:absolute;inset:8px;border:1px solid #5f646d;border-radius:12px;pointer-events:none}
+.top{display:flex;gap:11px;align-items:center;justify-content:space-between;padding:4px 6px 13px;font:800 11px 'Courier New',monospace;color:#e1e0e4;letter-spacing:.03em}
+.cd{margin:0 0 11px;height:15px;border-radius:9px;background:linear-gradient(#4a4d59,#020307 62%,#33343d);border:1px solid #595862;box-shadow:inset 0 2px 4px #000}
+.screen{position:relative;min-height:254px;border:5px solid #070813;border-radius:9px;overflow:hidden;box-shadow:0 0 0 2px #5d5b6d,inset 0 0 20px #000;background:#090518}
+.scene{position:absolute;inset:0;width:100%;height:100%}
+.screen:before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0 3px,#0004 4px 5px);z-index:5;pointer-events:none}
+.screen:after{content:"";position:absolute;inset:0;background:linear-gradient(155deg,#ffffff1b,transparent 23%,transparent 69%,#78afff13);z-index:6;pointer-events:none}
+.overlay{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;padding:18px 18px 13px;z-index:3;color:var(--glow);font-family:'Courier New',monospace;text-shadow:0 0 5px #0095ff,0 0 14px #2079ff}
+.readout-top,.readout-bottom{display:flex;gap:8px;justify-content:space-between;align-items:center;font-size:12px;letter-spacing:.12em}
+.number{font-size:clamp(17px,3vw,24px);font-weight:900}
+.name{font-size:clamp(19px,4.7vw,43px);font-weight:900;letter-spacing:-.055em;text-align:center;line-height:1.06;overflow-wrap:anywhere}
+.subtitle{text-align:center;color:#a6e2ff;font-size:11px;letter-spacing:.17em}
+.meter{display:flex;gap:4px;justify-content:center;align-items:end;height:27px;margin:7px auto;width:80%}
+.meter i{display:block;background:linear-gradient(0deg,#197aff,#91faff);width:8%;height:var(--h);box-shadow:0 0 7px #2e9aff}
+.playing .meter i{animation:bars .7s ease-in-out infinite alternate;animation-delay:var(--delay)}
+@keyframes bars{to{height:7%;opacity:.35}}
+.buttons{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;margin-top:14px}
+.preset{border:1px solid #282934;border-bottom:4px solid #101217;border-radius:5px;min-height:66px;padding:6px 3px;font:bold 24px Arial;background:linear-gradient(#a4a7ae,#646875 22%,#747a84 50%,#393d47 90%);color:#101522;box-shadow:inset 1px 1px #e0e2e7;text-shadow:0 1px #eef0f088}
+.preset small{font:700 8px 'Courier New',monospace;display:block;margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.preset[aria-pressed=true]{background:linear-gradient(#d5f1ff,#6695b5 70%,#263a5a);color:#07172a}
+.controlbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:16px}
+.hwbutton{min-width:68px;min-height:44px;border:1px solid #232630;border-bottom:3px solid #101116;border-radius:5px;background:linear-gradient(#565a68,#292e3a);box-shadow:inset 1px 1px #888f9a;color:#f3f7fc;padding:9px 12px;font:bold 12px 'Courier New',monospace}
+.hwbutton:active{transform:translateY(2px);border-bottom-width:1px}
+.hwbutton.primary{background:linear-gradient(#6eab94,#295542)}
+.vol{margin-left:auto;display:flex;align-items:center;gap:8px;color:#d6dce8;font:700 11px monospace}
+input[type=range]{width:150px;max-width:100%;accent-color:#7dffff}
+.panel{margin-top:20px;display:grid;grid-template-columns:1.3fr 1fr;gap:13px}
+.pane{background:linear-gradient(145deg,#202432,#10151f);border:1px solid #555a73;border-radius:8px;padding:16px;min-width:0}
+.pane h2{font:800 12px 'Courier New',monospace;letter-spacing:.13em;color:#a6e9ff;margin:0 0 10px}
+.pane p{color:#c6c9d6;margin:8px 0;font-size:12px;line-height:1.52}
+.bigstatus{min-height:42px;background:#090f1e;border:1px solid #314463;padding:10px 12px;color:#a1e7ff;font:12px/1.5 'Courier New',monospace}
+.station-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.station-links a{font:11px 'Courier New',monospace;padding:8px;border:1px solid #565c74;background:#17212d;color:#bcf2fa;text-decoration:none;border-radius:4px;overflow-wrap:anywhere}
+.links{display:flex;gap:12px;flex-wrap:wrap;margin-top:13px}
+.links a{color:#b0dfff;font-size:12px}
+.note{color:#a8a8bd;text-align:center;font-size:11px;margin:18px auto;max-width:810px}
+@media(max-width:700px){.radio{padding:14px 11px 15px}.screen{min-height:246px}.panel{grid-template-columns:1fr}.vol{margin-left:0}.buttons{gap:4px}.preset{min-height:58px;font-size:19px}.preset small{font-size:7px}.top{font-size:9px}.intro{font-size:9px;letter-spacing:.1em}}
+@media(prefers-reduced-motion:reduce){.playing .meter i{animation:none}}
+</style></head>
+<body><main>
+<div class="mast"><h1>CELLBEAT RADIO</h1><div class="live-label"><i class="live-dot"></i> SIX INDEPENDENT STATIONS</div></div>
+<p class="intro">DIGITAL X-OVER · MULTIPLE SOURCE CONTROL · LIVE MP3 TRANSMISSION</p>
+<div class="radio" aria-label="Cellbeat vintage car radio with six live music channels">
+<div class="top"><span>CELLBEAT · DPX CB440</span><span>CD / DSP / NET RADIO</span></div>
+<div class="cd" aria-hidden="true"></div>
+<div class="screen" id="screen">
+<svg class="scene" viewBox="0 0 900 300" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+<defs><linearGradient id="ceil" x2="0" y2="1"><stop stop-color="#542066"/><stop offset="1" stop-color="#080b2b"/></linearGradient>
+<linearGradient id="ground" x2="0" y2="1"><stop stop-color="#101d70"/><stop offset="1" stop-color="#06102e"/></linearGradient>
+<radialGradient id="ring"><stop stop-color="#46eaff"/><stop offset=".5" stop-color="#1d7cfe"/><stop offset="1" stop-color="#03104b"/></radialGradient>
+<filter id="glow"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+<rect width="900" height="300" fill="#090519"/>
+<path d="M70 14 H830 L590 190 H310Z" fill="url(#ceil)"/>
+<path d="M70 14 L310 190 L310 253 L70 229Z" fill="#121554"/>
+<path d="M830 14 L590 190 L590 253 L830 229Z" fill="#121554"/>
+<path d="M310 190 H590 L900 300 H0Z" fill="url(#ground)"/>
+<g id="gridLines"></g>
+<g filter="url(#glow)" fill="none">
+<path d="M70 63 L128 216 L188 242 M830 63 L772 216 L712 242" stroke="#388fff" stroke-width="7"/>
+<path d="M70 63 L128 216 M830 63 L772 216" stroke="#b7faff" stroke-width="2"/>
+<ellipse cx="450" cy="218" rx="115" ry="19" fill="url(#ring)" stroke="#86f9ff" stroke-width="3"/>
+<ellipse cx="450" cy="218" rx="70" ry="12" stroke="#89dfff" stroke-width="3"/>
+</g></svg>
+<div class="overlay">
+ <div class="readout-top"><span class="number" id="ch">CB 01</span><span id="signal">NET · ST · READY</span></div>
+ <div><div class="name" id="name">SIGNAL / NO MASTERS</div><div class="subtitle" id="subtitle">96 BPM · ORIGINAL CELLBEAT MUSIC</div>
+ <div class="meter" id="meter" aria-hidden="true"></div></div>
+ <div class="readout-bottom"><span id="mode">LIVE MP3</span><span id="volumeText">VOL 60</span></div>
+</div></div>
+<nav id="memory" class="buttons" aria-label="Station memory presets"></nav>
+<div class="controlbar">
+ <button id="back" class="hwbutton" type="button" aria-label="Previous channel">◀◀</button>
+ <button id="play" class="hwbutton primary" type="button">▶ PLAY</button>
+ <button id="stop" class="hwbutton" type="button">■ STOP</button>
+ <button id="forward" class="hwbutton" type="button" aria-label="Next channel">▶▶</button>
+ <label class="vol">VOL <input type="range" id="volume" aria-label="Volume" min="0" max="100" value="60"></label>
+</div></div>
+<div class="panel">
+ <section class="pane"><h2>ON-AIR RECEIVER STATUS</h2>
+ <div class="bigstatus" role="status" aria-live="polite" id="status">RADIO READY · SELECT MEMORY AND PRESS PLAY</div>
+ <p id="details">Connecting to a station joins the original Cellbeat program at its current live position, not the beginning of a recording.</p>
+ <div class="links"><a id="direct" href="/live/1.mp3" target="_blank" rel="noopener noreferrer">Open direct live MP3</a><a id="hls" href="/hls/1/index.m3u8" target="_blank" rel="noopener noreferrer">Apple HLS stream</a><a href="/api/stations" target="_blank" rel="noopener noreferrer">Station status API</a></div>
+ </section>
+ <section class="pane"><h2>SIX LIVE STREAM ADDRESSES</h2>
+ <div class="station-links" id="stationLinks"></div>
+ <p>All six programs use the owner's existing Cellbeat compositions and original bundled sample-kit PCM. They are aligned to the same UTC broadcast clock; each listener joins in progress.</p>
+ </section>
+</div>
+<p class="note">Original Cellbeat music, rendered to MP3 and broadcast by this service. Stations loop their authored music programs; they are not third-party radio stations. Streaming begins when you press Play. A sleeping/free hosting instance may need to wake before playback; uninterrupted 24/7 availability requires always-on hosting.</p>
+<audio id="audio" playsinline preload="none"></audio>
+</main>
+<script>
+(function(){
+"use strict";const $=id=>document.getElementById(id);
+const names=[
+ ["Signal / No Masters",96,"SIGNAL"],
+ ["Beyond Beyond Redline",148,"REDLINE"],
+ ["Redline / Night Drive",124,"NIGHT"],
+ ["Redline / Meter",146,"METER"],
+ ["Neon Interceptor",138,"NEON"],
+ ["Neon Interceptor / Pursuit Mix",132,"PURSUIT"]
+];
+let channel=0,playing=false,method="live",requestId=0;
+const audio=$("audio");
+function setStatus(t){$("status").textContent=t;$("signal").textContent=playing?"NET · ST · ON AIR":"NET · ST · READY"}
+function src(i){let hls='/hls/'+(i+1)+'/index.m3u8',mp3='/live/'+(i+1)+'.mp3';return method==='hls'?hls:mp3}
+function render(){
+ $("ch").textContent="CB "+String(channel+1).padStart(2,'0');
+ $("name").textContent=names[channel][0].toUpperCase();
+ $("subtitle").textContent=names[channel][1]+" BPM · ORIGINAL CELLBEAT MUSIC";
+ $("play").textContent=playing?"Ⅱ PAUSE":"▶ PLAY";
+ $("screen").classList.toggle("playing",playing);
+ $("direct").href="/live/"+(channel+1)+".mp3";
+ $("hls").href="/hls/"+(channel+1)+"/index.m3u8";
+ $("mode").textContent=method==="hls"?"HLS LIVE":"LIVE MP3";
+ document.querySelectorAll(".preset").forEach((b,i)=>b.setAttribute("aria-pressed",String(channel===i)));
+}
+function tune(n){
+ const resume=playing;audio.pause();playing=false;audio.removeAttribute("src");audio.load();channel=(n+6)%6;requestId++;
+ render();setStatus("TUNED · "+names[channel][0].toUpperCase());
+ if(resume)play()
+}
+async function play(){
+ if(playing){audio.pause();playing=false;setStatus("PAUSED");render();return}
+ const token=++requestId;
+ method=audio.canPlayType('application/vnd.apple.mpegurl')?"hls":"live";
+ audio.src=src(channel);audio.volume=Number($("volume").value)/100;
+ setStatus("TUNING · CONNECTING LIVE...");
+ try{
+  await audio.play();
+  if(token!==requestId){audio.pause();return}
+  playing=true;render();setStatus("ON AIR · "+names[channel][0].toUpperCase());
+ }catch(e){
+  if(token!==requestId)return;
+  playing=false;render();
+  setStatus("LIVE STREAM COULD NOT START: "+(e&&e.message?e.message:"unsupported audio"));
+ }
+}
+function stop(){
+ requestId++;audio.pause();audio.removeAttribute("src");audio.load();playing=false;render();setStatus("STOPPED")
+}
+names.forEach((s,i)=>{
+ let b=document.createElement("button");b.className="preset";b.type="button";b.setAttribute("aria-label","Station "+(i+1)+": "+s[0]);
+ b.textContent=String(i+1);let label=document.createElement("small");label.textContent=s[2];b.appendChild(label);
+ b.addEventListener("click",()=>tune(i));$("memory").appendChild(b);
+ let a=document.createElement("a");a.href="/live/"+(i+1)+".mp3";a.textContent="CH "+String(i+1)+" · "+s[2];a.target="_blank";a.rel="noopener noreferrer";$("stationLinks").appendChild(a)
+});
+for(let i=0;i<12;i++){let x=document.createElement("i");x.style.setProperty("--h",(15+i*11%80)+"%");x.style.setProperty("--delay",(-i*.13)+"s");$("meter").appendChild(x)}
+const g=document.getElementById("gridLines");const ns="http://www.w3.org/2000/svg";
+function ln(d,c,w,op){
+ const e=document.createElementNS(ns,"path");e.setAttribute("d",d);e.setAttribute("stroke",c);e.setAttribute("stroke-width",w);
+ e.setAttribute("opacity",op);e.setAttribute("fill","none");g.appendChild(e)
+}
+for(let i=0;i<=26;i++){let p=i/26;ln('M'+(70+760*p)+' 14 L'+(310+280*p)+' 190','#8b46ad',1,.65)}
+for(let i=0;i<=12;i++){let f=i/12;ln('M'+(70+240*f)+' '+(14+176*f)+' H'+(830-240*f),'#8147bf',i%3?1:2,.54)}
+for(let i=0;i<=28;i++){let f=i/28;ln('M'+(310+280*f)+' 190 L'+(0+900*f)+' 300','#2459e8',i%3?1:2,.53)}
+for(let i=0;i<=10;i++){let f=i/10;ln('M'+(310-310*f)+' '+(190+110*f)+' H'+(590+310*f),'#2785ff',1,.51)}
+$("play").addEventListener("click",play);$("stop").addEventListener("click",stop);
+$("back").addEventListener("click",()=>tune(channel-1));$("forward").addEventListener("click",()=>tune(channel+1));
+$("volume").addEventListener("input",e=>{audio.volume=Number(e.target.value)/100;$("volumeText").textContent="VOL "+e.target.value});
+audio.addEventListener("error",()=>{if(playing||audio.src){playing=false;render();setStatus("STREAM ERROR · TRY ANOTHER CHANNEL OR DIRECT MP3 LINK")}});
+audio.addEventListener("waiting",()=>setStatus("BUFFERING LIVE AUDIO..."));
+audio.addEventListener("playing",()=>{playing=true;render();setStatus("ON AIR · "+names[channel][0].toUpperCase())});
+audio.addEventListener("pause",()=>{playing=false;render()});
+render();
+})();
+</script></body></html>
