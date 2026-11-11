@@ -6,94 +6,162 @@
 <meta name="description" content="The independent Cellbeat Radio web player: fourteen playable original stations, all-VFD phosphor design, bEAST and LAI-Z FR0g.">
 <title>CELLBEAT RADIO // ALL-VFD MUSIC PLAYER</title>
 <style>
-:root{color-scheme:dark;--phosphor:#92faff;--ink:#d6fbfa;--soft:#6da3aa;--muted:#365b65;--ph-rgb:92,235,255;--p-bg:#020b0e}
-*{box-sizing:border-box}html{background:#01080b}
-body{margin:0;min-height:100vh;color:var(--ink);font:13px/1.48 'Courier New',ui-monospace,monospace;letter-spacing:.02em;background:radial-gradient(ellipse at 49% 5%,#10434d 0%,#061920 27%,#02080e 61%,#010509 100%);padding:clamp(12px,2.8vw,32px)}
-button,input{font:inherit}a{color:var(--phosphor)}button{cursor:pointer;touch-action:manipulation}button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #d1ffff;outline-offset:4px}button:disabled{cursor:not-allowed;opacity:.5}
-button{-webkit-tap-highlight-color:transparent}
-.shell{max-width:1160px;margin:0 auto}
-.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:13px;padding:2px 0 13px;border-bottom:1px solid #2d7c88}
-.top h1{font:900 clamp(27px,5vw,52px)/1.01 'Courier New',monospace;margin:5px 0 0;letter-spacing:-.085em;color:#c8fcff;text-shadow:0 0 5px #54e8ff,0 0 28px #0ed1ec9c}
-.kicker{font:bold 10px/1.5 'Courier New',monospace;letter-spacing:.2em;color:#7ad5e2}
-.top-right{text-align:right;font-size:10px;letter-spacing:.1em;color:#90c0c8}
-.led{display:inline-block;width:7px;height:7px;border-radius:100%;background:#7cfec2;box-shadow:0 0 14px #71f9b9;margin-right:7px;vertical-align:middle}
-.navlinks{display:flex;flex-wrap:wrap;gap:15px;padding:13px 2px 21px;align-items:center;font:700 10px 'Courier New',monospace;letter-spacing:.05em}
-.navlinks a{text-decoration:none;border-bottom:1px dotted #4db3bf;padding-bottom:3px}.navlinks a:hover{color:#fff}
-.preview-pill{color:#ffdcb5;border:1px solid #6f6245;padding:5px 8px;margin-left:auto;font-size:10px;white-space:nowrap}
-.screen{--accent:var(--phosphor);position:relative;padding:clamp(14px,2.7vw,26px);border:1px solid #378c93;outline:1px solid #164650;outline-offset:5px;min-height:445px;overflow:hidden;background:linear-gradient(155deg,#07151c 0%,#020b12 38%,#020914 70%,#031018 100%);box-shadow:inset 0 0 34px #00404a88,inset 0 0 85px #01313d63,0 0 24px #008caa23;isolation:isolate}
-.screen:before{content:"";inset:0;position:absolute;pointer-events:none;z-index:7;background:repeating-linear-gradient(180deg,#0000 0 3px,#000a 4px 5px);opacity:.55}
-.screen:after{content:"";inset:0;position:absolute;pointer-events:none;z-index:7;background:radial-gradient(ellipse at 50% 47%,transparent 22%,#000b 128%)}
-.display-grid{position:absolute;inset:0;opacity:.24;pointer-events:none;z-index:0;background-image:linear-gradient(#0a79881e 1px,transparent 1px),linear-gradient(90deg,#0a79881e 1px,transparent 1px);background-size:26px 26px}
-.display-diag{position:absolute;inset:-45% -5%;pointer-events:none;opacity:.14;transform:rotate(-22deg);background:repeating-linear-gradient(90deg,transparent 0 26px,#2698a633 27px 28px);z-index:0}
-.screen-head,.screen-footer{position:relative;z-index:3;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;font:bold 10px 'Courier New',monospace;letter-spacing:.1em;color:#7fd8e5}
-.screen-head{padding-bottom:12px;border-bottom:1px solid #1e6674}.screen-footer{border-top:1px solid #1f6770;padding-top:13px;color:#82d4df;margin-top:16px}
-.ph-label{color:#6aa8b6;text-shadow:0 0 8px #087b9b}.live-light{color:#b8ffeb;text-shadow:0 0 9px #3affb8}
-.display-body{display:grid;grid-template-columns:minmax(124px,210px) minmax(0,1fr);gap:clamp(13px,2.4vw,35px);align-items:center;min-height:182px;position:relative;z-index:3;padding:16px 0 8px}
-.channel-number{display:flex;flex-direction:column;gap:3px;align-items:center;justify-content:center;border-right:1px solid #275d6b;padding-right:17px;min-height:178px}
-.segment-svg{width:min(100%,180px);height:130px;filter:drop-shadow(0 0 8px #40ecff)}
-.channel-caption{font:700 10px 'Courier New',monospace;letter-spacing:.26em;color:#60baca}
-.track-meta{font:700 11px 'Courier New',monospace;color:#70b4c6;letter-spacing:.14em}
-.track-title{font:bold clamp(23px,3.8vw,44px)/1.15 'Courier New',monospace;letter-spacing:-.06em;color:#aff9ff;text-shadow:0 0 3px #64ffff,0 0 22px #00aaff,0 0 36px #007bd366;overflow-wrap:anywhere;margin:11px 0 10px;min-height:56px}
-.track-title.beast{color:#ffc4ed;text-shadow:0 0 3px #ff84d7,0 0 20px #f930b7}.track-title.frog{color:#c4ffad;text-shadow:0 0 3px #86ffaf,0 0 20px #56d386}
-.track-line{display:flex;flex-wrap:wrap;align-items:center;gap:12px;font:700 11px 'Courier New',monospace;color:#9edbea}
-.track-line span{border-bottom:1px solid #35626c;padding-bottom:4px}
-.equalizer{position:relative;z-index:2;margin-top:8px;border-top:1px solid #2b6874;border-bottom:1px solid #2b6874;padding:12px 0 8px}
-.scope-header{display:flex;justify-content:space-between;gap:8px;font:bold 10px 'Courier New',monospace;letter-spacing:.11em;color:#67b2bd;margin-bottom:8px}
-.scope{height:94px;display:grid;grid-template-columns:repeat(24,minmax(0,1fr));align-items:end;gap:4px;padding:0 3px 3px;border-bottom:1px dotted #235a66}
-.scope i{height:8%;min-width:0;display:block;background:linear-gradient(0deg,#277ac6 0%,#30dfe5 62%,#b8ffff 100%);box-shadow:0 0 7px #32c6eb99,0 0 14px #1364d959;transition:height .07s linear,opacity .2s;opacity:.34}
-.scope.playing i{opacity:.96}.scope[data-group=beast] i{background:linear-gradient(#ffd7fc,#e439a5 50%,#7030bd);box-shadow:0 0 9px #ff59e199}
-.scope[data-group=frog] i{background:linear-gradient(#c0ffdf,#46df9f 55%,#246f8e);box-shadow:0 0 9px #80ffad99}
-.track-progress{position:relative;z-index:2;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;padding:11px 0 0;color:#80c7d7;font:bold 10px 'Courier New',monospace}
-.track-progress input{width:100%;accent-color:#5cecff;cursor:pointer;height:20px;min-width:0}
-.transport{display:grid;grid-template-columns:repeat(4,minmax(0,1fr)) minmax(110px,1.15fr);gap:10px;margin:17px 0 13px}
-.vfd-key{min-width:0;min-height:50px;border:1px solid #338993;border-radius:2px;outline:1px solid #0a303d;outline-offset:2px;color:#8de8f5;background:#03131a;text-shadow:0 0 8px #38deec94;box-shadow:inset 0 0 14px #0e728340,0 0 10px #024d6740;font:900 12px 'Courier New',monospace;letter-spacing:.06em;padding:9px 7px}
-.vfd-key:hover,.vfd-key:focus-visible{background:#0b343a;color:#d3ffff;box-shadow:0 0 20px #27a8c488}.vfd-key.primary{color:#c4ffff;border-color:#7cffff;text-shadow:0 0 8px #37ffff;box-shadow:inset 0 0 20px #36dcee22,0 0 14px #17cad26a}
-.volume{display:flex;align-items:center;gap:8px;min-width:0;padding:0 11px;border:1px solid #246c79;color:#83d4e2;font:bold 10px 'Courier New',monospace}
-.volume input{width:100%;min-width:0;accent-color:#92faff}
-.feedback{display:flex;align-items:flex-start;gap:10px;min-height:27px;margin:4px 0 14px;color:#a0f0d2;font:bold 11px/1.5 'Courier New',monospace}
-.feedback .bullet{font-size:16px;line-height:1;color:#4efdb8;text-shadow:0 0 12px #4efdb8}
-.bank{display:grid;gap:15px;margin:20px 0 14px}
-.bank-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:9px;padding-bottom:7px;border-bottom:1px solid #235e69;color:#76cfda;font:bold 11px 'Courier New',monospace;letter-spacing:.12em}
-.bank-head strong{color:#c2fbff}
-.preset-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-.station{display:grid;grid-template-columns:38px 1fr;align-items:center;gap:8px;text-align:left;min-width:0;min-height:58px;border:1px solid #245b67;background:#031218;padding:9px 10px;color:#72bcca;font:700 11px/1.28 'Courier New',monospace}
-.station .num{color:#b4ffff;text-shadow:0 0 12px #5deaff;font-size:23px;letter-spacing:-.06em}
-.station .station-name{font-size:11px;color:#a6d4d9;overflow-wrap:anywhere}
-.station:hover{background:#0a2931;border-color:#4ac6d4}.station[aria-pressed=true]{background:#0c3037;border-color:#79fffa;box-shadow:inset 0 0 20px #26dfff23,0 0 13px #1fa7c255}
-.station.beast{border-color:#844a7e;background:#120b19}.station.beast .num{color:#ffb2eb;text-shadow:0 0 12px #ff3eab}.station.beast[aria-pressed=true]{border-color:#f3a3d8;box-shadow:0 0 16px #e243b755}
-.station.frog{border-color:#3d7867;background:#071915}.station.frog .num{color:#b6fba9;text-shadow:0 0 11px #4afb99}.station.frog[aria-pressed=true]{border-color:#a4ffb5;box-shadow:0 0 16px #3df5a855}
-.section-kicker{display:flex;align-items:center;gap:10px}.strip{display:inline-block;width:29px;height:6px;background:#2cced8;box-shadow:0 0 10px #42dded}.strip.beast{background:#f45cbf;box-shadow:0 0 9px #f447c3}.strip.frog{background:#a7ff8b;box-shadow:0 0 9px #77ffab}
-.info-strip{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:26px}
-.info{border-top:1px solid #306978;padding:15px 2px;color:#8fb7c2;font:12px/1.7 'Courier New',monospace}
-.info strong{display:block;color:#b8fbff;margin-bottom:9px;letter-spacing:.1em}
-.info a{color:#b9eaff}.info p{margin:6px 0}
-.info .good{color:#a4fbca}
-.bottomline{border-top:1px dotted #295e69;margin:17px 0 0;padding:12px 0;color:#5f93a1;font:10px/1.6 'Courier New',monospace}
-@media(max-width:850px){.preset-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.display-body{grid-template-columns:155px 1fr}.channel-number{padding-right:10px}}
-@media(max-width:650px){.top-right{text-align:left}.screen{min-height:465px}.display-body{grid-template-columns:1fr;gap:0;text-align:center;padding:10px 0 13px}.channel-number{min-height:94px;border-right:0;border-bottom:1px solid #234e5f;padding:0 0 7px}.segment-svg{height:81px;width:112px}.channel-caption{font-size:9px}.track-title{font-size:clamp(18px,5.5vw,29px);margin:9px 0 10px;min-height:25px}.track-line{justify-content:center}.equalizer{margin-top:5px}.scope{height:62px;gap:2px}.transport{grid-template-columns:repeat(4,minmax(0,1fr))}.volume{grid-column:1/-1;min-height:45px}.vfd-key{font-size:10px;padding:7px 4px}.preset-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.info-strip{grid-template-columns:1fr}.navlinks{gap:10px}.preview-pill{margin-left:0}.track-meta{font-size:9px}}
-@media(max-width:365px){.preset-grid{grid-template-columns:1fr}.screen-head{font-size:8px}.track-title{font-size:18px}.track-progress{gap:5px}.station{min-height:50px}}
+
+/* ONE physical phosphor hue, three drive states, and dark glass.
+   This is a simulated monochrome vacuum fluorescent face, not a website skin. */
+:root{color-scheme:dark;--glass:#020d0c;--off:#102a27;--dim:#35665f;--phosphor:#84f3d8}
+*{box-sizing:border-box}
+html{background:var(--glass)}
+body{margin:0;min-height:100vh;padding:clamp(5px,1.3vw,16px);
+ background:var(--glass);color:var(--phosphor);
+ font:600 12px/1.5 'Courier New',ui-monospace,monospace;letter-spacing:.055em}
+button,input{font:inherit}button{cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--phosphor);outline-offset:3px}
+a{color:var(--phosphor)}button:disabled{opacity:.4}
+.shell{max-width:1280px;margin:auto}
+.screen{position:relative;overflow:hidden;isolation:isolate;min-height:90vh;
+ background:var(--glass);border:1px solid var(--dim);
+ padding:clamp(12px,2.7vw,33px);box-shadow:inset 0 0 50px var(--off),0 0 12px var(--off)}
+.screen::before{content:"";pointer-events:none;position:absolute;inset:0;z-index:8;
+ background:repeating-linear-gradient(to bottom,transparent 0 5px,var(--dim) 6px 6px);opacity:.07}
+.screen::after{content:"";pointer-events:none;position:absolute;inset:7px;z-index:0;border:1px solid var(--off)}
+.top{display:flex;justify-content:space-between;align-items:end;gap:15px;flex-wrap:wrap;position:relative;z-index:1;
+ padding:0 0 16px;border-bottom:1px solid var(--dim)}
+.top h1{margin:2px 0 0;line-height:.94;font:900 clamp(23px,5.6vw,58px)/1 'Courier New',monospace;
+ letter-spacing:-.092em;color:var(--phosphor);text-shadow:0 0 7px var(--dim)}
+.kicker,.top-right,.channel-caption,.track-meta,.screen-head,.screen-footer,
+ .scope-header,.bank-head,.bottomline{font:700 10px/1.5 'Courier New',monospace;letter-spacing:.14em}
+.kicker,.top-right{color:var(--dim)}
+.top-right{text-align:right}
+.led{display:inline-block;vertical-align:middle;width:7px;height:7px;
+ background:var(--off);border:1px solid var(--dim);margin-right:6px}
+.led.on{background:var(--phosphor);box-shadow:0 0 8px var(--phosphor)}
+.navlinks{display:flex;flex-wrap:wrap;gap:5px 19px;align-items:center;
+ position:relative;z-index:1;margin:0;padding:10px 0 11px;
+ border-bottom:1px solid var(--off);font:700 10px 'Courier New',monospace;letter-spacing:.09em}
+.navlinks a{text-decoration:none;color:var(--dim);border:0}
+.navlinks a:hover,.navlinks a:focus-visible{color:var(--phosphor);text-shadow:0 0 6px var(--dim)}
+.preview-pill{margin-left:auto;color:var(--dim);border:0;padding:0;font-size:10px}
+.screen-head,.screen-footer{display:flex;align-items:center;justify-content:space-between;
+ gap:8px;flex-wrap:wrap;color:var(--dim);position:relative;z-index:1}
+.screen-head{padding:13px 0 10px}.screen-footer{border-top:1px solid var(--off);padding:9px 0;margin-top:10px}
+.ph-label,.live-light{color:var(--phosphor)}
+.display-body{position:relative;z-index:1;display:grid;grid-template-columns:minmax(95px,173px) minmax(0,1fr);align-items:center;
+ gap:clamp(15px,3vw,36px);min-height:175px;padding:13px 0}
+.channel-number{display:flex;flex-direction:column;align-items:center;justify-content:center;
+ border-right:1px solid var(--dim);gap:5px;padding-right:15px;min-height:153px}
+.segment-svg{width:min(100%,156px);height:113px;filter:drop-shadow(0 0 5px var(--dim))}
+.channel-caption{color:var(--dim);white-space:nowrap}
+.track-meta{color:var(--dim)}
+.track-title,.track-title.beast,.track-title.frog{
+ margin:8px 0 13px;min-height:37px;overflow-wrap:anywhere;
+ font:800 clamp(22px,4.5vw,46px)/1.09 'Courier New',monospace;
+ letter-spacing:-.08em;color:var(--phosphor);text-shadow:0 0 8px var(--dim)}
+.track-line{display:flex;flex-wrap:wrap;gap:13px;color:var(--dim);font:700 11px 'Courier New',monospace}
+.track-line span{padding:0;border:0}
+.equalizer{position:relative;z-index:1;border-top:1px solid var(--dim);
+ border-bottom:1px solid var(--dim);padding:11px 0 13px;margin:2px 0 0}
+.scope-header{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;color:var(--dim);padding-bottom:9px}
+.scope{height:134px;display:grid;grid-template-columns:repeat(24,minmax(0,1fr));gap:clamp(2px,.55vw,7px);
+ align-items:end;padding:0 3px;overflow:hidden}
+.scope .cell{display:flex;align-items:flex-end;height:100%;min-width:0;
+ background:repeating-linear-gradient(to top,var(--off) 0 5px,transparent 5px 8px)}
+.scope .cell i{display:block;width:100%;height:0%;min-height:0;
+ background:repeating-linear-gradient(to top,var(--phosphor) 0 5px,transparent 5px 8px);
+ box-shadow:none;transition:none}
+.scope[data-meter="offline"] .cell i{height:0%!important}
+.track-progress{position:relative;z-index:1;display:grid;grid-template-columns:42px minmax(0,1fr) 42px;
+ gap:13px;align-items:center;margin:10px 0 8px;color:var(--dim);font:700 11px 'Courier New',monospace}
+input[type="range"]{appearance:none;-webkit-appearance:none;cursor:pointer;border:0;border-radius:0;
+ background:var(--off);height:7px;min-width:0}
+input[type="range"]::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;
+ background:var(--phosphor);width:9px;height:20px;border:0;border-radius:0;box-shadow:0 0 5px var(--dim)}
+input[type="range"]::-moz-range-thumb{background:var(--phosphor);
+ width:9px;height:20px;border:0;border-radius:0}
+.track-progress input{width:100%}
+.transport{position:relative;z-index:1;display:grid;grid-template-columns:repeat(4,minmax(0,1fr)) minmax(96px,1.2fr);
+ gap:1px;border-top:1px solid var(--dim);border-bottom:1px solid var(--dim);margin:18px 0 7px}
+.vfd-key{min-height:56px;min-width:0;border:0;border-right:1px solid var(--off);border-radius:0;outline:0;
+ background:transparent;box-shadow:none;text-shadow:none;color:var(--dim);
+ font:900 12px 'Courier New',monospace;letter-spacing:.09em;padding:10px 4px}
+.vfd-key.primary{background:transparent;color:var(--phosphor);border:0;border-right:1px solid var(--off);box-shadow:none}
+.vfd-key:hover,.vfd-key:focus-visible,.vfd-key[aria-pressed=true]{background:var(--off);color:var(--phosphor);box-shadow:none}
+.volume{min-width:0;display:flex;gap:8px;align-items:center;padding:0 9px;
+ border:0;color:var(--dim);font:700 10px 'Courier New',monospace}
+.volume input{width:100%;min-width:0}
+.feedback{position:relative;z-index:1;display:flex;gap:8px;align-items:start;
+ padding:8px 0 15px;min-height:35px;color:var(--dim);font:700 11px 'Courier New',monospace}
+.feedback .bullet{font-size:12px;line-height:1.4;color:var(--phosphor);text-shadow:none}
+.bank{position:relative;z-index:1;margin:0;padding:0;display:grid;gap:0}
+.bank-head{display:flex;justify-content:space-between;align-items:baseline;
+ gap:8px;flex-wrap:wrap;padding:14px 0 9px;border-top:1px solid var(--dim);
+ background:transparent;color:var(--dim)}
+.bank-head strong{color:var(--phosphor)}
+.section-kicker{display:flex;align-items:center;gap:7px}
+.strip,.strip.beast,.strip.frog{display:inline-block;background:var(--phosphor);
+ width:14px;height:3px;box-shadow:none}
+.preset-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:0;border-left:1px solid var(--off);border-top:1px solid var(--off);margin-bottom:11px}
+.station,.station.beast,.station.frog{min-width:0;min-height:69px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;
+ gap:4px;border:0;border-right:1px solid var(--off);border-bottom:1px solid var(--off);
+ background:transparent;border-radius:0;box-shadow:none;
+ text-align:left;padding:8px 7px;color:var(--dim);
+ font:700 10px/1.15 'Courier New',monospace}
+.station .num,.station.beast .num,.station.frog .num{font:800 22px/1 'Courier New',monospace;
+ color:var(--dim);letter-spacing:-.05em;text-shadow:none}
+.station .station-name{font-size:10px;line-height:1.25;color:var(--dim);
+ overflow-wrap:anywhere;text-transform:uppercase}
+.station:hover,.station.beast:hover,.station.frog:hover{background:var(--off);border-color:var(--dim)}
+.station[aria-pressed=true],.station.beast[aria-pressed=true],.station.frog[aria-pressed=true]{
+ background:var(--off);color:var(--phosphor);box-shadow:inset 0 0 13px var(--dim);border-color:var(--dim)}
+.station[aria-pressed=true] .num,.station.beast[aria-pressed=true] .num,.station.frog[aria-pressed=true] .num,
+.station[aria-pressed=true] .station-name,.station.beast[aria-pressed=true] .station-name,.station.frog[aria-pressed=true] .station-name{
+ color:var(--phosphor);text-shadow:0 0 5px var(--dim)}
+.info-strip{position:relative;z-index:1;display:grid;grid-template-columns:1fr 1fr;gap:24px;margin:0;padding-top:10px;border-top:1px solid var(--dim)}
+.info{padding:6px 0;color:var(--dim);font:10px/1.6 'Courier New',monospace;background:transparent;border:0}
+.info strong{display:block;color:var(--phosphor);margin:0 0 7px;font:700 10px 'Courier New',monospace}
+.info a{color:var(--phosphor)}.info p{margin:5px 0}
+.info .good{color:var(--phosphor)}
+.bottomline{position:relative;z-index:1;margin:9px 0 0;border-top:1px solid var(--off);
+ padding:12px 0 0;color:var(--dim);font-size:9px}
+@media(max-width:900px){.preset-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.screen{min-height:95vh}}
+@media(max-width:650px){
+ .top h1{font-size:clamp(24px,7.2vw,42px)}.top-right{text-align:left}
+ .navlinks{gap:8px 13px;font-size:9px}
+ .display-body{grid-template-columns:1fr;gap:4px;text-align:center;padding:6px 0 12px}
+ .channel-number{border-right:0;border-bottom:1px solid var(--off);min-height:86px;padding:0 0 5px}
+ .segment-svg{width:112px;height:74px}
+ .track-meta{font-size:9px}.track-title{font-size:clamp(19px,5.8vw,33px);min-height:0}
+ .track-line{justify-content:center}
+ .scope{height:92px;gap:2px}
+ .transport{grid-template-columns:repeat(4,minmax(0,1fr))}.volume{grid-column:1/-1;min-height:42px;border-top:1px solid var(--off)}
+ .vfd-key{min-height:53px;font-size:10px}
+ .preset-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .station{min-height:56px}.info-strip{grid-template-columns:1fr;gap:0}
+ .screen-head,.scope-header,.bank-head{font-size:9px}
+}
+@media(max-width:370px){.station .station-name{font-size:9px}.screen{padding:10px}.navlinks{font-size:8px}}
 @media(prefers-reduced-motion:reduce){.scope i{transition:none}}
+
 </style>
 </head><body><main class="shell">
-<header class="top"><div><div class="kicker">▰ DIGITAL TRANSMISSION SYSTEM // 14 PROGRAM CHANNELS</div><h1>CELLBEAT RADIO<span style="color:#77aab4">_</span></h1></div><div class="top-right"><div><span class="led"></span> 14 PROGRAM STATIONS / SERVER AUDIO</div><div>INDEPENDENT RADIO / CLICK PLAY TO HEAR MUSIC</div></div></header>
+<section class="screen" id="screen" aria-label="Monochrome vacuum fluorescent radio display">
+<header class="top"><div><div class="kicker">▰ DIGITAL TRANSMISSION SYSTEM // 14 PROGRAM CHANNELS</div><h1>CELLBEAT RADIO<span>_</span></h1></div><div class="top-right"><div><span class="led"></span> 14 PROGRAM STATIONS / SERVER AUDIO</div><div>INDEPENDENT RADIO / CLICK PLAY TO HEAR MUSIC</div></div></header>
 <nav class="navlinks" aria-label="Related projects">
 <a href="https://github.com/Johnetordoff/cellbeat-radio" target="_blank" rel="noopener noreferrer">RADIO REPOSITORY ↗</a>
 <a href="https://cellbeat-mini.johnetordoff.chatgpt.site/" target="_blank" rel="noopener noreferrer">CELLBEAT MINI ↗</a>
 <a href="https://johntordoff.com/" target="_blank" rel="noopener noreferrer">PERSONAL SITE ↗</a>
 <a href="/beast/">bEAST ↗</a> <a href="/fr0g/">LAI-Z FR0g ↗</a>
-<span class="preview-pill">LISTENING ROOM // SOUND ON</span>
+<span class="preview-pill">MONOCHROME VFD / 1 PHOSPHOR</span>
 </nav>
-<section class="screen" id="screen" aria-label="Full-screen vacuum fluorescent display radio">
 <div class="display-grid"></div><div class="display-diag"></div>
 <div class="screen-head"><span>⟪ CELLBEAT // ALL-VFD INTERFACE ⟫</span><span><span class="led" id="statusled"></span> <span id="mode-label">STANDBY // SELECT A STATION</span></span></div>
 <div class="display-body">
 <div class="channel-number"><svg class="segment-svg" viewBox="0 0 232 142" id="digit-svg" role="img" aria-label="Channel 01"><g id="digit-glyphs"></g></svg><div class="channel-caption">CHANNEL / MEMORY</div></div>
 <div><div class="track-meta" id="artist">CELLBEAT ORIGINALS / SYNTHESIZED PROGRAM</div><div class="track-title" id="track-title">SIGNAL / NO MASTERS</div><div class="track-line"><span id="tempo">096 BPM</span><span id="group">CB / 01–06</span><span id="duration">TRACK / LOOP</span></div></div>
 </div>
-<div class="equalizer"><div class="scope-header"><span>VFD SIGNAL DISPLAY // 24-BAND PHOSPHOR ARRAY</span><span id="scope-status">∷ IDLE</span></div><div class="scope" id="scope" aria-label="Decorative rhythm visualization while real MP3 recording plays"></div></div>
+<div class="equalizer"><div class="scope-header"><span>ACTUAL AUDIO FFT // 24 PHOSPHOR BANDS</span><span id="scope-status">ANALYZER / NOT ARMED</span></div><div class="scope" id="scope" aria-label="Actual 24-band frequency energy of decoded playback; no simulated motion"></div></div>
 <div class="track-progress"><span id="elapsed">00:00</span><input type="range" min="0" max="1000" value="0" id="seek" aria-label="Seek within the original recording"><span id="remaining">00:30</span></div>
 <div class="screen-footer"><span id="readout">FLUORESCENT AUDIO TRANSCEIVER / STATION MP3 SOURCE</span><span id="level-label">MASTER LEVEL 060</span></div>
-</section>
 <div class="transport"><button class="vfd-key" id="prev" type="button">◀◀ PREV</button><button class="vfd-key primary" id="play" type="button">▶ PLAY</button><button class="vfd-key" id="stop" type="button">■ STOP</button><button class="vfd-key" id="next" type="button">NEXT ▶▶</button><label class="volume">VOL <input id="volume" type="range" min="0" max="100" value="70" aria-label="Master volume"></label></div>
 <div class="feedback" role="status" aria-live="polite"><span class="bullet">●</span><span id="status">14 ORIGINAL RADIO TRACKS READY. CHOOSE A CHANNEL AND PRESS PLAY.</span></div>
 <section class="bank" aria-label="Fourteen station presets">
@@ -106,67 +174,273 @@ button{-webkit-tap-highlight-color:transparent}
 </section>
 <section class="info-strip">
 <div class="info"><strong>♪ HEAR THE REAL TRACK</strong><p class="good">Press PLAY. The site plays the original station MP3, not a screenshot, download, or fake preview.</p><p>Each recording loops. If a stream cannot load, the display reports the error and offers the original file directly. A free hosting instance may take time to wake.</p><p><a href="/api/stations" target="_blank" rel="noopener noreferrer">ALL 14 LIVE MP3/HLS STATION ADDRESSES ↗</a></p></div>
-<div class="info"><strong>▣ ALL-VFD DESIGN</strong><p>Phosphor display, fluorescent digits and station memories, no plastic shell or chrome knobs.</p><p><a id="direct-mp3" href="/clips/1.mp3" target="_blank" rel="noopener noreferrer">Open current station audio directly ↗</a></p><p>Cellbeat Mini tracker, bEAST, and LAI-Z FR0g remain independently linked.</p></div>
+<div class="info"><strong>▣ ONE-PHOSPHOR DISPLAY</strong><p>Single blue-green phosphor: illuminated, dim and unlit states. The segmented spectrum meter reads actual decoded audio, never a randomized animation.</p><p><a id="direct-mp3" href="/clips/1.mp3" target="_blank" rel="noopener noreferrer">Open current station audio directly ↗</a></p><p>Cellbeat Mini tracker, bEAST, and LAI-Z FR0g remain independently linked.</p></div>
 </section>
-<footer class="bottomline">CELLBEAT RADIO // FOURTEEN CHANNELS // bEAST // LAI-Z FR0g // NATIVE HTML · CSS · JS · ORIGINAL MP3 RECORDINGS · NO NODE OR TRACKING</footer>
+<footer class="bottomline">CELLBEAT RADIO // FOURTEEN CHANNELS // bEAST // LAI-Z FR0g // ONE PHOSPHOR // NATIVE HTML · CSS · JS · ORIGINAL MP3 RECORDINGS · NO NODE OR TRACKING</footer>
+</section>
 <audio id="player" preload="none" playsinline loop crossorigin="anonymous"></audio>
 </main>
 <script type="application/json" id="track-metadata">[{"id":1,"name":"Signal / No Masters","short":"SIGNAL","bpm":96,"group":"core"},{"id":2,"name":"Beyond Beyond Redline","short":"REDLINE","bpm":148,"group":"core"},{"id":3,"name":"Redline / Night Drive","short":"NIGHT DRIVE","bpm":124,"group":"core"},{"id":4,"name":"Redline / Meter","short":"METER","bpm":146,"group":"core"},{"id":5,"name":"Neon Interceptor","short":"NEON","bpm":138,"group":"core"},{"id":6,"name":"Neon Interceptor / Pursuit Mix","short":"PURSUIT","bpm":132,"group":"core"},{"id":7,"name":"bEAST / Bang Switch","short":"BANG SWITCH","bpm":152,"group":"beast"},{"id":8,"name":"bEAST / Plastic Heaven","short":"PLASTIC HEAVEN","bpm":128,"group":"beast"},{"id":9,"name":"bEAST / Killa Klean","short":"KILLA KLEAN","bpm":146,"group":"beast"},{"id":10,"name":"bEAST / Heartdrive","short":"HEARTDRIVE","bpm":116,"group":"beast"},{"id":11,"name":"LAI-Z FR0g / The Frog Who Borrowed Midnight","short":"BORROWED MIDNIGHT","bpm":80,"group":"frog"},{"id":12,"name":"LAI-Z FR0g / Neon Lily Taxi","short":"NEON LILY TAXI","bpm":106,"group":"frog"},{"id":13,"name":"LAI-Z FR0g / The Moon Owed the River a Song","short":"MOON / RIVER","bpm":88,"group":"frog"},{"id":14,"name":"LAI-Z FR0g / Last Call at the Neptune Diner","short":"NEPTUNE DINER","bpm":112,"group":"frog"}]</script>
 <script>
-(function(){'use strict';
-const $ = id => document.getElementById(id);
-const tracks = JSON.parse($('track-metadata').textContent);
-const audio = $('player'), scoped = $('scope');
-let selected=0, playing=false, loadIndex=-1, activeRequest=0, backupUsed=false;
-const segmentPolys={a:'12,7 72,7 63,16 20,16',b:'77,12 84,19 79,61 71,66 67,60 71,23',c:'78,77 83,83 77,122 69,129 65,120 70,84',d:'18,132 67,132 60,140 25,140',e:'7,79 15,84 12,124 5,133 0,123 2,86',f:'7,18 15,23 12,63 4,70 0,62 2,25',g:'16,69 64,69 70,75 62,80 16,80 9,75'};
+(function(){
+'use strict';
+const $=id=>document.getElementById(id);
+const tracks=JSON.parse($('track-metadata').textContent);
+const audio=$('player'),scope=$('scope'),NS='http://www.w3.org/2000/svg';
+let selected=0,playing=false,loadedIndex=-1,requestId=0,backupUsed=false;
+const segmentPolys={
+ a:'12,7 72,7 63,16 20,16',b:'77,12 84,19 79,61 71,66 67,60 71,23',
+ c:'78,77 83,83 77,122 69,129 65,120 70,84',d:'18,132 67,132 60,140 25,140',
+ e:'7,79 15,84 12,124 5,133 0,123 2,86',f:'7,18 15,23 12,63 4,70 0,62 2,25',
+ g:'16,69 64,69 70,75 62,80 16,80 9,75'
+};
 const DIGITS=['abcdef','bc','abdeg','abcdg','bcfg','acdfg','abc','abcdefg','abcdfg'];
-const glyph=$('digit-glyphs'),NS='http://www.w3.org/2000/svg';
-function drawDigits(n,group){const chars=String(n).padStart(2,'0');glyph.replaceChildren();const lit=group==='beast'?'#ff9ee5':group==='frog'?'#bdffb5':'#9df9ff';
-for(let d=0;d<2;d++){const g=document.createElementNS(NS,'g');g.setAttribute('transform','translate('+(d*116+10)+' 0) scale(1 .98)');for(const [symbol,points] of Object.entries(segmentPolys)){const poly=document.createElementNS(NS,'polygon');poly.setAttribute('points',points);const on=DIGITS[Number(chars[d])].includes(symbol);poly.setAttribute('fill',on?lit:'#1a3c42');poly.setAttribute('opacity',on?'1':'.24');g.appendChild(poly)}glyph.appendChild(g)}$('digit-svg').setAttribute('aria-label','Channel '+chars)}
-const bars=[];
-for(let i=0;i<24;i++){const e=document.createElement('i');e.style.height='9%';scoped.appendChild(e);bars.push(e)}
-for(const track of tracks){const b=document.createElement('button');b.type='button';b.className='station '+track.group;b.setAttribute('aria-label','Tune channel '+track.id+': '+track.name);b.innerHTML='<span class="num">'+String(track.id).padStart(2,'0')+'</span><span class="station-name">'+track.short+'</span>';b.addEventListener('click',()=>tune(track.id-1));$(track.group+'-grid').appendChild(b)}
-const buttons=[...document.querySelectorAll('.station')];
-function fmt(time){if(!Number.isFinite(time)||time<0)return '--:--';const s=Math.floor(time);return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
-function status(message){$('status').textContent=message}
-function syncProgress(){const dur=Number.isFinite(audio.duration)?audio.duration:0;const elapsed=Number.isFinite(audio.currentTime)?audio.currentTime:0;$('elapsed').textContent=fmt(elapsed);$('remaining').textContent=dur?fmt(Math.max(0,dur-elapsed)):'--:--';$('seek').value=dur?String(Math.floor(Math.min(1,elapsed/dur)*1000)):'0';$('duration').textContent=dur?fmt(dur)+' / LOOP':'TRACK / LOOP'}
-function render(){const t=tracks[selected],group=t.group;
-$('track-title').textContent=t.name.replace(/^bEAST \/ /,'').replace(/^LAI-Z FR0g \/ /,'');$('track-title').className='track-title '+group;
-$('artist').textContent=group==='core'?'CELLBEAT // ORIGINAL TRANSMISSION':group==='beast'?'bEAST // THE SOAP FACED KILLA':'LAI-Z FR0g // AFTER HOURS AT THE LILY EXCHANGE';
-$('tempo').textContent=String(t.bpm).padStart(3,'0')+' BPM';$('group').textContent=group==='core'?'CB / 01–06':group==='beast'?'BEAST / 07–10':'FR0g / 11–14';
-$('readout').textContent=playing?'MP3 PLAYBACK ACTIVE // TRACK LOOP':'STATION MP3 MEMORY / READY';$('mode-label').textContent=playing?'AUDIO ACTIVE / SPEAKERS ON':'STATION READY / PRESS PLAY';$('scope-status').textContent=playing?'● SIGNAL ACTIVE':'∷ IDLE';
-$('level-label').textContent='MASTER LEVEL '+String($('volume').value).padStart(3,'0');$('play').textContent=playing?'Ⅱ PAUSE':'▶ PLAY';
-scoped.dataset.group=group;scoped.classList.toggle('playing',playing);drawDigits(t.id,group);
-buttons.forEach((b,i)=>b.setAttribute('aria-pressed',String(i===selected)));
-$('direct-mp3').href='/clips/'+t.id+'.mp3';syncProgress()}
-function sourceFor(idx,backup=false){const id=tracks[idx].id;return backup?'/live/'+id+'.mp3':'/clips/'+id+'.mp3'}
-function loadAudio(){if(loadIndex===selected&&audio.getAttribute('src'))return;
-audio.pause();audio.src=sourceFor(selected);audio.load();loadIndex=selected;backupUsed=false;audio.loop=true;
-// iOS controls hardware audio volume; the slider is effective on browsers that permit it.
-try{audio.volume=Number($('volume').value)/100}catch(e){}
+const glyph=$('digit-glyphs');
+function drawDigits(number){
+ const digits=String(number).padStart(2,'0');glyph.replaceChildren();
+ for(let d=0;d<2;d++){
+  const group=document.createElementNS(NS,'g');
+  group.setAttribute('transform','translate('+(d*116+10)+' 0) scale(1 .98)');
+  for(const [symbol,points] of Object.entries(segmentPolys)){
+   const segment=document.createElementNS(NS,'polygon');
+   const lit=DIGITS[Number(digits[d])].includes(symbol);
+   segment.setAttribute('points',points);
+   segment.setAttribute('fill',lit?'var(--phosphor)':'var(--off)');
+   segment.setAttribute('opacity',lit?'1':'.45');
+   group.appendChild(segment);
+  }
+  glyph.appendChild(group);
+ }
+ $('digit-svg').setAttribute('aria-label','Channel '+digits);
 }
-async function play(){if(playing&&!audio.paused){audio.pause();playing=false;render();status('PAUSED · '+tracks[selected].short);return}
-const token=++activeRequest;
-try{loadAudio();status('LOADING ORIGINAL STATION '+String(tracks[selected].id).padStart(2,'0')+' · MP3 AUDIO...');
-// Important: call audio.play() directly within the user's tap gesture for iPhone Safari.
-await audio.play();if(token!==activeRequest){audio.pause();return}playing=true;render();status('♪ PLAYING · '+tracks[selected].short+' / ORIGINAL CELLBEAT RADIO MUSIC')}
-catch(err){if(token!==activeRequest)return;playing=false;render();status('PLAYBACK FAILED: '+(err&&err.message?err.message:'station unavailable')+' · TRY DIRECT MP3 LINK BELOW')}}
-function tune(index){const wasPlaying=!audio.paused&&!!audio.getAttribute('src');activeRequest++;audio.pause();playing=false;audio.removeAttribute('src');audio.load();selected=(index+tracks.length)%tracks.length;loadIndex=-1;render();status('TUNED · CH '+String(tracks[selected].id).padStart(2,'0')+' / '+tracks[selected].short);if(wasPlaying)play()}
-function stop(){activeRequest++;audio.pause();try{audio.currentTime=0}catch(e){}playing=false;render();status('STOPPED / READY')}
-$('prev').addEventListener('click',()=>tune(selected-1));$('next').addEventListener('click',()=>tune(selected+1));$('play').addEventListener('click',play);$('stop').addEventListener('click',stop);
-$('volume').addEventListener('input',()=>{try{audio.volume=Number($('volume').value)/100}catch(e){}render()});
-$('seek').addEventListener('change',()=>{if(loadIndex!==selected)loadAudio();if(Number.isFinite(audio.duration)){audio.currentTime=Number($('seek').value)/1000*audio.duration;syncProgress()}});
-audio.addEventListener('timeupdate',syncProgress);audio.addEventListener('durationchange',syncProgress);
-audio.addEventListener('playing',()=>{playing=true;render();status('♪ PLAYING · '+tracks[selected].short+' / SOUND ON')});
-audio.addEventListener('pause',()=>{playing=false;render()});
-audio.addEventListener('waiting',()=>{if(!audio.paused)status('BUFFERING ORIGINAL MP3 AUDIO...')});
-audio.addEventListener('error',()=>{if(backupUsed){playing=false;render();status('STATION AUDIO UNAVAILABLE · OPEN DIRECT AUDIO LINK BELOW OR RETRY');return}
-backupUsed=true;const wasIntended=playing||activeRequest>0;status('RECOVERING STREAM · RETRYING LIVE AUDIO...');audio.src=sourceFor(selected,true);audio.load();if(wasIntended)audio.play().catch(e=>status('STREAM NOT AVAILABLE: '+e.message+' · USE DIRECT AUDIO LINK'));});
-// Animated phosphor meter: no WebAudio routing, so Safari audio is never muted by an AudioContext.
-function scopeTick(){syncProgress();if(!playing||audio.paused){for(let i=0;i<bars.length;i++)bars[i].style.height='8%';return}
-const beat=(audio.currentTime||0)*tracks[selected].bpm/60;
-for(let i=0;i<bars.length;i++){const v=.15+.34*Math.abs(Math.sin((beat*.83+i*.32)*1.37))+.48*Math.abs(Math.sin(beat*(.7+(i%5)*.08)+i*1.3));bars[i].style.height=Math.min(98,Math.max(8,Math.round(v*100)))+'%'}}
-window.setInterval(scopeTick,100);render();
+const bars=[],meterLevels=new Float32Array(24);
+for(let i=0;i<24;i++){
+ const cell=document.createElement('span');
+ cell.className='cell';
+ const bar=document.createElement('i');
+ bar.style.height='0%';bar.setAttribute('aria-hidden','true');
+ cell.appendChild(bar);scope.appendChild(cell);bars.push(bar);
+}
+for(const track of tracks){
+ const button=document.createElement('button');
+ button.type='button';button.className='station '+track.group;
+ button.setAttribute('aria-label','Tune channel '+track.id+': '+track.name);
+ const number=document.createElement('span'),name=document.createElement('span');
+ number.className='num';number.textContent=String(track.id).padStart(2,'0');
+ name.className='station-name';name.textContent=track.short;
+ button.appendChild(number);button.appendChild(name);
+ button.addEventListener('click',()=>tune(track.id-1));
+ $(track.group+'-grid').appendChild(button);
+}
+const buttons=Array.from(document.querySelectorAll('.station'));
+function formatTime(time){
+ if(!Number.isFinite(time)||time<0)return '--:--';
+ const t=Math.floor(time);return String(Math.floor(t/60)).padStart(2,'0')+':'+String(t%60).padStart(2,'0');
+}
+function setStatus(message){$('status').textContent=message}
+function syncProgress(){
+ const length=Number.isFinite(audio.duration)?audio.duration:0;
+ const position=Number.isFinite(audio.currentTime)?audio.currentTime:0;
+ $('elapsed').textContent=formatTime(position);
+ $('remaining').textContent=length?formatTime(Math.max(0,length-position)):'--:--';
+ $('seek').value=length?String(Math.round(Math.min(1,position/length)*1000)):'0';
+ $('duration').textContent=length?formatTime(length)+' / LOOP':'TRACK / LOOP';
+}
+let context=null,analyser=null,sourceNode=null,gainNode=null,freqData=null,meterUnavailable=false,meterError='';
+function sensorText(){
+ if(meterUnavailable)return 'SENSOR UNAVAILABLE / NO FALSE MOVEMENT';
+ if(!analyser)return 'SENSOR ARMING / AUDIO UNALTERED';
+ if(context.state!=='running')return 'SENSOR SUSPENDED / AUDIO UNALTERED';
+ return 'SOURCE FFT / 24 REAL FREQUENCY BANDS';
+}
+function render(){
+ const t=tracks[selected],category=t.group;
+ $('track-title').textContent=t.name.replace(/^bEAST \/ /,'').replace(/^LAI-Z FR0g \/ /,'');
+ $('track-title').className='track-title '+category;
+ $('artist').textContent=category==='core'?'CELLBEAT / ORIGINAL TRANSMISSION':
+  category==='beast'?'bEAST / THE SOAP FACED KILLA':'LAI-Z FR0g / LILY EXCHANGE';
+ $('tempo').textContent=String(t.bpm).padStart(3,'0')+' BPM';
+ $('group').textContent=category==='core'?'CB / 01–06':category==='beast'?'bEAST / 07–10':'FR0g / 11–14';
+ $('readout').textContent=playing?'DECODING ORIGINAL MP3 / NO SIMULATED METER':'STATION SOURCE / READY';
+ $('mode-label').textContent=playing?'SIGNAL PLAYING':'STANDBY / PRESS PLAY';
+ $('statusled').classList.toggle('on',playing);
+ $('scope-status').textContent=playing?sensorText():'SENSOR / IDLE';
+ $('level-label').textContent='LEVEL '+String($('volume').value).padStart(3,'0');
+ $('play').textContent=playing?'Ⅱ PAUSE':'▶ PLAY';
+ scope.dataset.group=category;
+ drawDigits(t.id);
+ buttons.forEach((button,i)=>button.setAttribute('aria-pressed',String(i===selected)));
+ $('direct-mp3').href='/clips/'+t.id+'.mp3';
+ syncProgress();
+}
+function clearMeter(){
+ for(let i=0;i<bars.length;i++){meterLevels[i]=0;bars[i].style.height='0%'}
+}
+function armMeter(){
+ // The audio element continues playing natively until the AudioContext is actually
+ // RUNNING. Connecting a MediaElementAudioSourceNode to a suspended context can mute
+ // iPhone output; never redirect it until the context has successfully resumed.
+ if(meterUnavailable)return;
+ if(context){
+  if(context.state==='suspended')context.resume().catch(err=>{
+   meterUnavailable=true;meterError=String(err);$('scope-status').textContent=sensorText();
+  });
+  return;
+ }
+ const C=window.AudioContext||window.webkitAudioContext;
+ if(!C){meterUnavailable=true;$('scope-status').textContent=sensorText();return}
+ try{
+  context=new C();
+  // Must be called during the same tap as audio.play() for iOS Safari.
+  const active=context.resume();
+  Promise.resolve(active).then(()=>{
+   if(context.state!=='running')throw new Error('AudioContext did not start');
+   const meter=context.createAnalyser();
+   meter.fftSize=2048;
+   meter.minDecibels=-95;
+   meter.maxDecibels=-12;
+   meter.smoothingTimeConstant=.48;
+   const gain=context.createGain();
+   gain.gain.value=Number($('volume').value)/100;
+   const input=context.createMediaElementSource(audio);
+   sourceNode=input;
+   // Analyze the exact same post-volume audio sent to the speakers.
+   // A gain node also makes the volume control functional on iOS Web Audio.
+   input.connect(gain);gain.connect(meter);meter.connect(context.destination);
+   gainNode=gain;analyser=meter;
+   audio.volume=1;
+   freqData=new Uint8Array(meter.frequencyBinCount);
+   $('scope-status').textContent=sensorText();
+  }).catch(err=>{
+   // If the browser refuses FFT, preserve native audio or restore direct routing.
+   if(sourceNode&&context){
+    try{sourceNode.connect(context.destination)}catch(ignore){}
+   }
+   meterUnavailable=true;meterError=String(err);
+   $('scope-status').textContent=sensorText();
+   clearMeter();
+  });
+ }catch(err){
+  meterUnavailable=true;meterError=String(err);
+  $('scope-status').textContent=sensorText();
+ }
+}
+function audioSrc(index,live){return (live?'/live/':'/clips/')+tracks[index].id+'.mp3'}
+function loadAudio(){
+ if(loadedIndex===selected&&audio.getAttribute('src'))return;
+ audio.pause();audio.src=audioSrc(selected,false);audio.load();
+ loadedIndex=selected;backupUsed=false;audio.loop=true;
+ try{audio.volume=Number($('volume').value)/100}catch(ignore){}
+}
+async function togglePlay(){
+ if(playing&&!audio.paused){
+  ++requestId;audio.pause();playing=false;clearMeter();render();
+  setStatus('PAUSED / '+tracks[selected].short);return;
+ }
+ const token=++requestId;
+ try{
+  loadAudio();
+  setStatus('DECODING STATION '+String(tracks[selected].id).padStart(2,'0')+' / MP3 AUDIO');
+  // This starts AudioContext.resume() during the direct tap, but NEVER awaits it
+  // before audio.play(): iOS requires a user-gesture call to audio.play().
+  armMeter();
+  const result=audio.play();
+  await result;
+  if(token!==requestId){audio.pause();return}
+  playing=true;render();
+  setStatus('PLAYING / '+tracks[selected].short+' / ORIGINAL RECORDING');
+ }catch(err){
+  if(token!==requestId)return;
+  playing=false;clearMeter();render();
+  setStatus('AUDIO ERROR: '+(err?.message||'unavailable')+' / USE DIRECT AUDIO LINK');
+ }
+}
+function tune(index){
+ const resume=!audio.paused&&!!audio.getAttribute('src');
+ ++requestId;audio.pause();playing=false;clearMeter();
+ audio.removeAttribute('src');audio.load();
+ selected=(index+tracks.length)%tracks.length;loadedIndex=-1;
+ render();setStatus('TUNED / CH '+String(tracks[selected].id).padStart(2,'0'));
+ if(resume)void togglePlay();
+}
+function stop(){
+ ++requestId;audio.pause();
+ try{audio.currentTime=0}catch(ignore){}
+ playing=false;clearMeter();render();setStatus('STOPPED / ZERO SIGNAL');
+}
+$('prev').addEventListener('click',()=>tune(selected-1));
+$('next').addEventListener('click',()=>tune(selected+1));
+$('play').addEventListener('click',()=>void togglePlay());
+$('stop').addEventListener('click',stop);
+$('volume').addEventListener('input',()=>{
+ const level=Number($('volume').value)/100;
+ if(gainNode&&context){
+  gainNode.gain.setTargetAtTime(level,context.currentTime,.012);
+ }else{
+  try{audio.volume=level}catch(ignore){}
+ }
+ if(level===0)clearMeter();
+ render();
+});
+$('seek').addEventListener('change',()=>{
+ if(loadedIndex!==selected)loadAudio();
+ if(Number.isFinite(audio.duration)){
+  audio.currentTime=Number($('seek').value)/1000*audio.duration;clearMeter();syncProgress();
+ }
+});
+audio.addEventListener('timeupdate',syncProgress);
+audio.addEventListener('durationchange',syncProgress);
+audio.addEventListener('playing',()=>{
+ playing=true;render();setStatus('PLAYING / '+tracks[selected].short+' / FFT '+(analyser?'ACTIVE':'ARMING'));
+});
+audio.addEventListener('pause',()=>{playing=false;clearMeter();render()});
+audio.addEventListener('waiting',()=>{clearMeter();if(!audio.paused)setStatus('BUFFERING ACTUAL AUDIO / METER ZERO')});
+audio.addEventListener('seeking',clearMeter);
+audio.addEventListener('ended',()=>{playing=false;clearMeter();render()});
+audio.addEventListener('error',()=>{
+ clearMeter();
+ if(backupUsed){playing=false;render();setStatus('AUDIO UNAVAILABLE / OPEN DIRECT MP3 BELOW');return}
+ backupUsed=true;
+ const intended=playing||requestId>0;
+ setStatus('RETRYING SAME STATION AS CONTINUOUS MP3');
+ audio.src=audioSrc(selected,true);audio.load();
+ if(intended)audio.play().catch(err=>{
+  playing=false;clearMeter();render();setStatus('STREAM FAILED: '+(err?.message||'unavailable'));
+ });
+});
+function tickMeter(now){
+ // True, logarithmically spaced FFT bins; no BPM clocks, sine curves, noise,
+ // interpolation from a pretend beat, randomized or pre-computed bar movement.
+ window.requestAnimationFrame(tickMeter);
+ if(now-tickMeter.last<33)return; // ~30Hz multiplex-like display refresh
+ tickMeter.last=now;
+ if(!playing||audio.paused||audio.seeking||audio.readyState<2||
+    audio.muted||Number($('volume').value)===0||!analyser||!context||context.state!=='running'){
+  clearMeter();return;
+ }
+ analyser.getByteFrequencyData(freqData);
+ const last=freqData.length-1;
+ const upper=Math.min(14000,context.sampleRate*.47);
+ for(let i=0;i<bars.length;i++){
+  const lo=45*Math.pow(upper/45,i/bars.length);
+  const hi=45*Math.pow(upper/45,(i+1)/bars.length);
+  const from=Math.max(0,Math.min(last,Math.floor(lo*analyser.fftSize/context.sampleRate)));
+  const to=Math.max(from+1,Math.min(freqData.length,Math.ceil(hi*analyser.fftSize/context.sampleRate)));
+  let peak=0;
+  for(let bin=from;bin<to;bin++)if(freqData[bin]>peak)peak=freqData[bin];
+  // Byte FFT amplitude reflects the decoded audio output. Zero input -> zero.
+  const value=Math.min(1,Math.max(0,(peak-12)/198));
+  const target=Math.pow(value,.88);
+  const previous=meterLevels[i];
+  const level=target>previous?previous*.18+target*.82:previous*.65+target*.35;
+  meterLevels[i]=level<.025?0:level;
+  const segments=Math.round(meterLevels[i]*16);
+  bars[i].style.height=(segments/16*100)+'%';
+ }
+}
+tickMeter.last=-1000;
+window.requestAnimationFrame(tickMeter);
+render();
 })();
 </script>
 </body></html>
