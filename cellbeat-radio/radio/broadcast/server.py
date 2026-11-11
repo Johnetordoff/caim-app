@@ -15,6 +15,8 @@ import json
 import os
 import re
 import time
+import http.client
+import threading
 from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -159,7 +161,7 @@ class Receiver(BaseHTTPRequestHandler):
             first=max(0,seq-4)
             parts=["#EXTM3U","#EXT-X-VERSION:3",
                    "#EXT-X-TARGETDURATION:7",f"#EXT-X-MEDIA-SEQUENCE:{first}",
-                   "#EXT-X-INDEPENDENT-SEGMENTS"]
+                   "#EXT-X-ALLOW-CACHE:NO"]
             for i in range(first,seq+1):
                 parts += [f"#EXTINF:{SEG_DURATION:.6f},",f"{i}.mp3"]
             return self.send_bytes(("\n".join(parts)+"\n").encode(),
@@ -212,9 +214,50 @@ class Receiver(BaseHTTPRequestHandler):
         except (BrokenPipeError,ConnectionResetError,ConnectionAbortedError,TimeoutError):
             pass
 
+def self_test(port):
+    """Exercise every live MP3, HLS and API route through the actual HTTP server."""
+    time.sleep(.4)
+    def request(path, count=None, extra=None):
+        c=http.client.HTTPConnection("127.0.0.1",port,timeout=7)
+        try:
+            c.request("GET",path,headers=extra or {})
+            r=c.getresponse()
+            data=r.read(count) if count is not None else r.read()
+            status=r.status
+            mime=r.getheader("Content-Type","")
+            return status,mime,data
+        finally:
+            c.close()
+    try:
+        for p in ["/","/health","/api/stations"]:
+            status,mime,data=request(p)
+            if status!=200:raise ValueError(p+" returned "+str(status))
+            if p=="/api/stations" and len(json.loads(data)["on_air"])!=6:raise ValueError("Station count mismatch")
+            print("SELFTEST OK",p,status,len(data),flush=True)
+        for n in range(1,7):
+            status,mime,data=request(f"/live/{n}.mp3",2048)
+            if status!=200 or not mime.startswith("audio/mpeg") or len(data)!=2048:
+                raise ValueError(f"Broken live MP3 endpoint {n}: {status} {mime} {len(data)}")
+            print(f"SELFTEST OK /live/{n}.mp3 2048 audio bytes",flush=True)
+            status,mime,data=request(f"/hls/{n}/index.m3u8")
+            if status!=200 or not data.startswith(b"#EXTM3U"):
+                raise ValueError(f"Broken HLS playlist {n}")
+            seq=int(re.search(rb"(\\d+)\\.mp3",data).group(1))
+            status,mime,seg=request(f"/hls/{n}/{seq}.mp3")
+            if status!=200 or not mime.startswith("audio/mpeg") or len(seg)<20000:
+                raise ValueError(f"Broken HLS audio segment {n}")
+            status,mime,clip=request(f"/clips/{n}.mp3",100,{"Range":"bytes=0-99"})
+            if status!=206 or len(clip)!=100:
+                raise ValueError(f"Broken clip byte-range support {n}")
+            print(f"SELFTEST OK /hls/{n}/... and range /clips/{n}.mp3",flush=True)
+        print("CELLBEAT BROADCAST SELFTEST: 6/6 STATIONS PASS",flush=True)
+    except Exception as exc:
+        print("CELLBEAT BROADCAST SELFTEST FAILED:",repr(exc),flush=True)
+
 if __name__=="__main__":
     port=int(os.environ.get("PORT","10000"))
     class Server(ThreadingHTTPServer):daemon_threads=True
     app=Server(("0.0.0.0",port),Receiver)
     print(f"Cellbeat Radio serving six real MP3 channels on port {port}",flush=True)
+    threading.Thread(target=self_test,args=(port,),daemon=True).start()
     app.serve_forever(poll_interval=.2)
