@@ -25,6 +25,7 @@ from urllib.parse import urlparse, unquote
 ROOT = Path(__file__).resolve().parents[2]
 BASE = Path(__file__).resolve().parent
 BEAST = ROOT / "beast"
+FROG = ROOT / "frog"
 RATE = 44100
 FRAME_SAMPLES = 1152
 FRAME_TIME = FRAME_SAMPLES / RATE
@@ -85,7 +86,22 @@ def load():
                    "bpm":item["bpm"],"artist":"bEAST — the soap faced killa",
                    "page":"/beast/","genre":item["genre"],
                    "raw":raw,"frames":frames,"duration":len(frames)*FRAME_TIME}
-    if len(result)!=(4 if os.environ.get("BEAST_ONLY") == "1" else 10):
+    if os.environ.get("BEAST_ONLY") != "1":
+        catalog=json.loads((FROG/"catalog.json").read_text("utf-8"))
+        for item in catalog:
+            n=int(item["id"])
+            if n not in (11,12,13,14) or n in result:
+                raise RuntimeError("Invalid LAI-Z FR0g station number")
+            filename=FROG/"tracks"/(item["slug"]+".mp3")
+            if not filename.is_file():
+                raise RuntimeError(f"Missing generated FR0g audio: {filename}")
+            raw=filename.read_bytes()
+            frames=parse_frames(raw)
+            result[n]={"id":n,"title":"LAI-Z FR0g / "+item["title"],
+                       "bpm":item["bpm"],"artist":"LAI-Z FR0g",
+                       "page":"/fr0g/","genre":item["genre"],
+                       "raw":raw,"frames":frames,"duration":len(frames)*FRAME_TIME}
+    if len(result)!=(4 if os.environ.get("BEAST_ONLY") == "1" else 14):
         raise RuntimeError("Unexpected Cellbeat station count")
     return result
 
@@ -141,6 +157,8 @@ class Receiver(BaseHTTPRequestHandler):
             return self.send_bytes((BASE/"receiver.html").read_bytes(),"text/html; charset=utf-8",head)
         if path in ("/beast","/beast/","/beast/index.html"):
             return self.send_bytes((BEAST/"index.html").read_bytes(),"text/html; charset=utf-8",head)
+        if path in ("/fr0g","/fr0g/","/fr0g/index.html") and os.environ.get("BEAST_ONLY") != "1":
+            return self.send_bytes((FROG/"index.html").read_bytes(),"text/html; charset=utf-8",head)
         if path=="/health":
             return self.send_bytes(b"ok\n","text/plain; charset=utf-8",head)
         if path=="/api/stations":
@@ -156,7 +174,7 @@ class Receiver(BaseHTTPRequestHandler):
                              "program_duration_s":round(s["duration"],2)}
                             for n,s in STATIONS.items()]}
             return self.send_bytes(json.dumps(data).encode(),"application/json; charset=utf-8",head)
-        m=re.fullmatch(r"/clips/((?:[1-9]|10))\.mp3",path)
+        m=re.fullmatch(r"/clips/((?:[1-9]|1[0-4]))\.mp3",path)
         if m:
             s=STATIONS[int(m.group(1))]
             data=s["raw"]
@@ -175,10 +193,10 @@ class Receiver(BaseHTTPRequestHandler):
                 if not head:self.wfile.write(chunk)
                 return
             return self.send_bytes(data,"audio/mpeg",head,{"Accept-Ranges":"bytes"})
-        m=re.fullmatch(r"/live/((?:[1-9]|10))\.mp3",path)
+        m=re.fullmatch(r"/live/((?:[1-9]|1[0-4]))\.mp3",path)
         if m:
             return self.send_live(int(m.group(1)),head)
-        m=re.fullmatch(r"/hls/((?:[1-9]|10))/index\.m3u8",path)
+        m=re.fullmatch(r"/hls/((?:[1-9]|1[0-4]))/index\.m3u8",path)
         if m:
             n=int(m.group(1))
             seq=int((time.time()-CLOCK_EPOCH)//SEG_DURATION)
@@ -190,7 +208,7 @@ class Receiver(BaseHTTPRequestHandler):
                 parts += [f"#EXTINF:{SEG_DURATION:.6f},",f"{i}.mp3"]
             return self.send_bytes(("\n".join(parts)+"\n").encode(),
                                    "application/vnd.apple.mpegurl",head)
-        m=re.fullmatch(r"/hls/((?:[1-9]|10))/(\d+)\.mp3",path)
+        m=re.fullmatch(r"/hls/((?:[1-9]|1[0-4]))/(\d+)\.mp3",path)
         if m:
             n,seq=int(m.group(1)),int(m.group(2))
             now_seq=int((time.time()-CLOCK_EPOCH)//SEG_DURATION)
@@ -253,7 +271,9 @@ def self_test(port):
         finally:
             c.close()
     try:
-        for p in ["/","/beast/","/health","/api/stations"]:
+        routes=["/","/beast/","/health","/api/stations"]
+        if os.environ.get("BEAST_ONLY") != "1":routes.append("/fr0g/")
+        for p in routes:
             status,mime,data=request(p)
             if status!=200:raise ValueError(p+" returned "+str(status))
             if p=="/api/stations" and len(json.loads(data)["on_air"])!=len(STATIONS):raise ValueError("Station count mismatch")
@@ -282,6 +302,6 @@ if __name__=="__main__":
     port=int(os.environ.get("PORT","10000"))
     class Server(ThreadingHTTPServer):daemon_threads=True
     app=Server(("0.0.0.0",port),Receiver)
-    print(f"Cellbeat Radio serving six real MP3 channels on port {port}",flush=True)
+    print(f"Cellbeat Radio serving {len(STATIONS)} real MP3 channels on port {port}",flush=True)
     threading.Thread(target=self_test,args=(port,),daemon=True).start()
     app.serve_forever(poll_interval=.2)
