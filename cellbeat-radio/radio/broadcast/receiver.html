@@ -1,8 +1,8 @@
 <!doctype html>
 <html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0e0e19"><meta name="description" content="Listen to ten original Cellbeat radio stations, including four bEAST originals, broadcasting MP3 audio on a shared UTC timeline.">
-<title>Cellbeat Radio — 10 Live Stations including bEAST</title>
+<meta name="theme-color" content="#0e0e19"><meta name="description" content="Listen to fourteen original Cellbeat radio stations, including bEAST and LAI-Z FR0g, with psychedelic reggae, electronic jazz and dub fables.">
+<title>Cellbeat Radio — 14 Live Stations with bEAST and LAI-Z FR0g</title>
 <style>
 :root{color-scheme:dark;--glow:#79dfff;--c2:#aa81ef;--ink:#edf1f5}
 *{box-sizing:border-box}
@@ -32,6 +32,14 @@ h1{margin:0;color:#f5f5f9;font:italic 900 clamp(28px,6vw,47px) Arial,sans-serif;
 .playing .meter i{animation:bars .7s ease-in-out infinite alternate;animation-delay:var(--delay)}
 @keyframes bars{to{height:7%;opacity:.35}}
 .buttons{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-top:14px}
+.preset.frog{background:linear-gradient(#d1ffa5,#61ad88 24%,#316c68 57%,#112d39 100%);color:#06251d;border-color:#255049;text-shadow:0 1px #e4ffd655}
+.preset.frog small{color:#143a35}
+.preset.frog[aria-pressed=true]{background:linear-gradient(#e9ffd4,#a7f47a 58%,#43958d);color:#042821;box-shadow:inset 0 0 12px #fff8,0 0 13px #b3ff9d99}
+.frog-promo{display:flex;flex-wrap:wrap;gap:9px;justify-content:space-between;align-items:center;margin-top:9px;padding:12px 14px;border:1px solid #7fdcaa;border-radius:5px;background:linear-gradient(90deg,#1e3731,#151b2e)}
+.frog-promo strong{color:#b0ff8d;font:900 12px 'Courier New',monospace;letter-spacing:.06em}
+.frog-promo span{color:#9bcebc;font:11px 'Courier New',monospace}
+.frog-promo a{color:#bafdd3;font:700 12px 'Courier New',monospace}
+.station-links a.frog{border-color:#589879;background:#15342d;color:#bbffdc}
 .preset.beast{background:linear-gradient(#f4a3de,#b5469f 22%,#85246c 54%,#391431 93%);color:#fff2fc;border-color:#401331;text-shadow:0 1px #240b20}
 .preset.beast small{color:#ffe3f6}
 .preset.beast[aria-pressed=true]{background:linear-gradient(#ffd0ef,#f049a7 55%,#942467);color:#21051c;box-shadow:inset 0 0 12px #fff5,0 0 11px #fa45b088}
@@ -66,7 +74,7 @@ input[type=range]{width:150px;max-width:100%;accent-color:#7dffff}
 @media(prefers-reduced-motion:reduce){.playing .meter i{animation:none}}
 </style></head>
 <body><main>
-<div class="mast"><h1>CELLBEAT RADIO</h1><a href="/beast/" style="font:900 12px 'Courier New',monospace;padding:11px 15px;border:1px solid #f98dd3;border-radius:6px;background:#36142f;color:#fff1fb;text-decoration:none">NEW MUSIC: bEAST / 4 BANGERS</a><div class="live-label"><i class="live-dot"></i> 10 ORIGINAL STATIONS</div></div>
+<div class="mast"><h1>CELLBEAT RADIO</h1><a href="/beast/" style="font:900 12px 'Courier New',monospace;padding:11px 15px;border:1px solid #f98dd3;border-radius:6px;background:#36142f;color:#fff1fb;text-decoration:none">NEW MUSIC: bEAST / 4 BANGERS</a><div class="live-label"><i class="live-dot"></i> 14 ORIGINAL STATIONS</div></div>
 <p class="intro">DIGITAL X-OVER · MULTIPLE SOURCE CONTROL · LIVE MP3 TRANSMISSION · bEAST NOW ON AIR</p>
 <div class="radio" aria-label="Cellbeat vintage car radio with ten live music channels including bEAST">
 <div class="top"><span>CELLBEAT · DPX CB440</span><span>CD / DSP / NET RADIO</span></div>
@@ -95,8 +103,9 @@ input[type=range]{width:150px;max-width:100%;accent-color:#7dffff}
  <div class="meter" id="meter" aria-hidden="true"></div></div>
  <div class="readout-bottom"><span id="mode">LIVE MP3</span><span id="volumeText">VOL 60</span></div>
 </div></div>
-<nav id="memory" class="buttons" aria-label="Ten station memory presets, including bEAST"></nav>
+<nav id="memory" class="buttons" aria-label="Fourteen station memory presets, including bEAST and LAI-Z FR0g"></nav>
 <div class="beast-promo"><div><strong>bEAST — THE SOAP FACED KILLA</strong><span> · PURE SYNTHETIC SIGNAL · CHANNELS 07–10</span></div><a href="/beast/">EXPLORE bEAST TRACKS</a></div>
+<div class="frog-promo"><div><strong>LAI-Z FR0g — AFTER HOURS AT THE LILY EXCHANGE</strong><span> · REGGAE / PSYCHEDELIA / ELECTRONIC JAZZ FABLES · CH 11–14</span></div><a href="/fr0g/">ENTER THE LILY EXCHANGE</a></div>
 <div class="controlbar">
  <button id="back" class="hwbutton" type="button" aria-label="Previous channel">◀◀</button>
  <button id="play" class="hwbutton primary" type="button">▶ PLAY</button>
@@ -110,9 +119,9 @@ input[type=range]{width:150px;max-width:100%;accent-color:#7dffff}
  <p id="details">Connecting to a station joins the original Cellbeat program at its current live position, not the beginning of a recording.</p>
  <div class="links"><a id="direct" href="/live/1.mp3" target="_blank" rel="noopener noreferrer">Open direct live MP3</a><a id="hls" href="/hls/1/index.m3u8" target="_blank" rel="noopener noreferrer">Apple HLS stream</a><a href="/api/stations" target="_blank" rel="noopener noreferrer">Station status API</a></div>
  </section>
- <section class="pane"><h2>TEN LIVE STREAM ADDRESSES</h2>
+ <section class="pane"><h2>FOURTEEN LIVE STREAM ADDRESSES</h2>
  <div class="station-links" id="stationLinks"></div>
- <p>The six original programs and four bEAST compositions all share a UTC radio clock. Select any of ten stations to hear the program in progress. bEAST is a synthetic music identity, not a human performer.</p>
+ <p>The six original programs, four bEAST bangers, and four LAI-Z FR0g dub-jazz fables all share a UTC radio clock. Select any of fourteen stations to hear a program in progress. Both artists are synthetic music identities, not human performers.</p>
  </section>
 </div>
 <p class="note">Original Cellbeat music, rendered to MP3 and broadcast by this service. Stations loop their authored music programs; they are not third-party radio stations. Streaming begins when you press Play. A sleeping/free hosting instance may need to wake before playback; uninterrupted 24/7 availability requires always-on hosting.</p>
@@ -131,7 +140,11 @@ const names=[
  ["bEAST / BANG SWITCH",152,"BANG"],
  ["bEAST / PLASTIC HEAVEN",128,"PLASTIC"],
  ["bEAST / KILLA KLEAN",146,"KILLA"],
- ["bEAST / HEARTDRIVE",116,"HEART"]
+ ["bEAST / HEARTDRIVE",116,"HEART"],
+ ["LAI-Z FR0g / THE FROG WHO BORROWED MIDNIGHT",80,"FR0G 1"],
+ ["LAI-Z FR0g / NEON LILY TAXI",106,"LILY TAXI"],
+ ["LAI-Z FR0g / THE MOON OWED THE RIVER A SONG",88,"MOON SONG"],
+ ["LAI-Z FR0g / LAST CALL AT THE NEPTUNE DINER",112,"NEPTUNE"]
 ];
 let channel=0,playing=false,method="live",requestId=0;
 const audio=$("audio");
@@ -140,7 +153,7 @@ function src(i){let hls='/hls/'+(i+1)+'/index.m3u8',mp3='/live/'+(i+1)+'.mp3';re
 function render(){
  $("ch").textContent="CB "+String(channel+1).padStart(2,'0');
  $("name").textContent=names[channel][0].toUpperCase();
- $("subtitle").textContent=names[channel][1]+" BPM · "+(channel>=6?"bEAST · THE SOAP FACED KILLA":"ORIGINAL CELLBEAT MUSIC");
+ $("subtitle").textContent=names[channel][1]+" BPM · "+(channel>=10?"LAI-Z FR0g · PSYCHEDELIC DUB JAZZ":channel>=6?"bEAST · THE SOAP FACED KILLA":"ORIGINAL CELLBEAT MUSIC");
  $("play").textContent=playing?"Ⅱ PAUSE":"▶ PLAY";
  $("screen").classList.toggle("playing",playing);
  $("direct").href="/live/"+(channel+1)+".mp3";
@@ -173,10 +186,10 @@ function stop(){
  requestId++;audio.pause();audio.removeAttribute("src");audio.load();playing=false;render();setStatus("STOPPED")
 }
 names.forEach((s,i)=>{
- let b=document.createElement("button");b.className="preset"+(i>=6?" beast":"");b.type="button";b.setAttribute("aria-label","Station "+(i+1)+": "+s[0]);
+ let b=document.createElement("button");b.className="preset"+(i>=10?" frog":i>=6?" beast":"");b.type="button";b.setAttribute("aria-label","Station "+(i+1)+": "+s[0]);
  b.textContent=String(i+1);let label=document.createElement("small");label.textContent=s[2];b.appendChild(label);
  b.addEventListener("click",()=>tune(i));$("memory").appendChild(b);
- let a=document.createElement("a");a.className=i>=6?"beast":"";a.href="/live/"+(i+1)+".mp3";a.textContent="CH "+String(i+1)+" · "+s[2];a.target="_blank";a.rel="noopener noreferrer";$("stationLinks").appendChild(a)
+ let a=document.createElement("a");a.className=i>=10?"frog":i>=6?"beast":"";a.href="/live/"+(i+1)+".mp3";a.textContent="CH "+String(i+1)+" · "+s[2];a.target="_blank";a.rel="noopener noreferrer";$("stationLinks").appendChild(a)
 });
 for(let i=0;i<12;i++){let x=document.createElement("i");x.style.setProperty("--h",(15+i*11%80)+"%");x.style.setProperty("--delay",(-i*.13)+"s");$("meter").appendChild(x)}
 const g=document.getElementById("gridLines");const ns="http://www.w3.org/2000/svg";
