@@ -24,6 +24,7 @@ from urllib.parse import urlparse, unquote
 
 ROOT = Path(__file__).resolve().parents[2]
 BASE = Path(__file__).resolve().parent
+BEAST = ROOT / "beast"
 RATE = 44100
 FRAME_SAMPLES = 1152
 FRAME_TIME = FRAME_SAMPLES / RATE
@@ -68,6 +69,23 @@ def load():
         frames=parse_frames(raw)
         result[n]={"id":n,"title":info["title"],"bpm":info["bpm"],
                    "raw":raw,"frames":frames,"duration":len(frames)*FRAME_TIME}
+    # bEAST programs are original, fully synthesized Cellbeat artist tracks.
+    catalog=json.loads((BEAST/"catalog.json").read_text("utf-8"))
+    for item in catalog:
+        n=int(item["id"])
+        if n not in (7,8,9,10) or n in result:
+            raise RuntimeError("Invalid bEAST channel number")
+        filename=BEAST/"tracks"/(item["slug"]+".mp3")
+        if not filename.is_file():
+            raise RuntimeError(f"Missing generated bEAST music: {filename}")
+        raw=filename.read_bytes()
+        frames=parse_frames(raw)
+        result[n]={"id":n,"title":"bEAST / "+item["title"],
+                   "bpm":item["bpm"],"artist":"bEAST — the soap faced killa",
+                   "page":"/beast/","genre":item["genre"],
+                   "raw":raw,"frames":frames,"duration":len(frames)*FRAME_TIME}
+    if len(result)!=10:
+        raise RuntimeError("Expected 10 Cellbeat music stations")
     return result
 
 STATIONS = load()
@@ -118,6 +136,8 @@ class Receiver(BaseHTTPRequestHandler):
         path=unquote(parsed.path)
         if path in ("/","/listen","/index.html"):
             return self.send_bytes((BASE/"receiver.html").read_bytes(),"text/html; charset=utf-8",head)
+        if path in ("/beast","/beast/","/beast/index.html"):
+            return self.send_bytes((BEAST/"index.html").read_bytes(),"text/html; charset=utf-8",head)
         if path=="/health":
             return self.send_bytes(b"ok\n","text/plain; charset=utf-8",head)
         if path=="/api/stations":
@@ -125,6 +145,7 @@ class Receiver(BaseHTTPRequestHandler):
             data={"service":"Cellbeat Radio","clock":"UTC-synchronized",
                   "utc":datetime.fromtimestamp(now,timezone.utc).isoformat(),
                   "on_air":[{"id":n,"title":s["title"],"bpm":s["bpm"],
+                             "artist":s.get("artist","Cellbeat Mini"),"page":s.get("page","/"),
                              "direct_mp3":f"/live/{n}.mp3",
                              "hls":f"/hls/{n}/index.m3u8",
                              "clip":f"/clips/{n}.mp3",
@@ -132,7 +153,7 @@ class Receiver(BaseHTTPRequestHandler):
                              "program_duration_s":round(s["duration"],2)}
                             for n,s in STATIONS.items()]}
             return self.send_bytes(json.dumps(data).encode(),"application/json; charset=utf-8",head)
-        m=re.fullmatch(r"/clips/([1-6])\.mp3",path)
+        m=re.fullmatch(r"/clips/((?:[1-9]|10))\.mp3",path)
         if m:
             s=STATIONS[int(m.group(1))]
             data=s["raw"]
@@ -151,10 +172,10 @@ class Receiver(BaseHTTPRequestHandler):
                 if not head:self.wfile.write(chunk)
                 return
             return self.send_bytes(data,"audio/mpeg",head,{"Accept-Ranges":"bytes"})
-        m=re.fullmatch(r"/live/([1-6])\.mp3",path)
+        m=re.fullmatch(r"/live/((?:[1-9]|10))\.mp3",path)
         if m:
             return self.send_live(int(m.group(1)),head)
-        m=re.fullmatch(r"/hls/([1-6])/index\.m3u8",path)
+        m=re.fullmatch(r"/hls/((?:[1-9]|10))/index\.m3u8",path)
         if m:
             n=int(m.group(1))
             seq=int((time.time()-CLOCK_EPOCH)//SEG_DURATION)
@@ -166,7 +187,7 @@ class Receiver(BaseHTTPRequestHandler):
                 parts += [f"#EXTINF:{SEG_DURATION:.6f},",f"{i}.mp3"]
             return self.send_bytes(("\n".join(parts)+"\n").encode(),
                                    "application/vnd.apple.mpegurl",head)
-        m=re.fullmatch(r"/hls/([1-6])/(\d+)\.mp3",path)
+        m=re.fullmatch(r"/hls/((?:[1-9]|10))/(\d+)\.mp3",path)
         if m:
             n,seq=int(m.group(1)),int(m.group(2))
             now_seq=int((time.time()-CLOCK_EPOCH)//SEG_DURATION)
@@ -229,12 +250,12 @@ def self_test(port):
         finally:
             c.close()
     try:
-        for p in ["/","/health","/api/stations"]:
+        for p in ["/","/beast/","/health","/api/stations"]:
             status,mime,data=request(p)
             if status!=200:raise ValueError(p+" returned "+str(status))
-            if p=="/api/stations" and len(json.loads(data)["on_air"])!=6:raise ValueError("Station count mismatch")
+            if p=="/api/stations" and len(json.loads(data)["on_air"])!=10:raise ValueError("Station count mismatch")
             print("SELFTEST OK",p,status,len(data),flush=True)
-        for n in range(1,7):
+        for n in range(1,11):
             status,mime,data=request(f"/live/{n}.mp3",2048)
             if status!=200 or not mime.startswith("audio/mpeg") or len(data)!=2048:
                 raise ValueError(f"Broken live MP3 endpoint {n}: {status} {mime} {len(data)}")
@@ -250,7 +271,7 @@ def self_test(port):
             if status!=206 or len(clip)!=100:
                 raise ValueError(f"Broken clip byte-range support {n}")
             print(f"SELFTEST OK /hls/{n}/... and range /clips/{n}.mp3",flush=True)
-        print("CELLBEAT BROADCAST SELFTEST: 6/6 STATIONS PASS",flush=True)
+        print("CELLBEAT BROADCAST SELFTEST: 10/10 STATIONS PASS",flush=True)
     except Exception as exc:
         print("CELLBEAT BROADCAST SELFTEST FAILED:",repr(exc),flush=True)
 
