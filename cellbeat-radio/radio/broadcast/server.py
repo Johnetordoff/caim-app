@@ -242,7 +242,7 @@ def self_test(port):
             status,mime,data=request(f"/hls/{n}/index.m3u8")
             if status!=200 or not data.startswith(b"#EXTM3U"):
                 raise ValueError(f"Broken HLS playlist {n}")
-            seq=int(re.search(rb"(\\d+)\\.mp3",data).group(1))
+            seq=int(re.search(rb"(\d+)\.mp3",data).group(1))
             status,mime,seg=request(f"/hls/{n}/{seq}.mp3")
             if status!=200 or not mime.startswith("audio/mpeg") or len(seg)<20000:
                 raise ValueError(f"Broken HLS audio segment {n}")
