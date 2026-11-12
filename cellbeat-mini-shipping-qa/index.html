@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Cellbeat Mini · Shipping Verification</title>
+<style>
+:root{--bg:#0b111a;--side:#101924;--panel:#152130;--pane:#192635;--line:#324456;--muted:#98a8ba;--ink:#e8eef4;--sea:#55d3bd;--amber:#ffca6c;--red:#fb7f81;--blue:#9fc9ff;--dim:#223245;--radius:12px}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+a{color:var(--blue)}
+.skip{position:absolute;top:-80px;left:12px;background:#fff;color:#111;padding:8px;z-index:100}.skip:focus{top:8px}
+.shell{display:grid;grid-template-columns:232px minmax(0,1fr);min-height:100vh}
+.sidebar{position:sticky;top:0;height:100vh;background:var(--side);border-right:1px solid var(--line);padding:22px 14px;display:flex;flex-direction:column;gap:22px}
+.brand{display:flex;align-items:center;gap:12px;padding:0 7px}.logo{width:39px;height:39px;border:1px solid var(--sea);border-radius:9px;display:grid;place-items:center;font:900 16px ui-monospace,monospace;color:var(--sea);box-shadow:inset 0 0 18px #55d3bd22}
+.brand strong{font-size:15px;letter-spacing:-.02em}.brand small{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.14em;margin-top:4px}
+.nav{display:grid;gap:5px}.nav button{text-align:left;background:none;color:#aabcce;border:1px solid transparent;padding:11px 12px;border-radius:8px;font-size:13px;display:flex;align-items:center;justify-content:space-between}
+.nav button:hover,.nav button.active{color:var(--ink);background:#203144;border-color:#3c5268}
+.nav .index{font:12px ui-monospace,monospace;color:#6f8aa1}
+.sidefoot{margin-top:auto;font:11px/1.6 ui-monospace,monospace;color:#7890a6;padding:8px;border-top:1px solid var(--line)}
+.main{min-width:0;padding:31px clamp(15px,3vw,48px) 60px}
+.kicker{color:var(--sea);font-size:11px;font-weight:800;letter-spacing:.2em;text-transform:uppercase}
+.top{display:flex;align-items:flex-start;justify-content:space-between;gap:15px;flex-wrap:wrap;margin-bottom:25px}
+h1{font-size:clamp(26px,3.4vw,43px);line-height:1.13;letter-spacing:-.045em;margin:9px 0 8px}
+.subtitle{color:var(--muted);font-size:14px;line-height:1.5;max-width:780px}
+.actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.btn{background:#22364a;border:1px solid #486178;color:var(--ink);border-radius:8px;padding:10px 13px;font-weight:700;font-size:12px;text-decoration:none;white-space:nowrap}
+.btn:hover{background:#30495e}.btn.primary{background:var(--sea);color:#0b2022;border-color:var(--sea)}.btn.warn{border-color:#937744;color:var(--amber)}.btn.small{padding:6px 9px}.btn.ghost{background:transparent}
+.callout{background:#202c36;border:1px solid #735f3b;border-left:4px solid var(--amber);padding:14px 17px;border-radius:8px;margin-bottom:21px;display:flex;gap:15px;align-items:flex-start}
+.callout strong{display:block;color:var(--amber);letter-spacing:.02em;margin-bottom:3px}.callout p{font-size:13px;margin:0;line-height:1.5;color:#c6d1dd}
+.statrow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px;margin-bottom:22px}
+.stat{border:1px solid var(--line);border-radius:var(--radius);padding:16px;background:var(--panel)}
+.stat .val{font-size:29px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.05em}.stat .lab{font-size:11px;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.1em}
+.stat .desc{font-size:11px;color:#b5c4d3;margin-top:9px}
+.columns{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(280px,1fr);gap:16px}
+.panel{border:1px solid var(--line);border-radius:var(--radius);background:var(--panel);margin-bottom:16px;overflow:hidden}
+.panelhead{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:17px 19px;border-bottom:1px solid var(--line)}
+.panelhead h2{font-size:15px;letter-spacing:-.01em;margin:0}.panelhead small{font-size:11px;color:var(--muted)}
+.panelbody{padding:17px 19px}.subhead{font-size:11px;font-weight:800;color:#a5bbcc;text-transform:uppercase;letter-spacing:.13em;margin:19px 0 10px}
+.meta{display:grid;grid-template-columns:120px 1fr;gap:10px;padding:8px 0;border-bottom:1px solid #273b4d;font-size:12px}
+.meta span:first-child{color:var(--muted)}.mono{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;overflow-wrap:anywhere;font-size:12px}
+.pill{font-weight:800;font-size:10px;letter-spacing:.08em;text-transform:uppercase;display:inline-block;padding:4px 7px;border-radius:5px;border:1px solid}
+.pill.unknown,.pill.unverified{color:#b2c2d4;background:#253548;border-color:#405367}
+.pill.pass,.pill.ready{color:var(--sea);background:#153630;border-color:#397769}
+.pill.fail{color:var(--red);background:#42252e;border-color:#81505a}
+.pill.blocked,.pill.hold{color:var(--amber);background:#3a3124;border-color:#776344}
+.muted{color:var(--muted)}.tiny{font-size:11px}.help{font-size:12px;line-height:1.5;color:#aec0d0}
+.progress{height:7px;background:#2b3e50;border-radius:20px;overflow:hidden;margin-top:12px}.progress>div{height:100%;background:var(--sea);transition:width .2s}
+.gates{display:grid;gap:9px}
+.gate{display:flex;gap:12px;align-items:flex-start;justify-content:space-between;border:1px solid #314354;border-radius:8px;padding:12px;background:#182838}
+.gate strong{font-size:13px}.gate p{font-size:11px;color:var(--muted);line-height:1.5;margin:5px 0 0}
+.gate .inputs{display:flex;flex-direction:column;align-items:flex-end;gap:6px;max-width:170px}
+.input,select,textarea{background:#101c29;border:1px solid #435b70;color:var(--ink);border-radius:7px;padding:9px 10px;min-width:0;width:100%;font-size:12px}
+.input:focus,select:focus,textarea:focus{outline:2px solid #4c9c99;outline-offset:1px}
+textarea{resize:vertical;min-height:72px;line-height:1.5}
+label{display:grid;gap:6px;color:#bac9d7;font-size:12px;font-weight:700}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+fieldset{border:1px solid #34485c;border-radius:9px;margin:0;padding:13px;min-width:0}
+legend{font-size:12px;font-weight:900;color:var(--sea);padding:0 6px}
+.fieldbox{display:grid;gap:10px}
+.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:14px}
+.toolbar .input,.toolbar select{width:auto;flex:1;min-width:135px}
+.tblwrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:12px;text-align:left}
+th{text-align:left;color:#a4b6c8;text-transform:uppercase;font-size:10px;letter-spacing:.1em;background:#1d2d3c;white-space:nowrap}
+th,td{padding:12px 11px;border-bottom:1px solid #2f4052;vertical-align:middle}
+td{color:#d4deea}tr:hover td{background:#1c2e3d}
+tbody tr{cursor:pointer}tbody tr.selected td{background:#213a48}
+.case-title{font-weight:750;color:#f1f6fa;font-size:12px}.case-sub{display:block;color:var(--muted);font-size:10px;margin-top:5px}
+.dot{width:8px;height:8px;border-radius:100%;display:inline-block;margin-right:5px;background:#71869b}.dot.pass{background:var(--sea)}.dot.fail{background:var(--red)}.dot.blocked{background:var(--amber)}
+.editorgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(310px,.95fr);gap:16px}
+.rule{padding:12px 0;border-bottom:1px solid #2c3f50}.rule strong{font-size:13px}.rule p{font-size:12px;line-height:1.5;color:#aabccf;margin:5px 0}
+.fixturelist{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.fixture{background:#162635;border:1px solid #35495c;border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:8px}
+.fixture:hover{border-color:#5b8c96}.fixture .num{font:11px ui-monospace,monospace;color:var(--sea)}
+.fixture h3{margin:0;font-size:15px}.fixture p{margin:0;color:#afbdcb;line-height:1.5;font-size:12px;flex:1}
+.fixture .btn{align-self:flex-start;margin-top:4px}
+.step{display:flex;gap:12px;margin-bottom:13px;line-height:1.5;color:#bdc9d4;font-size:13px}
+.step b{background:#294156;color:var(--sea);min-width:25px;height:25px;border-radius:6px;display:grid;place-items:center;font:800 12px ui-monospace,monospace}
+.details{display:none}.details.show{display:block}
+.section{display:none}.section.active{display:block}
+.notice{padding:11px 13px;border-radius:8px;border:1px solid #405b6e;background:#1b303e;color:#bcd2df;font-size:12px;line-height:1.5;margin-bottom:15px}
+.checklist{display:grid;gap:8px}.check{display:flex;align-items:flex-start;gap:10px;padding:8px;border:1px solid #2d4254;border-radius:7px;font-size:12px}.check input{width:16px;height:16px;accent-color:var(--sea)}
+pre{background:#0d1924;border:1px solid #31475c;color:#a6d4d3;border-radius:9px;padding:14px;font-size:11px;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.5}
+.footer{color:#7892a9;margin-top:30px;font:11px/1.6 ui-monospace,monospace}
+.toast{position:fixed;bottom:20px;right:20px;background:#224d47;border:1px solid #63c8b9;color:#e9f9f6;padding:12px 16px;border-radius:9px;box-shadow:0 12px 40px #0007;z-index:15;display:none;font-size:13px}
+@media(max-width:1050px){.columns,.editorgrid{grid-template-columns:1fr}.statrow{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:720px){.shell{display:block}.sidebar{position:static;height:auto;padding:12px;border-right:0;border-bottom:1px solid var(--line);gap:12px}.nav{display:flex;overflow-x:auto}.nav button{white-space:nowrap;padding:9px}.sidefoot{display:none}.main{padding:20px 14px 50px}.top{display:block}.top .actions{margin-top:15px}.grid2,.grid3{grid-template-columns:1fr}.statrow{gap:8px}.stat{padding:12px}.stat .val{font-size:24px}.panelbody{padding:13px}.panelhead{padding:14px}.meta{grid-template-columns:95px 1fr}.gate{flex-direction:column}.gate .inputs{align-items:stretch;width:100%;max-width:none}.toolbar .input,.toolbar select{min-width:100%}}
+@media print{body{background:#fff;color:#111}.sidebar,.actions,.toolbar,.btn,.footer,.toast{display:none!important}.shell{display:block}.main{padding:8px}.section:not(.active){display:none}.panel,.stat,.callout{background:#fff;color:#111;border-color:#aaa;break-inside:avoid}.muted,.help,.subtitle{color:#555}th,td{color:#111}thead{display:table-header-group}}
+</style>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<div class="shell">
+<aside class="sidebar">
+ <div class="brand"><div class="logo">CM<span style="color:#ffca6c">·</span></div><div><strong>Cellbeat Mini</strong><small>Shipping QA / 01</small></div></div>
+ <nav class="nav" aria-label="Workspace">
+  <button data-page="overview" class="active">Overview <span class="index">01</span></button>
+  <button data-page="matrix">Test matrix <span class="index">02</span></button>
+  <button data-page="fixtures">Guided fixtures <span class="index">03</span></button>
+  <button data-page="gates">Release gates <span class="index">04</span></button>
+  <button data-page="issues">Issue handoff <span class="index">05</span></button>
+  <button data-page="settings">Workspace data <span class="index">06</span></button>
+ </nav>
+ <div class="sidefoot">ONE PRODUCT · NO PLAYABLE CLONE<br>Source ≠ deployed ≠ audible<br>LOCAL DATA · EXPORT TO SHARE</div>
+</aside>
+<main id="content" class="main">
+<header class="top"><div><div class="kicker">Quality control / live-product evidence</div><h1 id="pageTitle">Shipping verification</h1><div class="subtitle" id="pageDescription">One canonical Cellbeat Mini. Every release claim must connect to a version, a device, a browser, and reproducible evidence.</div></div><div class="actions"><a class="btn ghost" href="https://github.com/Johnetordoff/cellbeat-mini" target="_blank" rel="noopener">Source ↗</a><a class="btn" href="https://cellbeat-mini.johnetordff.chatgpt.site" id="liveTop" target="_blank" rel="noopener">Open target ↗</a><button class="btn primary" id="exportBtn">Export JSON ↓</button></div></header>
+
+<section id="overview" class="section active">
+ <div id="releaseBanner" class="callout"></div>
+ <div class="statrow" id="stats"></div>
+ <div class="columns">
+  <div>
+   <div class="panel"><div class="panelhead"><h2>Release evidence posture</h2><small>Fail-closed · never inferred</small></div><div class="panelbody"><div id="readiness"></div><div class="progress"><div id="progressFill"></div></div><div class="subhead">Next blocking checks</div><div id="blockerList" class="gates"></div><div style="margin-top:16px"><button class="btn" data-go="gates">Review release gates →</button> <button class="btn ghost" data-go="matrix">Open full matrix →</button></div></div></div>
+   <div class="panel"><div class="panelhead"><h2>Recent source coordination</h2><small>GitHub observation · not test results</small></div><div class="panelbody"><div class="rule"><strong>PR #199 — module/script ordering guard</strong><p>Merged to the shipping source branch. Local synthetic Chromium evidence is documented; no live-app or listening pass is implied.</p><a href="https://github.com/Johnetordoff/cellbeat-mini/pull/199" target="_blank" rel="noopener">Review merged PR #199 ↗</a></div><div class="rule"><strong>PRs #197–198 — BLEAK controls / Safari asset retention</strong><p>Merged shipping guard work. Full source-derived package, live page, live BLEAK and Safari audio still require independent evidence.</p><a href="https://github.com/Johnetordoff/cellbeat-mini/pull/197" target="_blank" rel="noopener">#197 ↗</a> · <a href="https://github.com/Johnetordoff/cellbeat-mini/pull/198" target="_blank" rel="noopener">#198 ↗</a></div><div class="rule" style="border-bottom:0"><strong>Do not promote by assertion</strong><p>Passing unit tests, parsers, static file checks, or a synthetic browser fixture never passes an actual listening or deployed-hash gate.</p></div></div></div>
+  </div>
+  <div>
+   <div class="panel"><div class="panelhead"><h2>Canonical release identity</h2></div><div class="panelbody" id="identity"></div></div>
+   <div class="panel"><div class="panelhead"><h2>Evidence rules</h2></div><div class="panelbody"><div class="rule"><strong>01 · Source inspection</strong><p>Use repository commit, test transcript, build logs, or static-package hash. Not proof of a functional deployed page.</p></div><div class="rule"><strong>02 · Live browser</strong><p>Use actual canonical URL, browser/OS/device, runtime behavior, timestamp, and screenshot or trace.</p></div><div class="rule" style="border-bottom:0"><strong>03 · Listening</strong><p>Record physical headphones/speakers, gesture to unlock sound, audible notes and timing, recording or human observation.</p></div></div></div>
+  </div>
+ </div>
+</section>
+
+<section id="matrix" class="section">
+ <div class="notice">Each row is one use case × one environment × one candidate release. Source, live browser, and listening results are independent. Click any row to edit its evidence and see its gate outcome.</div>
+ <div class="toolbar"><input class="input" id="search" placeholder="Search use case, browser, device, issue…" aria-label="Search test cases"><select id="filterGate" aria-label="Filter gate"><option value="">All gates</option><option value="unverified">Unverified</option><option value="hold">Hold</option><option value="fail">Fail</option><option value="pass">Pass</option></select><select id="filterFixture" aria-label="Filter fixture"><option value="">All fixtures</option></select><button class="btn primary" id="addTest">+ Test row</button></div>
+ <div class="panel"><div class="tblwrap"><table><thead><tr><th>Use case</th><th>Browser / OS</th><th>Device / output</th><th>Source</th><th>Live</th><th>Listen</th><th>Release gate</th></tr></thead><tbody id="matrixBody"></tbody></table></div></div>
+ <div id="editArea"></div>
+</section>
+
+<section id="fixtures" class="section">
+ <div class="notice">These are <strong>guided test procedures</strong> against the shipped Cellbeat Mini UI. They are not replacement songs, a second player, or fabricated pattern JSON. Compare observed behavior and capture evidence.</div>
+ <div class="fixturelist" id="fixtureCards"></div>
+ <div id="fixtureDetail" style="margin-top:19px"></div>
+</section>
+
+<section id="gates" class="section">
+ <div class="notice">A checked-in fix is not a deployed fix. Package verification, live fingerprint matching, actual playback and platform tests all remain separate. Release decision is computed; recording an “N/A” needs an explanation.</div>
+ <div class="columns"><div class="panel"><div class="panelhead"><h2>Mandatory release gates</h2><small>Editable evidence / status</small></div><div class="panelbody" id="gateEditor"></div></div><div><div class="panel"><div class="panelhead"><h2>Gate logic</h2></div><div class="panelbody"><div class="rule"><strong>READY</strong><p>All mandatory independent gates pass, every critical matrix row has its required evidence and regression check, and deployed hash matches the proposed release.</p></div><div class="rule"><strong>HOLD</strong><p>Any mandatory check is unknown, blocked or missing qualified evidence. An unknown is never a pass.</p></div><div class="rule"><strong>FAIL</strong><p>Any mandatory gate fails, or any critical test records a failure in a required evidence channel.</p></div><div class="rule"><strong>Regression</strong><p>A fix is not closed until retested on the same failing environment, then on relevant neighboring environments and the canonical live build.</p></div></div></div><div class="panel"><div class="panelhead"><h2>Release decision</h2></div><div class="panelbody" id="gateDecision"></div></div></div></div>
+</section>
+
+<section id="issues" class="section">
+ <div class="columns"><div class="panel"><div class="panelhead"><h2>Failure-first issue queue</h2><small>From test evidence, not guesses</small></div><div class="panelbody" id="issueQueue"></div></div><div class="panel"><div class="panelhead"><h2>Handoff format</h2></div><div class="panelbody"><p class="help">Select a failed or blocked matrix row, then copy a GitHub-ready issue summary. It includes environment, release SHA, observed failure, reproducibility, evidence, smallest fix and regression gate.</p><select id="issueSelect" aria-label="Issue case"></select><div style="margin-top:11px"><button class="btn primary" id="copyIssue">Copy issue Markdown</button> <button class="btn" id="copySummary">Copy release summary</button></div><div class="subhead">Issue preview</div><pre id="issuePreview"></pre><div class="notice">Copy does not open, create or update a GitHub issue. Paste into the canonical repository after reviewing the evidence. Existing issue URL can be stored in the row.</div></div></div></div>
+</section>
+
+<section id="settings" class="section">
+ <div class="columns"><div class="panel"><div class="panelhead"><h2>Release identity and URLs</h2></div><div class="panelbody fieldbox" id="settingsFields"></div></div><div><div class="panel"><div class="panelhead"><h2>Data management</h2></div><div class="panelbody"><p class="help">Records persist in this browser only. Export a JSON snapshot before switching browsers, devices or sharing evidence. No repository or deployment changes are made by this dashboard.</p><div class="actions"><button class="btn primary" id="exportFull">Export workspace JSON</button><button class="btn" id="csvBtn">Export test matrix CSV</button><button class="btn" id="importBtn">Import JSON</button><input type="file" id="fileImport" accept=".json,application/json" hidden></div><div class="subhead">Reset</div><p class="help">Reset restores the initial blank/unverified records; exported snapshots are unaffected.</p><button class="btn warn" id="resetBtn">Reset local workspace</button></div></div><div class="panel"><div class="panelhead"><h2>Provenance</h2></div><div class="panelbody"><p class="help">Starting GitHub branch and commit were checked on 2026-11-12. That check does not verify deployed content. Site URL is a target from repository README. Case statuses start unknown, and no automated browser, sound or deployment test results are prefilled.</p><p class="tiny muted">Self-contained static HTML · zero external runtime dependencies · no audio engine · no telemetry</p></div></div></div></div>
+</section>
+<div class="footer">Cellbeat Mini Shipping Verification · workspace only · no songs published · Classic untouched · no GitHub Actions · last source observation 2026-11-12 08:20 ET</div>
+</main>
+</div>
+<div class="toast" id="toast" role="status"></div>
+<script>
+"use strict";
+const STORE="cellbeat-mini-shipping-verification-v1";
+const BASE_SHA="1950188eb453a03a95a5799c66524b224a7a3781";
+const ROOT_URL="https://cellbeat-mini.johnetordoff.chatgpt.site/";
+const FIXTURES=[
+{id:"cadence",name:"Cadence & tempo",category:"Timing",critical:true,description:"Verify quarter-beat ticks, rate independence and audible pulse.",expected:"At BPM B, internal tick period is 60,000 / (4×B) ms. Robot movement respects each robot's ticks-per-move; tone on arrival is audible in time.",steps:["Start a simple one-robot repeating note at a fixed BPM, e.g. 120. Log the audible pulse and movement for 16 ticks.","Set Ticks per move to 1, 2, then 4 without changing BPM. Compare motion to tick counter and listening cadence.","Change tempo during playback; verify phase continuity and that output timing agrees with event trace.","Compare a 30-second recording and timestamped events against expected intervals. Repeat via speakers and headphones."],signals:"Clock/tick trace, BPM, 16-tick count, waveform or actual audio recording",source:true,browser:true,listening:true},
+{id:"robot",name:"Robot movement",category:"Mechanics",critical:true,description:"Starting positions, independent speeds, deterministic phases and resets.",expected:"Each robot advances on its own eligible tick; WAIT/BLOCK state is legible. Reset returns to starts and rearms phases; unchanged rates don't reset.",steps:["Add a second robot on a different start. Give robots distinct ticks-per-move values.","Observe 16 ticks and log grid, cell, heading, phase and any WAIT/BLOCK.","Pause/resume and change only one robot rate; verify unaffected robot phase.","Reset and replay the exact fixture; compare deterministic event sequence."],signals:"Position/phase trace and before/after screenshots",source:true,browser:true,listening:false},
+{id:"turn",name:"Turn & event order",category:"Mechanics",critical:true,description:"Ahead-cell turn effects versus arrival-cell note, REC, END and portal effects.",expected:"Turns/flips act on the cell ahead; tones, recording commands, END and portals trigger on arrival. The same seed and inputs give the same event order.",steps:["Place a fixed facing arrow ahead of a robot and a tone on the arrival path.","Record direction and tone arrival event order, then add a portal and END.","Run twice from Reset with identical state and compare serialized ordered event traces.","Inspect whether a turn unexpectedly triggers sound or an arrival is skipped."],signals:"Ordered action/event trace and video capture",source:true,browser:true,listening:true},
+{id:"edge",name:"Edges, collisions & portals",category:"Mechanics",critical:true,description:"Boundary interactions, contested destinations, one portal transfer per tick.",expected:"No robots stack on contested targets; WAIT/BLOCK or applicable edge behavior is coherent. A robot transfers through a valid portal at most once per tick.",steps:["Place a robot approaching each grid boundary and capture expected direction/state.","Arrange two robots competing for one destination; record occupancy and movement order.","Place paired portals across grids, then an orphaned portal after deletion.","Repeat from identical seed; log edge, collision, blocked and portal events."],signals:"Before/after state snapshots, position trace",source:true,browser:true,listening:false},
+{id:"tones",name:"Tone/sample events",category:"Audio",critical:true,description:"12 tones, instruments, sample bank, mute, chorus, echo, tail behavior.",expected:"Selected notes and native sample kit play on eligible arrivals, with audible distinctions. Muted arrivals do not emit new voices; existing tails may ring out.",steps:["Create 12 pitches plus one kick, snare, hat and bass sample, each with predictable arrivals.","Listen to each patch on speakers/headphones and compare event times to the robot.","Toggle MUTE and effects while capturing live and WAV playback.","Capture wrong-note, missing sample, silence, clipping, or unexpected tail behavior."],signals:"Actual listening notes plus audio/waveform and event trace",source:true,browser:true,listening:true},
+{id:"save",name:"Save/open round trip",category:"Data",critical:true,description:"Persistence across reload, schema migration and deterministic playback.",expected:"A saved canonical Mini song/pattern reloads without losing grids, robot IDs, phases, cells, effects, portal pairs or event behavior; supported older inputs migrate safely.",steps:["Set a nontrivial song with multiple grids, rates, counters and effects.","Save Pattern; inspect exported version and essential fields without mutating file.","Reload app, Open Pattern, then compare structure, UI and deterministic event trace.","Try one supported legacy fixture; record explicit migration differences."],signals:"Original + reloaded JSON hashes, schema version, event-trace equality",source:true,browser:true,listening:true},
+{id:"download",name:"Downloads & WAV",category:"Data",critical:true,description:"Correct filenames, format, durations and audio event parity.",expected:"JSON and WAV downloads complete, decode correctly, and represent the intended composition without missing notes or unexpected truncation.",steps:["Download a saved pattern and confirm file can be reopened.","Record an audio take and download WAV; inspect MIME/header/sample rate, duration and nonzero data.","Audibly compare downloaded WAV with live playback for identical seed/state.","Repeat from Safari; note file-picker, download name or gesture constraints."],signals:"Downloaded file hashes, decoded duration and actual listening report",source:true,browser:true,listening:true},
+{id:"sharing",name:"Sharing & links",category:"Network",critical:true,description:"Share/open URL, persistence across clean sessions, error transparency.",expected:"A generated share link (when supported) opens the same song on a clean browser/device and does not silently claim success if the backend is unavailable.",steps:["Use the shipping Share control; capture URL, request/response and UI confirmation.","Open on another clean browser/device without local cached state.","Compare reconstructed pattern and playback events with source.","Simulate backend failure/expired link and verify explicit user-visible failure."],signals:"Live URL + network trace + cross-client import/play check",source:true,browser:true,listening:true},
+{id:"bleak",name:"BLEAK vote / feedback",category:"Network",critical:true,description:"Thumb controls, transport, queue, acknowledgments, idempotency.",expected:"Thumbs are visible, enabled and respond to one intentional click; backend response is truthful. Retry/offline behavior must not duplicate votes or claim success without acknowledgment.",steps:["On the live page locate thumbs-up and thumbs-down in actual DOM.","Submit one vote; capture request, response status, UI acknowledgment and server record if accessible.","Test offline/failed response, repeat/click spam, expiry, cross-tab and reload.","Verify ordered classic-script wiring and asset paths, then repeat on Safari."],signals:"Full live HTTP exchange, UI screenshot, persistence/idempotency observation",source:true,browser:true,listening:false},
+{id:"safari",name:"Safari layout & audio",category:"Platform",critical:true,description:"Touch controls, viewport, unlock gestures, background/recovery and sound.",expected:"No clipping or horizontal overlap on iPhone/iPad Safari. One deliberate gesture unlocks audio; Play produces actual sound, and route/visibility changes recover safely.",steps:["Open canonical URL in Safari on real iPhone, portrait then landscape.","Inspect control alignment, scrolling, safe areas and tap targets; screenshot both orientations.","Tap Play with volume and silent switch appropriately set; actually listen via speaker then headphones.","Background/foreground, lock/unlock, re-tap Play; record AudioContext and visible/audible results."],signals:"Device+OS version, screenshots, physical listening, audio route",source:true,browser:true,listening:true},
+{id:"native",name:"Native Cellbeat 2 parity",category:"Compatibility",critical:true,description:"Document behavior equivalence and deliberate differences, not fictional identity.",expected:"Compare native Cellbeat 2 against Mini for common supported grid, timing, note and save behaviors. Unsupported native collisions or import paths must be documented as gaps, not passed.",steps:["Open equivalent supported fixture in native Cellbeat 2 and canonical Mini.","Compare BPM-to-tick ratio and audible event timestamps, then turn and edge behavior.","Compare native PCM sample identities and event order where shared.","Record deliberate gaps: native pass-through/overtaking and cross-format import are not presumed supported."],signals:"Side-by-side trace, physical audio comparisons, exact version IDs",source:true,browser:true,listening:true},
+{id:"deployment",name:"Canonical URL & fingerprint",category:"Release",critical:true,description:"Prove the deployed root is the intended shipping code, not a stale former beta.",expected:"Canonical root serves approved source-derived package at current release SHA; former /beta/ safely redirects with query/hash. No iframe and no divergent playable product.",steps:["Build package from complete shipping source checkout, run verifier and hash manifest.","Fetch canonical root, hashed JS/CSS and asset URLs; compare to manifest.","Open the root in a fresh browser; verify no iframe, no stale assets, no duplicate playable beta.","Verify former /beta/ bookmark redirects preserving query/hash, Classic stays untouched."],signals:"Source commit, full package hash, curl/browser network trace, redirect URL",source:true,browser:true,listening:false},
+{id:"responsive",name:"Desktop & mobile interactions",category:"Platform",critical:false,description:"UI editing controls, precise grid taps, scrolling and keyboard/touch state.",expected:"Controls remain readable and tappable; editing/undo/redo work without accidental drag or scroll behavior.",steps:["Test mouse, touch and keyboard controls on representative browsers.","Select robot, place note, undo/redo, open ? Program, apply/cancel.","Resize viewport and rotate screen; identify overlapped or inaccessible controls.","Record screenshots and reproducible gesture sequence."],signals:"Screenshots, interaction video, browser console",source:false,browser:true,listening:false},
+{id:"stability",name:"Play/Stop and recovery",category:"Audio",critical:true,description:"Repeated Play/Stop, tempo edits, foreground change and audio-context stability.",expected:"Every Play/Stop cycle consistently starts or stops motion and sound, no duplicate scheduler, no stuck or doubled notes.",steps:["Run ten Play→Stop→Play cycles, logging tick and audible starts.","Change tempo, switch tab, background browser, then resume and Play.","Verify a single active scheduler and no doubled sound/ghost robots.","Repeat after network disconnection and app reload."],signals:"Console trace, elapsed-tick log and actual listening",source:true,browser:true,listening:true}
+];
+const MATRIX_ENV=[
+["cadence","Chrome","MacBook","macOS","Built-in speakers"],["cadence","Safari","iPhone","iOS","Phone speaker"],
+["robot","Chrome","MacBook","macOS","Built-in speakers"],["turn","Chrome","MacBook","macOS","Built-in speakers"],
+["edge","Chrome","MacBook","macOS","Built-in speakers"],["tones","Chrome","MacBook","macOS","Headphones"],
+["tones","Safari","iPhone","iOS","Phone speaker"],["save","Chrome","MacBook","macOS","Built-in speakers"],
+["save","Firefox","Windows PC","Windows","Headphones"],["download","Chrome","MacBook","macOS","Headphones"],
+["download","Safari","iPad","iPadOS","Tablet speakers"],["sharing","Chrome","Windows PC","Windows","Headphones"],
+["sharing","Safari","iPhone","iOS","Headphones"],["bleak","Chrome","MacBook","macOS","Built-in speakers"],
+["bleak","Safari","iPhone","iOS","Phone speaker"],["safari","Safari","iPhone","iOS","Phone speaker"],
+["safari","Safari","iPad","iPadOS","Bluetooth headphones"],["native","Safari","MacBook","macOS","Headphones"],
+["native","Chrome","Windows PC","Windows","Speakers"],["deployment","Chrome","MacBook","macOS","Built-in speakers"],
+["deployment","Safari","iPhone","iOS","Phone speaker"],["responsive","Edge","Windows PC","Windows","Speakers"],
+["responsive","Safari","iPhone","iOS","Phone speaker"],["stability","Safari","iPhone","iOS","Phone speaker"],
+["stability","Chrome","MacBook","macOS","Headphones"]
+];
+const GATE_DEFAULTS=[
+{id:"source",title:"Canonical source identity",description:"The ONE shipping branch and exact commit are recorded from GitHub.",status:"pass",evidence:"GitHub branch beta → 1950188eb453a03a95a5799c66524b224a7a3781, observed 2026-11-12 08:20 ET",kind:"source"},
+{id:"checkout",title:"Full checkout and test suite",description:"Complete checkout, all relevant tests executed on the intended commit.",status:"unknown",evidence:"",kind:"source"},
+{id:"package",title:"Shipping build / package integrity",description:"Execute source-derived builder; compare all files to expected digest tree.",status:"unknown",evidence:"",kind:"source"},
+{id:"canonical",title:"Live root / deployed commit match",description:"Fetch canonical root and all fingerprinted assets; match the approved SHA.",status:"unknown",evidence:"",kind:"live"},
+{id:"redirect",title:"Former /beta/ compatibility URL",description:"One product root; bookmark path preserves query/hash; no second player.",status:"unknown",evidence:"",kind:"live"},
+{id:"browser",title:"Live browser interaction",description:"Representative actual deployed session, controls, state, network, and recordings.",status:"unknown",evidence:"",kind:"live"},
+{id:"audio",title:"Physical listening verification",description:"At least one headphones and one speakers run with audible results; Safari included.",status:"unknown",evidence:"",kind:"listening"},
+{id:"safari",title:"Real Safari layout/audio",description:"Real iPhone/iPad Safari touch, sound and lifecycle evidence.",status:"unknown",evidence:"",kind:"listening"},
+{id:"bleak",title:"Live BLEAK transport and sharing",description:"Actual confirmations, retry/error transparency and cross-browser sharing.",status:"unknown",evidence:"",kind:"live"},
+{id:"parity",title:"Native Cellbeat 2 comparison",description:"Same supported fixtures compared; gaps explicitly documented and triaged.",status:"unknown",evidence:"",kind:"listening"},
+{id:"regression",title:"Fix verification and regression sweep",description:"Re-test first-failure environments and neighboring platforms.",status:"unknown",evidence:"",kind:"live"}
+];
+const freshProof=()=>({status:"unknown",result:"",evidence:"",at:"",tester:""});
+const nowISO=()=>new Date().toISOString();
+function createRow(id,env){let f=FIXTURES.find(x=>x.id===id);return {id:"case-"+Math.random().toString(36).slice(2,10),fixture:id,caseName:f.name,browser:env[1],device:env[2],os:env[3],output:env[4],url:ROOT_URL,version:BASE_SHA,expected:f.expected,actual:"",repro:"",firstFailure:"",fix:"",regression:"",regressionStatus:"unknown",issueUrl:"",priority:f.critical?"P0":"P2",source:freshProof(),live:freshProof(),listening:freshProof(),created:nowISO(),updated:nowISO()};}
+function initialState(){return {settings:{sourceRepo:"Johnetordoff/cellbeat-mini",branch:"beta",sourceSha:BASE_SHA,releaseLabel:"one-product shipping candidate",canonicalUrl:ROOT_URL,legacyUrl:ROOT_URL+"beta/",deployedSha:"",observedAt:"2026-11-12 08:20 ET",releaseNotes:"One canonical Cellbeat Mini. Former beta is the designated shipping implementation; publication and deployed hash remain unverified."},rows:MATRIX_ENV.map(e=>createRow(e[0],e)),gates:GATE_DEFAULTS.map(x=>({...x})),selected:null,fixtureSelected:null,schema:1}};
+function load(){try{let x=JSON.parse(localStorage.getItem(STORE));if(x&&Array.isArray(x.rows)&&Array.isArray(x.gates)&&x.settings)return x}catch(e){}return initialState()}
+let state=load();let page="overview";let currentFilter={search:"",gate:"",fixture:""};
+const $=id=>document.getElementById(id);
+const escapeHtml=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const pill=s=>'<span class="pill '+escapeHtml(s==="unknown"?"unverified":s)+'">'+escapeHtml(s==="unknown"?"unverified":s)+'</span>';
+const formatDate=s=>s?new Date(s).toLocaleString():"not recorded";
+function save(){try{localStorage.setItem(STORE,JSON.stringify(state))}catch(e){toast("Local storage unavailable — export snapshots to preserve results")}}
+function toast(s){$("toast").textContent=s;$("toast").style.display="block";clearTimeout(toast._timer);toast._timer=setTimeout(()=>$("toast").style.display="none",2500)}
+function requirements(row){let f=FIXTURES.find(x=>x.id===row.fixture)||FIXTURES[0];return ["source","live","listening"].filter(k=>f[k]);}
+function gateStatus(row){let req=requirements(row);if(req.some(k=>row[k]?.status==="fail"))return"fail";if(req.some(k=>row[k]?.status==="blocked"))return"hold";if(req.some(k=>!row[k]||row[k].status!=="pass"))return"unverified";if(row.regressionStatus==="fail")return"fail";if(row.regressionStatus!=="pass")return"unverified";return"pass";}
+function overviewNumbers(){const critical=state.rows.filter(r=>(FIXTURES.find(f=>f.id===r.fixture)||{}).critical);return {passed:critical.filter(r=>gateStatus(r)==="pass").length,total:critical.length,fails:critical.filter(r=>gateStatus(r)==="fail").length,unverified:critical.filter(r=>["hold","unverified"].includes(gateStatus(r))).length,globalPassed:state.gates.filter(g=>g.status==="pass"&&g.evidence.trim()).length};}
+function releaseStatus(){let critical=state.rows.filter(r=>(FIXTURES.find(f=>f.id===r.fixture)||{}).critical),statuses=[...state.gates.map(g=>g.status==="pass"&&!g.evidence.trim()?"unknown":g.status),...critical.map(gateStatus)];if(statuses.includes("fail"))return"fail";if(statuses.some(s=>s!=="pass"))return"hold";return"ready";}
+function summaryText(){let n=overviewNumbers(),st=releaseStatus(),g=state.gates.filter(x=>x.status!=="pass"||!x.evidence.trim());let bad=state.rows.filter(x=>gateStatus(x)!=="pass"&&(FIXTURES.find(f=>f.id===x.fixture)||{}).critical);return `CELLBEAT MINI — SINGLE PRODUCTION RELEASE\\nDecision: ${st.toUpperCase()}\\nSource: ${state.settings.sourceRepo} [${state.settings.branch}] @ ${state.settings.sourceSha}\\nTarget: ${state.settings.canonicalUrl}\\nDeployed SHA: ${state.settings.deployedSha||"UNVERIFIED"}\\nCritical cases passed: ${n.passed}/${n.total}; failed: ${n.fails}; pending/blocked: ${n.unverified}\\nGlobal gates passed: ${n.globalPassed}/${state.gates.length}\\nBlocking release gates: ${g.map(x=>x.title+" ("+x.status+")").join("; ")||"none"}\\nUnpassed critical cases: ${bad.slice(0,12).map(x=>x.caseName+" / "+x.browser+" "+x.device+" ("+gateStatus(x)+")").join("; ")||"none"}\\nPolicy: Source, live browser and physical listening are separate. No beta/product split. Never infer deployment from merge.\\nSnapshot: ${nowISO()}`.replace(/\\n/g,"\n");}
+function setPage(name){page=name;document.querySelectorAll(".section").forEach(s=>s.classList.toggle("active",s.id===name));document.querySelectorAll("[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===name));let head={overview:["Shipping verification","One canonical Cellbeat Mini. A release is only verified when the actual deployed build and audio are evidenced."],matrix:["Device & browser matrix","Track each use case, device, OS, audio route, release version, expected outcome, observed result and regression."],fixtures:["Guided comparison fixtures","Reproducible test procedures. The actual Cellbeat Mini, not a simulated player."],gates:["Release gates","Release approval requires independent source, full-package, live-site and listening evidence."],issues:["Issue handoff","A failure-first, smallest-fix and regression queue tied to the exact environment and release."],settings:["Workspace data","Version identity, local records, import/export and provenance."]}[name];$("pageTitle").textContent=head[0];$("pageDescription").textContent=head[1];render();window.scrollTo(0,0);}
+function render(){if(page==="overview")renderOverview();if(page==="matrix")renderMatrix();if(page==="fixtures")renderFixtures();if(page==="gates")renderGates();if(page==="issues")renderIssues();if(page==="settings")renderSettings();let u=state.settings.canonicalUrl;$("liveTop").href=u.startsWith("https://")?u:ROOT_URL;}
+function renderOverview(){
+ const n=overviewNumbers(),st=releaseStatus();
+ $("releaseBanner").innerHTML=`<div style="font-size:26px">${st==="ready"?"✓":st==="fail"?"✕":"!"}</div><div><strong>${st==="ready"?"READY — all recorded gates passed":st==="fail"?"FAIL — verified blocking defect":"HOLD — release not independently verified"}</strong><p>${st==="ready"?"Record a release sign-off and publish only the approved, hash-matched artifact.":st==="fail"?"A mandatory gate or critical test has a confirmed failing result. Prioritize first reproducible failure.":"The canonical branch is known, but full deployment, browser and physical listening evidence cannot be inferred. All missing checks remain open."}</p></div>`;
+ $("stats").innerHTML=[[""+n.passed+"/"+n.total,"Critical cases passed","Only full evidence plus regression"],[String(n.fails),"Confirmed failures","Required-channel failures"],[String(n.unverified),"Pending / blocked","Unknown is not pass"],[n.globalPassed+"/"+state.gates.length,"Release gates","Independent confirmations"]].map(([v,l,d])=>`<div class="stat"><div class="val">${escapeHtml(v)}</div><div class="lab">${l}</div><div class="desc">${d}</div></div>`).join("");
+ let p=Math.round(100*((n.passed+n.globalPassed)/(n.total+state.gates.length)));$("progressFill").style.width=p+"%";$("readiness").innerHTML=`<strong style="font-size:13px">${p}% strictly verified across required checks</strong><div class="help">Counting only explicit evidence-backed passes. Not a quality or uptime estimate.</div>`;
+ $("blockerList").innerHTML=state.gates.filter(g=>g.status!=="pass"||!g.evidence.trim()).slice(0,5).map(g=>`<div class="gate"><div><strong>${escapeHtml(g.title)}</strong><p>${escapeHtml(g.description)}</p></div>${pill(g.status)}</div>`).join("")||`<div class="help">No separate release gates pending. Check the use-case matrix.</div>`;
+ let id=state.settings;$("identity").innerHTML=[["Repository",id.sourceRepo],["Branch",id.branch],["Source commit",id.sourceSha],["Deployed commit",id.deployedSha||"Unknown — do not infer"],["Release model","ONE product · direct static"],["Target URL",`<a href="${escapeHtml(id.canonicalUrl.startsWith("https://")?id.canonicalUrl:ROOT_URL)}" target="_blank" rel="noopener">${escapeHtml(id.canonicalUrl)}</a>`],["Former route",escapeHtml(id.legacyUrl)],["Source observed",id.observedAt]].map(([k,v])=>`<div class="meta"><span>${escapeHtml(k)}</span><span class="${k.includes("commit")?"mono":""}">${k==="Target URL"?v:escapeHtml(v)}</span></div>`).join("");
+}
+function renderMatrix(){
+ let f=$("filterFixture");if(!f.dataset.built){f.innerHTML='<option value="">All fixtures</option>'+FIXTURES.map(x=>`<option value="${x.id}">${escapeHtml(x.name)}</option>`).join("");f.dataset.built="1"}
+ $("search").value=currentFilter.search;$("filterGate").value=currentFilter.gate;f.value=currentFilter.fixture;
+ const rows=state.rows.filter(r=>{let q=currentFilter.search.toLowerCase();return(!q||[r.caseName,r.browser,r.device,r.os,r.output,r.issueUrl,r.version].join(" ").toLowerCase().includes(q))&&(!currentFilter.gate||gateStatus(r)===currentFilter.gate)&&(!currentFilter.fixture||r.fixture===currentFilter.fixture)});
+ $("matrixBody").innerHTML=rows.map(r=>`<tr data-row="${escapeHtml(r.id)}" class="${state.selected===r.id?"selected":""}" tabindex="0" aria-label="Edit ${escapeHtml(r.caseName)} on ${escapeHtml(r.browser)}"><td><span class="case-title">${escapeHtml(r.caseName)}</span><span class="case-sub">${escapeHtml(r.version.slice(0,10))} · ${escapeHtml(r.priority)}</span></td><td>${escapeHtml(r.browser)}<span class="case-sub">${escapeHtml(r.os)}</span></td><td>${escapeHtml(r.device)}<span class="case-sub">${escapeHtml(r.output)}</span></td><td>${pill(r.source.status)}</td><td>${pill(r.live.status)}</td><td>${pill(r.listening.status)}</td><td>${pill(gateStatus(r))}</td></tr>`).join("")||`<tr><td colspan="7" class="help">No cases match this filter. Clear filters or add a test.</td></tr>`;
+ renderEditor();
+}
+function options(vals,v){return vals.map(x=>`<option value="${escapeHtml(x)}" ${x===v?"selected":""}>${escapeHtml(x)}</option>`).join("")}
+const simpleStatuses=["unknown","pass","fail","blocked","not-applicable"];
+function field(name,key,val,type="text"){return `<label>${name}${type==="textarea"?`<textarea data-field="${key}" rows="3">${escapeHtml(val)}</textarea>`:`<input class="input" data-field="${key}" value="${escapeHtml(val)}" type="${type}">`}</label>`;}
+function renderEditor(){
+ let r=state.rows.find(x=>x.id===state.selected);if(!r){$("editArea").innerHTML=`<div class="panel"><div class="panelbody help">Choose a row to enter physical listening results, first failure, smallest fix and follow-up evidence. Unselected rows remain unverified.</div></div>`;return}
+ let f=FIXTURES.find(x=>x.id===r.fixture)||FIXTURES[0];
+ $("editArea").innerHTML=`<div class="editorgrid"><div><div class="panel"><div class="panelhead"><h2>${escapeHtml(r.caseName)} · environment</h2>${pill(gateStatus(r))}</div><div class="panelbody fieldbox"><div class="grid2"><label>Fixture<select data-field="fixture">${options(FIXTURES.map(x=>x.id),r.fixture)}</select></label><label>Priority<select data-field="priority">${options(["P0","P1","P2","P3"],r.priority)}</select></label></div><div class="grid2">${field("Browser","browser",r.browser)}${field("Device","device",r.device)}</div><div class="grid3">${field("Operating system","os",r.os)}${field("Headphones / speakers","output",r.output)}${field("Release version / SHA","version",r.version)}</div>${field("Live tested URL","url",r.url)}${field("Expected result","expected",r.expected,"textarea")}${field("Actual interaction / listening result","actual",r.actual,"textarea")}<div class="grid2">${field("Reproducibility / steps","repro",r.repro,"textarea")}${field("First failure / timestamp","firstFailure",r.firstFailure,"textarea")}</div>${field("Smallest viable fix","fix",r.fix,"textarea")}<div class="grid2">${field("Regression procedure + outcome","regression",r.regression,"textarea")}<label>Regression check<select data-field="regressionStatus">${options(["unknown","pass","fail","blocked"],r.regressionStatus)}</select></label></div>${field("Existing GitHub issue / PR URL","issueUrl",r.issueUrl)}<div class="actions"><button class="btn" id="duplicateRow">Duplicate environment</button><button class="btn" id="openFixture">Guided fixture →</button><button class="btn warn" id="deleteRow">Delete row</button></div><div class="tiny muted">Auto-saved in this browser · last changed ${escapeHtml(formatDate(r.updated))}</div></div></div></div><div><div class="panel"><div class="panelhead"><h2>Independent evidence records</h2><small>Never combine modalities</small></div><div class="panelbody fieldbox">${["source","live","listening"].map(k=>{let x=r[k],required=!!f[k];let title={source:"Source / local build",live:"Canonical live browser",listening:"Physical listening"}[k];return `<fieldset><legend>${title} · ${required?"REQUIRED":"optional"}</legend><div class="fieldbox"><label>Outcome<select data-proof="${k}" data-proof-field="status">${options(simpleStatuses,x.status)}</select></label>${field("Actual observation",k+".result",x.result,"textarea")}${field("Evidence URL / artifact / trace ID",k+".evidence",x.evidence)}<div class="grid2">${field("Date/time",k+".at",x.at)}${field("Tester / device owner",k+".tester",x.tester)}</div></div></fieldset>`}).join("")}<div class="notice">A PASS requires an actual observation and evidence reference in every required channel. Editing the result alone cannot open the gate. Listening PASS requires the physical output route and tester/date.</div><button class="btn primary" id="selectIssue">Prepare issue handoff →</button></div></div></div></div>`;
+ $("editArea").querySelectorAll("[data-field]").forEach(el=>{el.addEventListener("change",e=>{let key=el.dataset.field;if(key.includes(".")){let [a,b]=key.split(".");r[a][b]=el.value}else r[key]=el.value;if(key==="fixture"){let ff=FIXTURES.find(x=>x.id===r.fixture);r.caseName=ff.name;r.expected=ff.expected}r.updated=nowISO();save();setTimeout(()=>{if(page==="matrix")renderMatrix()},0);});});
+ $("editArea").querySelectorAll("[data-proof]").forEach(el=>el.addEventListener("change",()=>{r[el.dataset.proof][el.dataset.proofField]=el.value;r.updated=nowISO();save();setTimeout(()=>{if(page==="matrix")renderMatrix()},0)}));
+ $("duplicateRow").onclick=()=>{let cp=JSON.parse(JSON.stringify(r));cp.id="case-"+Math.random().toString(36).slice(2,10);cp.created=nowISO();cp.updated=nowISO();cp.source=freshProof();cp.live=freshProof();cp.listening=freshProof();cp.regressionStatus="unknown";cp.actual="";cp.issueUrl="";state.rows.push(cp);state.selected=cp.id;save();renderMatrix();toast("New unverified environment created")};
+ $("deleteRow").onclick=()=>{if(confirm("Delete this test row from the local workspace?")){state.rows=state.rows.filter(x=>x.id!==r.id);state.selected=null;save();renderMatrix()}};
+ $("openFixture").onclick=()=>{state.fixtureSelected=r.fixture;setPage("fixtures")};
+ $("selectIssue").onclick=()=>{setPage("issues");$("issueSelect").value=r.id;updateIssuePreview()};
+}
+function renderFixtures(){
+ $("fixtureCards").innerHTML=FIXTURES.map((f,i)=>`<div class="fixture"><div class="num">${String(i+1).padStart(2,"0")} / ${escapeHtml(f.category)} · ${f.critical?"P0 GATE":"coverage"}</div><h3>${escapeHtml(f.name)}</h3><p>${escapeHtml(f.description)}</p><div class="tiny muted">Evidence: ${["source","live","listening"].filter(k=>f[k]).join(" · ")}</div><button class="btn small" data-fixture="${f.id}">Open procedure →</button></div>`).join("");
+ let f=FIXTURES.find(x=>x.id===state.fixtureSelected);$("fixtureDetail").innerHTML=f?`<div class="panel"><div class="panelhead"><h2>Procedure · ${escapeHtml(f.name)}</h2><button class="btn small" id="closeFixture">Close</button></div><div class="panelbody"><div class="subhead">Expected outcome</div><p class="help">${escapeHtml(f.expected)}</p><div class="subhead">Guided comparison</div>${f.steps.map((s,i)=>`<div class="step"><b>${i+1}</b><span>${escapeHtml(s)}</span></div>`).join("")}<div class="subhead">Collect</div><p class="help">${escapeHtml(f.signals)}</p><div class="actions"><button class="btn primary" id="newFromFixture">Record this fixture in matrix</button><button class="btn" id="goMatching">View matching cases</button></div></div></div>`:"";
+ document.querySelectorAll("[data-fixture]").forEach(el=>el.onclick=()=>{state.fixtureSelected=el.dataset.fixture;save();renderFixtures();$("fixtureDetail").scrollIntoView({behavior:"smooth",block:"start"})});
+ if(f){$("closeFixture").onclick=()=>{state.fixtureSelected=null;save();renderFixtures()};$("newFromFixture").onclick=()=>{let row=createRow(f.id,[f.id,"Choose browser","Choose device","Choose OS","Choose audio output"]);state.rows.push(row);state.selected=row.id;save();setPage("matrix")};$("goMatching").onclick=()=>{currentFilter.fixture=f.id;setPage("matrix")};}
+}
+function renderGates(){
+ $("gateEditor").innerHTML=state.gates.map(g=>`<div class="gate" style="display:block;margin-bottom:12px"><div style="display:flex;justify-content:space-between;align-items:center;gap:12px"><strong>${escapeHtml(g.title)}</strong>${pill(g.status)}</div><p>${escapeHtml(g.description)} · ${escapeHtml(g.kind)}</p><div class="fieldbox" style="margin-top:10px"><label>Recorded status<select data-gate="${g.id}" data-gate-key="status">${options(["unknown","pass","fail","blocked"],g.status)}</select></label><label>Evidence / timestamp / exact artifact<textarea rows="2" data-gate="${g.id}" data-gate-key="evidence" placeholder="Do not mark pass without supporting evidence.">${escapeHtml(g.evidence)}</textarea></label></div></div>`).join("");
+ document.querySelectorAll("[data-gate]").forEach(el=>el.addEventListener("change",()=>{let g=state.gates.find(x=>x.id===el.dataset.gate);g[el.dataset.gateKey]=el.value;if(g.status==="pass"&&!g.evidence.trim()){g.status="unknown";toast("Evidence required before recording PASS")}save();renderGates()}));
+ let st=releaseStatus();$("gateDecision").innerHTML=`<div style="font-size:27px;font-weight:900;color:${st==="ready"?"var(--sea)":st==="fail"?"var(--red)":"var(--amber)"}">${st.toUpperCase()}</div><p class="help">This is a computed local release gate, not proof that publication occurred. The actual deployment commit must still be matched to the source release.</p><pre>${escapeHtml(summaryText())}</pre><button class="btn" id="copyGateSummary">Copy summary</button>`;$("copyGateSummary").onclick=()=>copy(summaryText());
+}
+function issueMarkdown(r){let f=FIXTURES.find(x=>x.id===r.fixture);return `# Cellbeat Mini shipping QA: ${r.caseName} — ${r.browser} / ${r.device}
+
+ONE canonical production product · no beta/production split.
+
+- **Priority:** ${r.priority}
+- **Release SHA:** ${r.version||"unrecorded"}
+- **Source branch:** ${state.settings.branch}
+- **Live tested URL:** ${r.url}
+- **Browser / OS / device:** ${r.browser} / ${r.os} / ${r.device}
+- **Audio output:** ${r.output}
+- **Gate:** ${gateStatus(r)}
+- **Expected:** ${r.expected}
+- **Actual:** ${r.actual||"UNVERIFIED"}
+- **First failure:** ${r.firstFailure||"Not recorded"}
+- **Reproduction:** ${r.repro||"Not recorded"}
+- **Smallest fix:** ${r.fix||"Not proposed"}
+- **Regression check:** ${r.regressionStatus} — ${r.regression||"Not tested"}
+- **Source proof:** ${r.source.status}; observation: ${r.source.result||"missing"}; evidence: ${r.source.evidence||"missing"}
+- **Live-browser proof:** ${r.live.status}; observation: ${r.live.result||"missing"}; evidence: ${r.live.evidence||"missing"}
+- **Listening proof:** ${r.listening.status}; observation: ${r.listening.result||"missing"}; evidence: ${r.listening.evidence||"missing"}
+
+Keep source, browser and physical listening evidence separate. Do not claim deployment or Safari parity from isolated fixture tests. Preserve Classic and the independent personal site; no GitHub Actions.
+`;}
+function renderIssues(){
+ let candidates=state.rows.filter(x=>gateStatus(x)==="fail"||gateStatus(x)==="hold"||x.firstFailure.trim()).sort((a,b)=>(a.priority||"P3").localeCompare(b.priority||"P3"));$("issueQueue").innerHTML=candidates.length?candidates.map(r=>`<div class="rule"><strong>${escapeHtml(r.caseName)} / ${escapeHtml(r.browser)} ${escapeHtml(r.device)}</strong> ${pill(gateStatus(r))}<p>${escapeHtml(r.firstFailure||"Blocked evidence channel; first failure not yet recorded.")}</p><div class="tiny muted">Smallest fix: ${escapeHtml(r.fix||"not established")}</div><div style="margin-top:8px"><button class="btn small" data-issue="${r.id}">Prepare handoff</button> ${r.issueUrl?`<a href="${escapeHtml(r.issueUrl.startsWith("https://")?r.issueUrl:"#")}" target="_blank" rel="noopener">Existing issue ↗</a>`:""}</div></div>`).join(""):`<p class="help">No confirmed failures or blocked rows yet. Unverified checks remain on the release-gates and matrix pages; they are not fabricated as issues.</p>`;
+ let sel=$("issueSelect");let old=sel.value||state.selected;sel.innerHTML=state.rows.map(r=>`<option value="${escapeHtml(r.id)}" ${r.id===old?"selected":""}>${escapeHtml(r.caseName+" · "+r.browser+" "+r.device)}</option>`).join("");sel.onchange=updateIssuePreview;updateIssuePreview();
+ document.querySelectorAll("[data-issue]").forEach(b=>b.onclick=()=>{sel.value=b.dataset.issue;updateIssuePreview()});$("copyIssue").onclick=()=>{let r=state.rows.find(x=>x.id===sel.value);if(r)copy(issueMarkdown(r))};$("copySummary").onclick=()=>copy(summaryText());
+}
+function updateIssuePreview(){let r=state.rows.find(x=>x.id===$("issueSelect").value);$("issuePreview").textContent=r?issueMarkdown(r):"No test rows."}
+function renderSettings(){
+ const s=state.settings;$("settingsFields").innerHTML=[["Repository","sourceRepo"],["Shipping branch","branch"],["Source SHA","sourceSha"],["Recorded deployed SHA (leave empty until checked)","deployedSha"],["Canonical root URL","canonicalUrl"],["Former /beta/ alias","legacyUrl"],["Release label","releaseLabel"],["Source observed (timestamp)","observedAt"]].map(([label,k])=>field(label,k,s[k])).join("")+field("Release notes","releaseNotes",s.releaseNotes,"textarea");
+ $("settingsFields").querySelectorAll("[data-field]").forEach(el=>el.addEventListener("change",()=>{s[el.dataset.field]=el.value;save();toast("Release settings saved")}));
+}
+function download(blob,name){let u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),2500)}
+function exportJSON(){download(new Blob([JSON.stringify({...state,exportedAt:nowISO()},null,2)],{type:"application/json"}),"cellbeat-mini-shipping-qa-"+new Date().toISOString().slice(0,10)+".json");toast("JSON snapshot exported")}
+function csvValue(x){return '"'+String(x??"").replace(/"/g,'""')+'"'}
+function exportCSV(){let keys=["id","caseName","browser","device","os","output","url","version","priority","expected","actual","repro","firstFailure","fix","regression","regressionStatus","issueUrl"];let heads=[...keys,"sourceStatus","sourceEvidence","liveStatus","liveEvidence","listeningStatus","listeningEvidence","gate"];let lines=[heads.map(csvValue).join(",")];state.rows.forEach(r=>lines.push([...keys.map(k=>r[k]),r.source.status,r.source.evidence,r.live.status,r.live.evidence,r.listening.status,r.listening.evidence,gateStatus(r)].map(csvValue).join(",")));download(new Blob([lines.join("\r\n")],{type:"text/csv;charset=utf-8"}),"cellbeat-mini-shipping-matrix.csv");toast("CSV exported")}
+function copy(t){if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(t).then(()=>toast("Copied to clipboard")).catch(()=>fallbackCopy(t))}else fallbackCopy(t)}
+function fallbackCopy(t){let el=document.createElement("textarea");el.value=t;el.style.position="fixed";el.style.opacity="0";document.body.appendChild(el);el.select();try{document.execCommand("copy");toast("Copied to clipboard")}catch(e){toast("Copy unavailable: select preview text")}el.remove()}
+function importWorkspace(file){if(!file)return;const rd=new FileReader();rd.onload=()=>{try{let x=JSON.parse(rd.result);if(!x.settings||!Array.isArray(x.rows)||!Array.isArray(x.gates))throw new Error("Unexpected workspace schema");if(x.rows.length>2000)throw new Error("Too many test cases");if(!confirm("Replace all local test records with the imported snapshot?"))return;state=x;state.rows.forEach(r=>{for(let k of ["source","live","listening"])r[k]=r[k]||freshProof();r.regressionStatus=r.regressionStatus||"unknown"});state.selected=null;save();setPage("overview");toast("Workspace imported")}catch(e){alert("Import failed: "+e.message)}};rd.readAsText(file)}
+function normalizeProof(r){for(const k of requirements(r)){const p=r[k];if(p.status==="pass"&&(!p.result?.trim()||!p.evidence?.trim()||!p.at?.trim()||!p.tester?.trim()))return false;if(p.status==="not-applicable")return false}return true}
+const originalGateStatus=gateStatus;
+gateStatus=function(r){let g=originalGateStatus(r);if(g==="pass"&&!normalizeProof(r))return"unverified";return g};
+document.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>setPage(b.dataset.page));
+document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>setPage(b.dataset.go));
+$("exportBtn").onclick=exportJSON;$("exportFull").onclick=exportJSON;$("csvBtn").onclick=exportCSV;
+$("importBtn").onclick=()=>$("fileImport").click();$("fileImport").onchange=e=>{importWorkspace(e.target.files?.[0]);e.target.value=""};
+$("resetBtn").onclick=()=>{if(confirm("Reset every locally saved result and gate to the initial unverified state? Export first if you want to keep records.")){state=initialState();currentFilter={search:"",gate:"",fixture:""};save();setPage("overview");toast("Reset to source snapshot / unverified checks")}};
+$("search").oninput=e=>{currentFilter.search=e.target.value;renderMatrix()};$("filterGate").onchange=e=>{currentFilter.gate=e.target.value;renderMatrix()};$("filterFixture").onchange=e=>{currentFilter.fixture=e.target.value;renderMatrix()};
+$("matrixBody").addEventListener("click",e=>{let tr=e.target.closest("[data-row]");if(tr){state.selected=tr.dataset.row;save();renderMatrix();$("editArea").scrollIntoView({behavior:"smooth",block:"start"})}});
+$("matrixBody").addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){let tr=e.target.closest("[data-row]");if(tr){e.preventDefault();tr.click()}}});
+$("addTest").onclick=()=>{let row=createRow("cadence",["cadence","Choose browser","Choose device","Choose OS","Choose audio output"]);state.rows.push(row);state.selected=row.id;save();renderMatrix();$("editArea").scrollIntoView({behavior:"smooth"})};
+save();render();
+</script>
+</body></html>
