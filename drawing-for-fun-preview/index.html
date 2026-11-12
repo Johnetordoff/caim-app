@@ -167,6 +167,8 @@ button.recording { background: #ff5a69; animation: recording-pulse .9s steps(2, 
 .canvas-wrap {
   position: relative;
   overflow: auto;
+  overscroll-behavior: contain;
+  touch-action: none;
   min-height: 340px;
   max-height: calc(100vh - 220px);
   padding: 12px;
@@ -182,6 +184,7 @@ button.recording { background: #ff5a69; animation: recording-pulse .9s steps(2, 
 
 .canvas-stage {
   position: relative;
+  touch-action: none;
   width: 900px;
   height: 600px;
   transform-origin: top left;
@@ -196,6 +199,9 @@ button.recording { background: #ff5a69; animation: recording-pulse .9s steps(2, 
   min-width: 0;
   border: 2px solid #171717;
   touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
 }
 
 #drawingCanvas {
@@ -262,13 +268,17 @@ button.recording { background: #ff5a69; animation: recording-pulse .9s steps(2, 
   .canvas-toolbar { flex-wrap: wrap; }
   #status { width: 100%; margin-left: 0; }
   .magic-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .canvas-wrap { max-height: none; }
+  .canvas-wrap { min-height: 230px; height: min(48vh, 430px); max-height: min(65vh, 500px); }
+  .topbar input, .app-shell input, .app-shell select, .app-shell textarea { font-size: 16px; }
 }
 
 @media (max-width: 500px) {
   .tool-grid,
   .magic-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+
+/* Taps on UI controls must not trigger Safari's double-tap magnification. */
+button, a { touch-action: manipulation; }
 
 </style>
 </head>
@@ -416,6 +426,7 @@ button.recording { background: #ff5a69; animation: recording-pulse .9s steps(2, 
   const motionCanvas = document.querySelector("#motionCanvas");
   const motionCtx = motionCanvas.getContext("2d");
   const canvasStage = document.querySelector("#canvasStage");
+  const canvasWrap = document.querySelector("#canvasWrap");
 
   const toolButtons = [...document.querySelectorAll(".tool")];
   const colorPicker = document.querySelector("#colorPicker");
@@ -454,6 +465,11 @@ button.recording { background: #ff5a69; animation: recording-pulse .9s steps(2, 
   let historyIndex = -1;
   let zoom = 1;
   let cropPreview = null;
+  let activePointerId = null;
+  let touchStrokeBackup = null;
+  let touchGestureLocked = false;
+  const touchContacts = new Map();
+  let pinchStart = null;
   let particles = [];
   let brushImage = null;
   let brushImageUrl = null;
@@ -486,10 +502,15 @@ button.recording { background: #ff5a69; animation: recording-pulse .9s steps(2, 
   }
 
   function syncCanvasStage() {
-    motionCanvas.width = canvas.width;
-    motionCanvas.height = canvas.height;
-    canvasStage.style.width = `${Math.round(canvas.width * zoom)}px`;
-    canvasStage.style.height = `${Math.round(canvas.height * zoom)}px`;
+    // A 100% view fits the artwork inside the actual device viewport.
+    // Zoom is relative to that fit, not to an oversized desktop-sized canvas.
+    if (motionCanvas.width !== canvas.width) motionCanvas.width = canvas.width;
+    if (motionCanvas.height !== canvas.height) motionCanvas.height = canvas.height;
+    const availableWidth = Math.max(120, canvasWrap.clientWidth - 28);
+    const availableHeight = Math.max(180, Math.min(window.innerHeight * 0.58, 600));
+    const fit = Math.min(1, availableWidth / canvas.width, availableHeight / canvas.height);
+    canvasStage.style.width = `${Math.max(1, Math.round(canvas.width * fit * zoom))}px`;
+    canvasStage.style.height = `${Math.max(1, Math.round(canvas.height * fit * zoom))}px`;
     zoomOutput.textContent = `${Math.round(zoom * 100)}%`;
   }
 
@@ -758,10 +779,72 @@ button.recording { background: #ff5a69; animation: recording-pulse .9s steps(2, 
     }
   }
 
+  // A single touch draws. Two touches zoom/pan the canvas viewport only;
+  // neither gesture is allowed to zoom the browser page.
+  function touchGeometry() {
+    const points = [...touchContacts.values()];
+    if (points.length < 2) return null;
+    const a = points[0], b = points[1];
+    return { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2,
+      distance: Math.max(1, Math.hypot(a.x - b.x, a.y - b.y)) };
+  }
+
+  function beginPinch() {
+    const geometry = touchGeometry();
+    if (!geometry) return;
+    if (drawing) {
+      if (touchStrokeBackup) ctx.putImageData(touchStrokeBackup, 0, 0);
+      drawing = false;
+      startPoint = null;
+      lastPoint = null;
+      cropPreview = null;
+    }
+    touchStrokeBackup = null;
+    activePointerId = null;
+    touchGestureLocked = true;
+    const rect = canvasStage.getBoundingClientRect();
+    pinchStart = { distance: geometry.distance, zoom,
+      x: (geometry.x - rect.left) * (canvas.width / rect.width),
+      y: (geometry.y - rect.top) * (canvas.height / rect.height) };
+  }
+
+  function movePinch() {
+    if (!pinchStart || touchContacts.size < 2) return;
+    const geometry = touchGeometry();
+    zoom = clamp(pinchStart.zoom * geometry.distance / pinchStart.distance, 0.25, 4);
+    syncCanvasStage();
+    const wrap = canvasWrap.getBoundingClientRect();
+    canvasWrap.scrollLeft = pinchStart.x / canvas.width * canvasStage.clientWidth - (geometry.x - wrap.left);
+    canvasWrap.scrollTop = pinchStart.y / canvas.height * canvasStage.clientHeight - (geometry.y - wrap.top);
+  }
+
+  function releaseTouchContact(event) {
+    if (event.pointerType !== "touch") return;
+    touchContacts.delete(event.pointerId);
+    if (touchContacts.size >= 2) beginPinch();
+    else pinchStart = null;
+    if (touchContacts.size === 0) touchGestureLocked = false;
+  }
+
   function onPointerDown(event) {
     if (event.button !== undefined && event.button !== 0) return;
+    if (event.pointerType === "touch") {
+      touchContacts.set(event.pointerId, { x: event.clientX, y: event.clientY });
+      canvasWrap.setPointerCapture?.(event.pointerId);
+      if (touchContacts.size >= 2) {
+        beginPinch();
+        canvasWrap.setPointerCapture?.(event.pointerId);
+        if (event.cancelable) event.preventDefault();
+        return;
+      }
+      if (touchGestureLocked) return;
+    }
+    if (activePointerId !== null || event.target !== canvas) return;
+    activePointerId = event.pointerId;
+    touchStrokeBackup = event.pointerType === "touch" ? ctx.getImageData(0, 0, canvas.width, canvas.height) : null;
+    if (event.cancelable) event.preventDefault();
     const point = pointFromEvent(event);
-    canvas.setPointerCapture?.(event.pointerId);
+    canvasWrap.setPointerCapture?.(event.pointerId);
 
     if (activeTool === "stamp") {
       drawMirrored((p) => stampAt(p), point);
@@ -797,7 +880,16 @@ button.recording { background: #ff5a69; animation: recording-pulse .9s steps(2, 
   }
 
   function onPointerMove(event) {
-    if (!drawing) return;
+    if (event.pointerType === "touch" && touchContacts.has(event.pointerId)) {
+      touchContacts.set(event.pointerId, { x: event.clientX, y: event.clientY });
+      if (touchGestureLocked) {
+        movePinch();
+        if (event.cancelable) event.preventDefault();
+        return;
+      }
+    }
+    if (!drawing || event.pointerId !== activePointerId) return;
+    if (event.cancelable) event.preventDefault();
     const point = pointFromEvent(event);
 
     if (activeTool === "crop") {
@@ -863,6 +955,10 @@ button.recording { background: #ff5a69; animation: recording-pulse .9s steps(2, 
   }
 
   function finishPointer(event) {
+    releaseTouchContact(event);
+    if (event.pointerId !== activePointerId) return;
+    activePointerId = null;
+    touchStrokeBackup = null;
     if (!drawing) return;
     const point = pointFromEvent(event);
 
@@ -876,14 +972,21 @@ button.recording { background: #ff5a69; animation: recording-pulse .9s steps(2, 
     startPoint = null;
     lastPoint = null;
     cropPreview = null;
-    canvas.releasePointerCapture?.(event.pointerId);
+    canvasWrap.releasePointerCapture?.(event.pointerId);
 
     if (activeTool !== "crop") {
       commitHistory("Picture changed. Excellent choice.");
     }
   }
 
-  function cancelPointer() {
+  function cancelPointer(event) {
+    if (event) {
+      releaseTouchContact(event);
+      if (event.pointerId !== activePointerId) return;
+    }
+    if (drawing && touchStrokeBackup) ctx.putImageData(touchStrokeBackup, 0, 0);
+    activePointerId = null;
+    touchStrokeBackup = null;
     drawing = false;
     startPoint = null;
     lastPoint = null;
@@ -1481,10 +1584,19 @@ button.recording { background: #ff5a69; animation: recording-pulse .9s steps(2, 
   });
 
   sizeSlider.addEventListener("input", () => { sizeOutput.value = sizeSlider.value; });
-  canvas.addEventListener("pointerdown", onPointerDown);
-  canvas.addEventListener("pointermove", onPointerMove);
-  canvas.addEventListener("pointerup", finishPointer);
-  canvas.addEventListener("pointercancel", cancelPointer);
+  canvasWrap.addEventListener("pointerdown", onPointerDown);
+  canvasWrap.addEventListener("pointermove", onPointerMove);
+  canvasWrap.addEventListener("pointerup", finishPointer);
+  canvasWrap.addEventListener("pointercancel", cancelPointer);
+  // Only touches starting inside the editor are suppressed. The rest of
+  // the document retains browser scrolling and accessibility zoom.
+  for (const type of ["touchstart", "touchmove", "gesturestart", "gesturechange"]) {
+    canvasWrap.addEventListener(type, (event) => {
+      if (event.cancelable) event.preventDefault();
+    }, { passive: false });
+  }
+  window.addEventListener("resize", syncCanvasStage);
+  if (typeof ResizeObserver !== "undefined") new ResizeObserver(syncCanvasStage).observe(canvasWrap);
 
   undoButton.addEventListener("click", undo);
   redoButton.addEventListener("click", redo);
