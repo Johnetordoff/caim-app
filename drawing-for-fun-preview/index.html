@@ -1,0 +1,2492 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#fff36d">
+  <title>Draw 4 Fun!</title>
+  <style>
+:root {
+  font-family: "Trebuchet MS", system-ui, sans-serif;
+  color: #171717;
+  background: #7dd7ff;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 10% 10%, #fff36d 0 8%, transparent 8.5%),
+    radial-gradient(circle at 90% 85%, #ff8ac6 0 7%, transparent 7.5%),
+    #7dd7ff;
+}
+
+button, input { font: inherit; }
+button { cursor: pointer; }
+button:disabled { cursor: default; opacity: .48; }
+
+.app-shell {
+  width: min(1580px, 100%);
+  margin: 0 auto;
+  padding: 14px;
+}
+
+.topbar {
+  display: flex;
+  gap: 18px;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 18px;
+  border: 4px solid #171717;
+  border-radius: 18px;
+  background: #fff36d;
+  box-shadow: 6px 6px 0 #171717;
+}
+
+h1, h2, h3, p { margin-top: 0; }
+h1 { margin-bottom: 4px; font-size: clamp(2rem, 4vw, 3.5rem); line-height: .9; }
+.topbar p { margin-bottom: 0; font-weight: 700; max-width: 720px; }
+
+.top-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+button,
+.big-button {
+  border: 3px solid #171717;
+  border-radius: 10px;
+  background: #fff;
+  padding: 9px 12px;
+  font-weight: 800;
+  box-shadow: 3px 3px 0 #171717;
+}
+
+button:not(:disabled):hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 #171717; }
+button:not(:disabled):active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 #171717; }
+button:focus-visible, input:focus-visible { outline: 4px solid #ff4da6; outline-offset: 2px; }
+button.accent { background: #77f28d; }
+button.hot { background: #ff9f76; }
+button.recording { background: #ff5a69; animation: recording-pulse .9s steps(2, end) infinite; }
+
+@keyframes recording-pulse {
+  50% { filter: brightness(1.28); }
+}
+
+.workbench {
+  display: grid;
+  grid-template-columns: 230px minmax(0, 1fr) 238px;
+  gap: 14px;
+  margin-top: 16px;
+  align-items: start;
+}
+
+.panel,
+.canvas-toolbar,
+.canvas-wrap,
+.record-strip {
+  border: 4px solid #171717;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 5px 5px 0 #171717;
+}
+
+.panel { padding: 14px; }
+.panel h2 { margin-bottom: 10px; font-size: 1.35rem; }
+
+.tool-grid,
+.magic-grid { display: grid; gap: 8px; }
+.tool-grid { grid-template-columns: 1fr; }
+.magic-grid { grid-template-columns: 1fr 1fr; }
+
+.tool { text-align: left; }
+.tool.active { background: #ff8ac6; }
+
+.control-block {
+  margin-top: 16px;
+  display: grid;
+  gap: 7px;
+  font-weight: 800;
+}
+
+.control-block small {
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+#colorPicker {
+  width: 100%;
+  height: 48px;
+  padding: 2px;
+  border: 3px solid #171717;
+  border-radius: 9px;
+  background: #fff;
+}
+
+#sizeSlider { width: 100%; }
+.check-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 16px;
+  font-weight: 800;
+}
+.check-row input { width: 20px; height: 20px; }
+
+.stamp-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+.stamp-grid button { padding: 7px; font-size: 1.3rem; }
+.stamp-grid button.selected { background: #77f28d; }
+
+.canvas-column { min-width: 0; }
+.canvas-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  margin-bottom: 12px;
+  background: #d7ffef;
+}
+
+.zoom-cluster {
+  display: inline-flex;
+  gap: 4px;
+  margin-left: 4px;
+}
+.zoom-cluster button { min-width: 42px; padding-inline: 8px; }
+#zoomResetButton { min-width: 70px; }
+#status { margin-left: auto; font-weight: 800; font-size: .9rem; }
+
+.canvas-wrap {
+  position: relative;
+  overflow: auto;
+  min-height: 340px;
+  max-height: calc(100vh - 220px);
+  padding: 12px;
+  background:
+    linear-gradient(45deg, #e8e8e8 25%, transparent 25%),
+    linear-gradient(-45deg, #e8e8e8 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #e8e8e8 75%),
+    linear-gradient(-45deg, transparent 75%, #e8e8e8 75%),
+    #fff;
+  background-size: 24px 24px;
+  background-position: 0 0, 0 12px, 12px -12px, -12px 0;
+}
+
+.canvas-stage {
+  position: relative;
+  width: 900px;
+  height: 600px;
+  transform-origin: top left;
+}
+
+.canvas-stage canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  border: 2px solid #171717;
+  touch-action: none;
+}
+
+#drawingCanvas {
+  z-index: 1;
+  background: #fff;
+  image-rendering: auto;
+}
+
+#motionCanvas {
+  z-index: 2;
+  pointer-events: none;
+  background: transparent;
+}
+
+.record-strip {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-top: 12px;
+  padding: 10px 12px;
+  background: #ffd5df;
+  font-size: .88rem;
+}
+
+.record-strip[hidden] { display: none; }
+.record-strip span:last-child { flex: 1 1 260px; font-weight: 700; }
+
+.resize-box {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 3px dashed #171717;
+}
+.resize-box label { display: grid; gap: 4px; margin: 8px 0; font-weight: 800; }
+.resize-box input { width: 100%; border: 3px solid #171717; border-radius: 8px; padding: 7px; }
+.transform-row { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-top: 8px; }
+
+.tip-box {
+  margin-top: 18px;
+  padding: 11px;
+  border: 3px solid #171717;
+  border-radius: 50% 18px 40% 12px;
+  background: #d9c4ff;
+  font-size: .9rem;
+}
+.tip-box strong, .tip-box span { display: block; }
+
+@media (max-width: 1120px) {
+  .workbench { grid-template-columns: 190px minmax(0, 1fr); }
+  .magic-panel { grid-column: 1 / -1; }
+  .magic-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+}
+
+@media (max-width: 780px) {
+  .topbar { align-items: flex-start; flex-direction: column; }
+  .top-actions { justify-content: flex-start; }
+  .workbench { grid-template-columns: 1fr; }
+  .tools-panel, .magic-panel { grid-column: auto; }
+  .tool-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .tool { text-align: center; padding-inline: 6px; }
+  .canvas-column { order: 2; }
+  .tools-panel { order: 1; }
+  .magic-panel { order: 3; }
+  .canvas-toolbar { flex-wrap: wrap; }
+  #status { width: 100%; margin-left: 0; }
+  .magic-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .canvas-wrap { max-height: none; }
+}
+
+@media (max-width: 500px) {
+  .tool-grid,
+  .magic-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+</style>
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <div>
+        <h1>DRAWING FOR FUN!</h1>
+        <p>Draw, import pictures, and make GIFs for fun. Press <strong>~</strong> for Beta features without losing your drawing.</p>
+      </div>
+      <div class="top-actions" aria-label="File actions">
+        <button id="newButton" class="big-button">New</button>
+        <button id="openButton" class="big-button">Open image</button>
+        <button id="saveButton" class="big-button accent">Save PNG</button>
+        <button id="gifStudioButton" class="big-button hot" data-beta-feature type="button" aria-label="Make or import an animated GIF in GIFs for Fun">🎞 Make or import GIF</button>
+        <button id="recordGifButton" class="big-button hot">● Record GIF</button>
+        <input id="fileInput" type="file" accept="image/*" hidden>
+        <input id="brushImageInput" type="file" accept="image/*,.gif" hidden>
+      </div>
+    </header>
+
+    <section class="workbench">
+      <aside class="panel tools-panel" aria-label="Drawing tools">
+        <h2>Paint brushes</h2>
+        <div class="tool-grid" id="toolGrid">
+          <button class="tool active" data-tool="pencil" aria-pressed="true">✏️ Pencil</button>
+          <button class="tool" data-tool="marker" aria-pressed="false">🖍️ Marker</button>
+          <button class="tool" data-tool="rainbow" aria-pressed="false">🌈 Rainbow</button>
+          <button class="tool" data-tool="spray" aria-pressed="false">💨 Spray</button>
+          <button class="tool" data-tool="neon" aria-pressed="false">⚡ Neon</button>
+          <button class="tool" data-tool="glitter" aria-pressed="false">✨ Glitter</button>
+          <button class="tool" data-tool="wiggle" aria-pressed="false">〰️ Wiggle</button>
+          <button class="tool" data-tool="orbit" aria-pressed="false">🪐 Orbit</button>
+          <button class="tool" data-tool="imagebrush" aria-pressed="false">🎞️ Image brush</button>
+          <button class="tool" data-tool="eraser" aria-pressed="false">🧼 Eraser</button>
+          <button class="tool" data-tool="fill" aria-pressed="false">🪣 Fill bucket</button>
+          <button class="tool" data-tool="line" aria-pressed="false">╱ Line</button>
+          <button class="tool" data-tool="rect" aria-pressed="false">▭ Box</button>
+          <button class="tool" data-tool="ellipse" aria-pressed="false">◯ Blob</button>
+          <button class="tool" data-tool="crop" aria-pressed="false">✂️ Crop</button>
+          <button class="tool" data-tool="stamp" aria-pressed="false">👁️ Stamp</button>
+        </div>
+
+        <div class="control-block">
+          <label for="colorPicker">Color</label>
+          <input id="colorPicker" type="color" value="#202020">
+        </div>
+
+        <div class="control-block">
+          <label for="sizeSlider">Brush size <output id="sizeOutput">12</output></label>
+          <input id="sizeSlider" type="range" min="1" max="120" value="12">
+        </div>
+
+        <label class="check-row">
+          <input id="mirrorToggle" type="checkbox">
+          Mirror-draw weirdly
+        </label>
+
+        <div class="control-block stamp-picker" id="stampPicker" hidden>
+          <span>Stamp</span>
+          <div class="stamp-grid">
+            <button data-stamp="👁️">👁️</button>
+            <button data-stamp="⭐">⭐</button>
+            <button data-stamp="🐸">🐸</button>
+            <button data-stamp="🍕">🍕</button>
+            <button data-stamp="☁️">☁️</button>
+            <button data-stamp="🛸">🛸</button>
+          </div>
+        </div>
+
+        <div class="control-block" id="imageBrushPicker" hidden>
+          <span>Moving image brush</span>
+          <button id="chooseBrushImageButton">Choose image / GIF</button>
+          <small id="brushImageName">No image loaded yet.</small>
+        </div>
+      </aside>
+
+      <section class="canvas-column">
+        <div class="canvas-toolbar" aria-label="Edit actions">
+          <button id="undoButton">↶ Undo</button>
+          <button id="redoButton">↷ Redo</button>
+          <button id="clearButton">Clear</button>
+          <div class="zoom-cluster" aria-label="Canvas zoom">
+            <button id="zoomOutButton" title="Zoom out">−</button>
+            <button id="zoomResetButton" title="Reset zoom"><span id="zoomOutput">100%</span></button>
+            <button id="zoomInButton" title="Zoom in">+</button>
+          </div>
+          <span id="status" role="status" aria-live="polite">Ready to make a mess.</span>
+        </div>
+
+        <div class="canvas-wrap" id="canvasWrap">
+          <div class="canvas-stage" id="canvasStage">
+            <canvas id="drawingCanvas" width="900" height="600" aria-label="Drawing canvas"></canvas>
+            <canvas id="motionCanvas" width="900" height="600" aria-hidden="true"></canvas>
+          </div>
+        </div>
+
+        <div class="record-strip" id="recordStrip" hidden>
+          <strong>GIF recorder:</strong>
+          <span id="recordStatus">0.0 s</span>
+          <button id="stopGifButton">■ Stop + save GIF</button>
+          <span>Records up to 6 seconds at 8 fps and scales large pictures down for sane GIF sizes.</span>
+        </div>
+      </section>
+
+      <aside class="panel magic-panel" aria-label="Image manipulation">
+        <h2>Magic</h2>
+        <div class="magic-grid">
+          <button id="flipHButton">↔ Flip</button>
+          <button id="flipVButton">↕ Flop</button>
+          <button id="rotateButton">⟳ Turn</button>
+          <button id="invertButton">◐ Invert</button>
+          <button id="pixelateButton">▦ Pixelate</button>
+          <button id="waveShaderButton">🌊 Wave shader</button>
+          <button id="glitchShaderButton">📺 RGB glitch</button>
+          <button id="swirlShaderButton">🌀 Swirl shader</button>
+          <button id="posterizeShaderButton">🎨 Posterize</button>
+        </div>
+
+        <div class="resize-box">
+          <h3>Transform picture</h3>
+          <label>Width <input id="widthInput" type="number" min="32" max="4096" value="900"></label>
+          <label>Height <input id="heightInput" type="number" min="32" max="4096" value="600"></label>
+          <button id="resizeButton">Resize / stretch</button>
+          <div class="transform-row">
+            <button id="halfSizeButton">½ size</button>
+            <button id="doubleSizeButton">2× size</button>
+          </div>
+        </div>
+
+        <div class="tip-box">
+          <strong>Odd tool rule:</strong>
+          <span>Crop by dragging a box. Orbit and glitter keep moving briefly after you paint. Image brush can stamp a local still image or animated GIF as you drag.</span>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <script>
+(() => {
+  "use strict";
+
+  const canvas = document.querySelector("#drawingCanvas");
+  const ctx = canvas.getContext("2d", { willReadFrequently: true });
+  const motionCanvas = document.querySelector("#motionCanvas");
+  const motionCtx = motionCanvas.getContext("2d");
+  const canvasStage = document.querySelector("#canvasStage");
+
+  const toolButtons = [...document.querySelectorAll(".tool")];
+  const colorPicker = document.querySelector("#colorPicker");
+  const sizeSlider = document.querySelector("#sizeSlider");
+  const sizeOutput = document.querySelector("#sizeOutput");
+  const mirrorToggle = document.querySelector("#mirrorToggle");
+  const stampPicker = document.querySelector("#stampPicker");
+  const imageBrushPicker = document.querySelector("#imageBrushPicker");
+  const stampButtons = [...document.querySelectorAll("[data-stamp]")];
+  const status = document.querySelector("#status");
+  const widthInput = document.querySelector("#widthInput");
+  const heightInput = document.querySelector("#heightInput");
+  const undoButton = document.querySelector("#undoButton");
+  const redoButton = document.querySelector("#redoButton");
+  const fileInput = document.querySelector("#fileInput");
+  const brushImageInput = document.querySelector("#brushImageInput");
+  const brushImageName = document.querySelector("#brushImageName");
+  const recordGifButton = document.querySelector("#recordGifButton");
+  const stopGifButton = document.querySelector("#stopGifButton");
+  const recordStrip = document.querySelector("#recordStrip");
+  const recordStatus = document.querySelector("#recordStatus");
+  const zoomOutput = document.querySelector("#zoomOutput");
+
+  const HISTORY_LIMIT = 30;
+  const GIF_FPS = 8;
+  const GIF_MAX_SECONDS = 6;
+  const GIF_MAX_DIMENSION = 480;
+
+  let activeTool = "pencil";
+  let selectedStamp = "👁️";
+  let drawing = false;
+  let startPoint = null;
+  let lastPoint = null;
+  let rainbowHue = 0;
+  let history = [];
+  let historyIndex = -1;
+  let zoom = 1;
+  let cropPreview = null;
+  let particles = [];
+  let brushImage = null;
+  let brushImageUrl = null;
+
+  let gifRecording = false;
+  let gifFrames = [];
+  let gifTimer = null;
+  let gifStartedAt = 0;
+  let gifWidth = 0;
+  let gifHeight = 0;
+
+  function say(message) {
+    status.textContent = message;
+  }
+
+  function clamp(value, min, max) {
+    return Math.max(min, Math.min(max, value));
+  }
+
+  function pointFromEvent(event) {
+    const rect = canvas.getBoundingClientRect();
+    return {
+      x: (event.clientX - rect.left) * (canvas.width / rect.width),
+      y: (event.clientY - rect.top) * (canvas.height / rect.height)
+    };
+  }
+
+  function mirrorPoint(point) {
+    return { x: canvas.width - point.x, y: point.y };
+  }
+
+  function syncCanvasStage() {
+    motionCanvas.width = canvas.width;
+    motionCanvas.height = canvas.height;
+    canvasStage.style.width = `${Math.round(canvas.width * zoom)}px`;
+    canvasStage.style.height = `${Math.round(canvas.height * zoom)}px`;
+    zoomOutput.textContent = `${Math.round(zoom * 100)}%`;
+  }
+
+  function setZoom(nextZoom) {
+    zoom = clamp(nextZoom, 0.25, 4);
+    syncCanvasStage();
+    say(`Zoom ${Math.round(zoom * 100)}%. Picture pixels are unchanged.`);
+  }
+
+  function fillWhite() {
+    ctx.save();
+    ctx.globalCompositeOperation = "source-over";
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.restore();
+  }
+
+  function snapshot() {
+    return {
+      width: canvas.width,
+      height: canvas.height,
+      data: canvas.toDataURL("image/png")
+    };
+  }
+
+  function updateHistoryButtons() {
+    undoButton.disabled = historyIndex <= 0;
+    redoButton.disabled = historyIndex >= history.length - 1;
+  }
+
+  function commitHistory(message) {
+    if (historyIndex < history.length - 1) {
+      history = history.slice(0, historyIndex + 1);
+    }
+    history.push(snapshot());
+    if (history.length > HISTORY_LIMIT) history.shift();
+    historyIndex = history.length - 1;
+    updateHistoryButtons();
+    if (message) say(message);
+  }
+
+  function restoreSnapshot(entry) {
+    return new Promise((resolve) => {
+      const image = new Image();
+      image.onload = () => {
+        canvas.width = entry.width;
+        canvas.height = entry.height;
+        widthInput.value = entry.width;
+        heightInput.value = entry.height;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(image, 0, 0);
+        particles = [];
+        syncCanvasStage();
+        resolve();
+      };
+      image.src = entry.data;
+    });
+  }
+
+  async function undo() {
+    if (historyIndex <= 0) return;
+    historyIndex -= 1;
+    await restoreSnapshot(history[historyIndex]);
+    updateHistoryButtons();
+    say("Undid a thing. History has been altered.");
+  }
+
+  async function redo() {
+    if (historyIndex >= history.length - 1) return;
+    historyIndex += 1;
+    await restoreSnapshot(history[historyIndex]);
+    updateHistoryButtons();
+    say("Redid the thing. It has returned.");
+  }
+
+  function setupStroke(tool) {
+    ctx.globalCompositeOperation = "source-over";
+    ctx.globalAlpha = 1;
+    ctx.shadowBlur = 0;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.lineWidth = Number(sizeSlider.value);
+    ctx.strokeStyle = colorPicker.value;
+    ctx.fillStyle = colorPicker.value;
+
+    if (tool === "marker") {
+      ctx.globalAlpha = 0.28;
+      ctx.lineWidth = Number(sizeSlider.value) * 1.8;
+    } else if (tool === "eraser") {
+      ctx.strokeStyle = "#ffffff";
+      ctx.fillStyle = "#ffffff";
+      ctx.lineWidth = Number(sizeSlider.value) * 1.8;
+    } else if (tool === "rainbow") {
+      ctx.strokeStyle = `hsl(${rainbowHue} 90% 52%)`;
+      ctx.fillStyle = ctx.strokeStyle;
+      rainbowHue = (rainbowHue + 7) % 360;
+    } else if (tool === "neon") {
+      ctx.globalAlpha = 0.9;
+      ctx.strokeStyle = colorPicker.value;
+      ctx.shadowColor = colorPicker.value;
+      ctx.shadowBlur = Math.max(8, Number(sizeSlider.value) * 1.5);
+      ctx.lineWidth = Math.max(2, Number(sizeSlider.value) * 0.65);
+    }
+  }
+
+  function drawSegment(from, to, tool = activeTool) {
+    ctx.save();
+    setupStroke(tool);
+    ctx.beginPath();
+    ctx.moveTo(from.x, from.y);
+    ctx.lineTo(to.x, to.y);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawWiggle(from, to) {
+    const distance = Math.hypot(to.x - from.x, to.y - from.y);
+    const steps = Math.max(2, Math.ceil(distance / 5));
+    const amplitude = Math.max(2, Number(sizeSlider.value) * 0.5);
+    ctx.save();
+    setupStroke("pencil");
+    ctx.lineWidth = Math.max(1.5, Number(sizeSlider.value) * 0.55);
+    ctx.beginPath();
+    for (let i = 0; i <= steps; i += 1) {
+      const t = i / steps;
+      const x = from.x + (to.x - from.x) * t;
+      const y = from.y + (to.y - from.y) * t;
+      const nx = -(to.y - from.y) / Math.max(1, distance);
+      const ny = (to.x - from.x) / Math.max(1, distance);
+      const wiggle = Math.sin((t * 5 + performance.now() / 120) * Math.PI) * amplitude;
+      const px = x + nx * wiggle;
+      const py = y + ny * wiggle;
+      if (i === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function sprayAt(point) {
+    const radius = Math.max(4, Number(sizeSlider.value));
+    const dots = Math.max(8, Math.floor(radius * 1.4));
+    ctx.save();
+    ctx.globalAlpha = 0.7;
+    ctx.fillStyle = colorPicker.value;
+    for (let i = 0; i < dots; i += 1) {
+      const angle = Math.random() * Math.PI * 2;
+      const distance = Math.sqrt(Math.random()) * radius;
+      const x = point.x + Math.cos(angle) * distance;
+      const y = point.y + Math.sin(angle) * distance;
+      const dot = Math.max(1, radius / 11);
+      ctx.beginPath();
+      ctx.arc(x, y, Math.random() * dot + 0.6, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  function glitterAt(point) {
+    const radius = Math.max(8, Number(sizeSlider.value) * 1.2);
+    ctx.save();
+    ctx.fillStyle = colorPicker.value;
+    for (let i = 0; i < 5; i += 1) {
+      const angle = Math.random() * Math.PI * 2;
+      const distance = Math.random() * radius;
+      const x = point.x + Math.cos(angle) * distance;
+      const y = point.y + Math.sin(angle) * distance;
+      const size = 1 + Math.random() * Math.max(2, radius / 8);
+      ctx.globalAlpha = 0.35 + Math.random() * 0.5;
+      ctx.fillRect(x - size / 2, y - size / 2, size, size);
+      particles.push({
+        type: "glitter",
+        x,
+        y,
+        size: size * 2.2,
+        color: Math.random() > 0.45 ? colorPicker.value : `hsl(${Math.random() * 360} 100% 65%)`,
+        vx: (Math.random() - 0.5) * 26,
+        vy: -12 - Math.random() * 28,
+        spin: (Math.random() - 0.5) * 8,
+        birth: performance.now(),
+        life: 700 + Math.random() * 900
+      });
+    }
+    ctx.restore();
+  }
+
+  function orbitAt(point) {
+    const size = Math.max(3, Number(sizeSlider.value) * 0.4);
+    ctx.save();
+    ctx.globalAlpha = 0.18;
+    ctx.fillStyle = colorPicker.value;
+    ctx.beginPath();
+    ctx.arc(point.x, point.y, Math.max(2, size), 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
+    for (let i = 0; i < 3; i += 1) {
+      particles.push({
+        type: "orbit",
+        cx: point.x,
+        cy: point.y,
+        radius: Math.max(10, Number(sizeSlider.value) * (0.6 + Math.random() * 0.9)),
+        angle: Math.random() * Math.PI * 2,
+        speed: (Math.random() > 0.5 ? 1 : -1) * (2 + Math.random() * 4),
+        size: 2 + Math.random() * Math.max(3, Number(sizeSlider.value) * 0.22),
+        color: `hsl(${(rainbowHue + i * 90 + Math.random() * 50) % 360} 95% 60%)`,
+        birth: performance.now(),
+        life: 900 + Math.random() * 1200
+      });
+    }
+    rainbowHue = (rainbowHue + 13) % 360;
+  }
+
+  function stampAt(point) {
+    const size = Math.max(24, Number(sizeSlider.value) * 2.6);
+    ctx.save();
+    ctx.font = `${size}px system-ui, sans-serif`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(selectedStamp, point.x, point.y);
+    ctx.restore();
+  }
+
+  function imageBrushAt(point) {
+    if (!brushImage) return;
+    const nominal = Math.max(24, Number(sizeSlider.value) * 3.4);
+    const ratio = (brushImage.naturalWidth || 1) / Math.max(1, brushImage.naturalHeight || 1);
+    let width = nominal;
+    let height = nominal;
+    if (ratio > 1) height = nominal / ratio;
+    else width = nominal * ratio;
+    ctx.save();
+    ctx.globalAlpha = 0.9;
+    ctx.drawImage(brushImage, point.x - width / 2, point.y - height / 2, width, height);
+    ctx.restore();
+  }
+
+  function drawShape(from, to, tool) {
+    ctx.save();
+    setupStroke(tool);
+    ctx.globalAlpha = 1;
+    ctx.beginPath();
+
+    if (tool === "line") {
+      ctx.moveTo(from.x, from.y);
+      ctx.lineTo(to.x, to.y);
+    } else if (tool === "rect") {
+      ctx.rect(from.x, from.y, to.x - from.x, to.y - from.y);
+    } else if (tool === "ellipse") {
+      const cx = (from.x + to.x) / 2;
+      const cy = (from.y + to.y) / 2;
+      const rx = Math.max(0.5, Math.abs(to.x - from.x) / 2);
+      const ry = Math.max(0.5, Math.abs(to.y - from.y) / 2);
+      ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+    }
+
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawMirrored(action, pointA, pointB) {
+    action(pointA, pointB);
+    if (mirrorToggle.checked) {
+      action(mirrorPoint(pointA), pointB ? mirrorPoint(pointB) : undefined);
+    }
+  }
+
+  function onPointerDown(event) {
+    if (event.button !== undefined && event.button !== 0) return;
+    const point = pointFromEvent(event);
+    canvas.setPointerCapture?.(event.pointerId);
+
+    if (activeTool === "stamp") {
+      drawMirrored((p) => stampAt(p), point);
+      commitHistory("Stamp deployed. Very official.");
+      return;
+    }
+
+    if (activeTool === "imagebrush" && !brushImage) {
+      brushImageInput.click();
+      say("Choose an image or animated GIF first.");
+      return;
+    }
+
+    drawing = true;
+    startPoint = point;
+    lastPoint = point;
+
+    if (activeTool === "crop") {
+      cropPreview = { from: point, to: point };
+    } else if (activeTool === "spray") {
+      drawMirrored((p) => sprayAt(p), point);
+    } else if (activeTool === "glitter") {
+      drawMirrored((p) => glitterAt(p), point);
+    } else if (activeTool === "orbit") {
+      drawMirrored((p) => orbitAt(p), point);
+    } else if (activeTool === "imagebrush") {
+      drawMirrored((p) => imageBrushAt(p), point);
+    } else if (["pencil", "marker", "rainbow", "eraser", "neon", "wiggle"].includes(activeTool)) {
+      const tiny = { x: point.x + 0.01, y: point.y + 0.01 };
+      if (activeTool === "wiggle") drawMirrored((a, b) => drawWiggle(a, b), point, tiny);
+      else drawMirrored((a, b) => drawSegment(a, b), point, tiny);
+    }
+  }
+
+  function onPointerMove(event) {
+    if (!drawing) return;
+    const point = pointFromEvent(event);
+
+    if (activeTool === "crop") {
+      cropPreview = { from: startPoint, to: point };
+    } else if (activeTool === "spray") {
+      drawMirrored((p) => sprayAt(p), point);
+    } else if (activeTool === "glitter") {
+      drawMirrored((p) => glitterAt(p), point);
+    } else if (activeTool === "orbit") {
+      drawMirrored((p) => orbitAt(p), point);
+    } else if (activeTool === "imagebrush") {
+      drawMirrored((p) => imageBrushAt(p), point);
+    } else if (activeTool === "wiggle") {
+      drawMirrored((a, b) => drawWiggle(a, b), lastPoint, point);
+    } else if (["pencil", "marker", "rainbow", "eraser", "neon"].includes(activeTool)) {
+      drawMirrored((a, b) => drawSegment(a, b), lastPoint, point);
+    }
+
+    lastPoint = point;
+  }
+
+  function normalizedRect(from, to) {
+    const x1 = clamp(Math.floor(Math.min(from.x, to.x)), 0, canvas.width - 1);
+    const y1 = clamp(Math.floor(Math.min(from.y, to.y)), 0, canvas.height - 1);
+    const x2 = clamp(Math.ceil(Math.max(from.x, to.x)), x1 + 1, canvas.width);
+    const y2 = clamp(Math.ceil(Math.max(from.y, to.y)), y1 + 1, canvas.height);
+    return {
+      x: x1,
+      y: y1,
+      width: x2 - x1,
+      height: y2 - y1
+    };
+  }
+
+  function cropToSelection(from, to) {
+    const rect = normalizedRect(from, to);
+    if (rect.width < 5 || rect.height < 5) {
+      say("Crop box was too tiny, so I left the picture alone.");
+      return;
+    }
+    const source = document.createElement("canvas");
+    source.width = rect.width;
+    source.height = rect.height;
+    source.getContext("2d").drawImage(
+      canvas,
+      rect.x,
+      rect.y,
+      rect.width,
+      rect.height,
+      0,
+      0,
+      rect.width,
+      rect.height
+    );
+    canvas.width = rect.width;
+    canvas.height = rect.height;
+    widthInput.value = rect.width;
+    heightInput.value = rect.height;
+    ctx.drawImage(source, 0, 0);
+    particles = [];
+    syncCanvasStage();
+    commitHistory(`Cropped to ${rect.width} × ${rect.height}. Smaller universe acquired.`);
+  }
+
+  function finishPointer(event) {
+    if (!drawing) return;
+    const point = pointFromEvent(event);
+
+    if (["line", "rect", "ellipse"].includes(activeTool)) {
+      drawMirrored((a, b) => drawShape(a, b, activeTool), startPoint, point);
+    } else if (activeTool === "crop") {
+      cropToSelection(startPoint, point);
+    }
+
+    drawing = false;
+    startPoint = null;
+    lastPoint = null;
+    cropPreview = null;
+    canvas.releasePointerCapture?.(event.pointerId);
+
+    if (activeTool !== "crop") {
+      commitHistory("Picture changed. Excellent choice.");
+    }
+  }
+
+  function cancelPointer() {
+    drawing = false;
+    startPoint = null;
+    lastPoint = null;
+    cropPreview = null;
+  }
+
+  function setTool(tool) {
+    activeTool = tool;
+    toolButtons.forEach((button) => {
+      const selected = button.dataset.tool === tool;
+      button.classList.toggle("active", selected);
+      button.setAttribute("aria-pressed", String(selected));
+    });
+    stampPicker.hidden = tool !== "stamp";
+    imageBrushPicker.hidden = tool !== "imagebrush";
+    say(tool === "crop" ? "Crop selected. Drag a box around what you want to keep." : `${tool[0].toUpperCase()}${tool.slice(1)} selected.`);
+  }
+
+  function renderMotion(now) {
+    motionCtx.clearRect(0, 0, motionCanvas.width, motionCanvas.height);
+
+    if (cropPreview) {
+      const rect = normalizedRect(cropPreview.from, cropPreview.to);
+      motionCtx.save();
+      motionCtx.setLineDash([10, 7]);
+      motionCtx.lineWidth = Math.max(2, 2 / zoom);
+      motionCtx.strokeStyle = "#ff2c91";
+      motionCtx.fillStyle = "rgba(255,255,255,.16)";
+      motionCtx.fillRect(rect.x, rect.y, rect.width, rect.height);
+      motionCtx.strokeRect(rect.x, rect.y, rect.width, rect.height);
+      motionCtx.restore();
+    }
+
+    particles = particles.filter((particle) => now - particle.birth < particle.life);
+    for (const particle of particles) {
+      const age = now - particle.birth;
+      const t = age / particle.life;
+      const alpha = Math.max(0, 1 - t);
+      motionCtx.save();
+      motionCtx.globalAlpha = alpha;
+      motionCtx.fillStyle = particle.color;
+      motionCtx.shadowColor = particle.color;
+      motionCtx.shadowBlur = particle.size * 2;
+
+      if (particle.type === "glitter") {
+        const seconds = age / 1000;
+        const x = particle.x + particle.vx * seconds;
+        const y = particle.y + particle.vy * seconds + 22 * seconds * seconds;
+        motionCtx.translate(x, y);
+        motionCtx.rotate(particle.spin * seconds);
+        const s = particle.size * (0.55 + Math.sin(age / 70) * 0.25);
+        motionCtx.fillRect(-s / 2, -s / 2, s, s);
+      } else if (particle.type === "orbit") {
+        const angle = particle.angle + particle.speed * age / 1000;
+        const radius = particle.radius * (0.65 + t * 0.65);
+        const x = particle.cx + Math.cos(angle) * radius;
+        const y = particle.cy + Math.sin(angle * 1.17) * radius * 0.72;
+        motionCtx.beginPath();
+        motionCtx.arc(x, y, particle.size * (1 - t * 0.45), 0, Math.PI * 2);
+        motionCtx.fill();
+      }
+      motionCtx.restore();
+    }
+
+    requestAnimationFrame(renderMotion);
+  }
+
+  function withCanvasCopy(transform) {
+    const source = document.createElement("canvas");
+    source.width = canvas.width;
+    source.height = canvas.height;
+    source.getContext("2d").drawImage(canvas, 0, 0);
+    transform(source);
+  }
+
+  function flip(horizontal) {
+    withCanvasCopy((source) => {
+      ctx.save();
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.translate(horizontal ? canvas.width : 0, horizontal ? 0 : canvas.height);
+      ctx.scale(horizontal ? -1 : 1, horizontal ? 1 : -1);
+      ctx.drawImage(source, 0, 0);
+      ctx.restore();
+    });
+    commitHistory(horizontal ? "Flipped sideways." : "Flopped upside-down.");
+  }
+
+  function rotateClockwise() {
+    const source = document.createElement("canvas");
+    source.width = canvas.width;
+    source.height = canvas.height;
+    source.getContext("2d").drawImage(canvas, 0, 0);
+
+    canvas.width = source.height;
+    canvas.height = source.width;
+    widthInput.value = canvas.width;
+    heightInput.value = canvas.height;
+
+    ctx.save();
+    ctx.translate(canvas.width / 2, canvas.height / 2);
+    ctx.rotate(Math.PI / 2);
+    ctx.drawImage(source, -source.width / 2, -source.height / 2);
+    ctx.restore();
+    particles = [];
+    syncCanvasStage();
+    commitHistory("Turned 90°. Gravity remains optional.");
+  }
+
+  function invert() {
+    const image = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    for (let i = 0; i < image.data.length; i += 4) {
+      image.data[i] = 255 - image.data[i];
+      image.data[i + 1] = 255 - image.data[i + 1];
+      image.data[i + 2] = 255 - image.data[i + 2];
+    }
+    ctx.putImageData(image, 0, 0);
+    commitHistory("Colors inverted. The picture has entered the mirror universe.");
+  }
+
+  function pixelate() {
+    const source = document.createElement("canvas");
+    source.width = canvas.width;
+    source.height = canvas.height;
+    source.getContext("2d").drawImage(canvas, 0, 0);
+
+    const scale = Math.max(4, Math.round(Math.min(canvas.width, canvas.height) / 80));
+    const tiny = document.createElement("canvas");
+    tiny.width = Math.max(1, Math.round(canvas.width / scale));
+    tiny.height = Math.max(1, Math.round(canvas.height / scale));
+    const tinyCtx = tiny.getContext("2d");
+    tinyCtx.imageSmoothingEnabled = false;
+    tinyCtx.drawImage(source, 0, 0, tiny.width, tiny.height);
+
+    ctx.save();
+    ctx.imageSmoothingEnabled = false;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(tiny, 0, 0, tiny.width, tiny.height, 0, 0, canvas.width, canvas.height);
+    ctx.restore();
+    commitHistory("Pixelated. Crunchy pixels achieved.");
+  }
+
+  const vertexShaderSource = `
+    attribute vec2 a_position;
+    varying vec2 v_uv;
+    void main() {
+      v_uv = (a_position + 1.0) * 0.5;
+      gl_Position = vec4(a_position, 0.0, 1.0);
+    }
+  `;
+
+  const shaderSources = {
+    wave: `
+      precision mediump float;
+      uniform sampler2D u_image;
+      uniform float u_time;
+      varying vec2 v_uv;
+      void main() {
+        vec2 uv = v_uv;
+        uv.x += sin((uv.y * 22.0) + u_time * 2.0) * 0.025;
+        uv.y += cos((uv.x * 16.0) - u_time * 1.3) * 0.012;
+        gl_FragColor = texture2D(u_image, clamp(uv, 0.0, 1.0));
+      }
+    `,
+    glitch: `
+      precision mediump float;
+      uniform sampler2D u_image;
+      uniform float u_time;
+      varying vec2 v_uv;
+      void main() {
+        float band = step(0.72, fract(v_uv.y * 17.0 + u_time));
+        float offset = 0.012 + band * 0.025;
+        float r = texture2D(u_image, clamp(v_uv + vec2(offset, 0.0), 0.0, 1.0)).r;
+        float g = texture2D(u_image, v_uv).g;
+        float b = texture2D(u_image, clamp(v_uv - vec2(offset, 0.0), 0.0, 1.0)).b;
+        gl_FragColor = vec4(r, g, b, 1.0);
+      }
+    `,
+    swirl: `
+      precision mediump float;
+      uniform sampler2D u_image;
+      uniform float u_time;
+      varying vec2 v_uv;
+      void main() {
+        vec2 p = v_uv - vec2(0.5);
+        float r = length(p);
+        float angle = atan(p.y, p.x) + (1.0 - smoothstep(0.0, 0.72, r)) * 2.4;
+        vec2 uv = vec2(cos(angle), sin(angle)) * r + vec2(0.5);
+        gl_FragColor = texture2D(u_image, clamp(uv, 0.0, 1.0));
+      }
+    `,
+    posterize: `
+      precision mediump float;
+      uniform sampler2D u_image;
+      uniform float u_time;
+      varying vec2 v_uv;
+      void main() {
+        vec4 c = texture2D(u_image, v_uv);
+        c.rgb = floor(c.rgb * 5.0 + 0.5) / 5.0;
+        float scan = 0.97 + 0.03 * sin(v_uv.y * 700.0 + u_time);
+        gl_FragColor = vec4(c.rgb * scan, c.a);
+      }
+    `
+  };
+
+  function compileShader(gl, type, source) {
+    const shader = gl.createShader(type);
+    gl.shaderSource(shader, source);
+    gl.compileShader(shader);
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+      const message = gl.getShaderInfoLog(shader);
+      gl.deleteShader(shader);
+      throw new Error(message || "Shader compilation failed");
+    }
+    return shader;
+  }
+
+  function applyShader(name) {
+    const fragmentSource = shaderSources[name];
+    if (!fragmentSource) return;
+
+    const glCanvas = document.createElement("canvas");
+    glCanvas.width = canvas.width;
+    glCanvas.height = canvas.height;
+    const gl = glCanvas.getContext("webgl", { preserveDrawingBuffer: true });
+    if (!gl) {
+      say("WebGL shaders are unavailable in this browser.");
+      return;
+    }
+
+    try {
+      const vertex = compileShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
+      const fragment = compileShader(gl, gl.FRAGMENT_SHADER, fragmentSource);
+      const program = gl.createProgram();
+      gl.attachShader(program, vertex);
+      gl.attachShader(program, fragment);
+      gl.linkProgram(program);
+      if (!gl.getProgramParameter(program, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(program));
+      gl.useProgram(program);
+
+      const buffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]), gl.STATIC_DRAW);
+      const position = gl.getAttribLocation(program, "a_position");
+      gl.enableVertexAttribArray(position);
+      gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
+
+      const texture = gl.createTexture();
+      gl.activeTexture(gl.TEXTURE0);
+      gl.bindTexture(gl.TEXTURE_2D, texture);
+      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, canvas);
+      gl.uniform1i(gl.getUniformLocation(program, "u_image"), 0);
+      const timeLocation = gl.getUniformLocation(program, "u_time");
+      if (timeLocation) gl.uniform1f(timeLocation, performance.now() / 1000);
+
+      gl.viewport(0, 0, glCanvas.width, glCanvas.height);
+      gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+      ctx.save();
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(glCanvas, 0, 0);
+      ctx.restore();
+      commitHistory(`${name[0].toUpperCase()}${name.slice(1)} shader applied. Pixels have been professionally confused.`);
+    } catch (error) {
+      console.error(error);
+      say("That shader fizzled instead of sizzling.");
+    }
+  }
+
+  function resizeTo(newWidth, newHeight, message = "Picture transformed.") {
+    newWidth = Math.round(clamp(newWidth, 32, 4096));
+    newHeight = Math.round(clamp(newHeight, 32, 4096));
+
+    const source = document.createElement("canvas");
+    source.width = canvas.width;
+    source.height = canvas.height;
+    source.getContext("2d").drawImage(canvas, 0, 0);
+
+    canvas.width = newWidth;
+    canvas.height = newHeight;
+    widthInput.value = canvas.width;
+    heightInput.value = canvas.height;
+    fillWhite();
+    ctx.drawImage(source, 0, 0, source.width, source.height, 0, 0, canvas.width, canvas.height);
+    particles = [];
+    syncCanvasStage();
+    commitHistory(message);
+  }
+
+  function resizeCanvas() {
+    const newWidth = Number(widthInput.value) || canvas.width;
+    const newHeight = Number(heightInput.value) || canvas.height;
+    resizeTo(newWidth, newHeight, `Resized to ${Math.round(newWidth)} × ${Math.round(newHeight)}.`);
+  }
+
+  function scaleCanvas(factor) {
+    resizeTo(canvas.width * factor, canvas.height * factor, factor < 1 ? "Shrunk to half size." : "Doubled in size. More pixels for mischief.");
+  }
+
+  function clearCanvas() {
+    fillWhite();
+    particles = [];
+    commitHistory("Canvas cleared. The void is ready.");
+  }
+
+  function newPicture() {
+    if (!window.confirm("Start a new blank picture? You can still Undo afterward.")) return;
+    fillWhite();
+    particles = [];
+    commitHistory("New blank picture. Infinite potential, mild danger.");
+  }
+
+  function downloadBlob(blob, filename) {
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.download = filename;
+    link.href = url;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  function timestamp() {
+    return new Date().toISOString().replace(/[:.]/g, "-");
+  }
+
+  function savePng() {
+    canvas.toBlob((blob) => {
+      if (!blob) return;
+      downloadBlob(blob, `draw-4-fun-${timestamp()}.png`);
+      say("PNG saved. Refrigerator display is now possible.");
+    }, "image/png");
+  }
+
+  function openImageFile(file) {
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    const image = new Image();
+    image.onload = () => {
+      const maxDimension = 4096;
+      const scale = Math.min(1, maxDimension / Math.max(image.naturalWidth, image.naturalHeight));
+      canvas.width = Math.max(32, Math.round(image.naturalWidth * scale));
+      canvas.height = Math.max(32, Math.round(image.naturalHeight * scale));
+      widthInput.value = canvas.width;
+      heightInput.value = canvas.height;
+      fillWhite();
+      ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+      URL.revokeObjectURL(url);
+      particles = [];
+      syncCanvasStage();
+      commitHistory(`Opened ${file.name}. Draw on it recklessly.`);
+      fileInput.value = "";
+    };
+    image.onerror = () => {
+      URL.revokeObjectURL(url);
+      say("That image would not open. It may be haunted.");
+    };
+    image.src = url;
+  }
+
+  function loadBrushImage(file) {
+    if (!file) return;
+    if (brushImageUrl) URL.revokeObjectURL(brushImageUrl);
+    brushImageUrl = URL.createObjectURL(file);
+    const image = new Image();
+    image.onload = () => {
+      brushImage = image;
+      brushImageName.textContent = file.name;
+      brushImageInput.value = "";
+      say(`Loaded ${file.name} as the moving image brush.`);
+    };
+    image.onerror = () => {
+      URL.revokeObjectURL(brushImageUrl);
+      brushImageUrl = null;
+      brushImage = null;
+      say("That brush image refused to cooperate.");
+    };
+    image.src = brushImageUrl;
+  }
+
+  function buildGifPalette() {
+    const palette = new Uint8Array(256 * 3);
+    let offset = 0;
+    for (let r = 0; r < 8; r += 1) {
+      for (let g = 0; g < 8; g += 1) {
+        for (let b = 0; b < 4; b += 1) {
+          palette[offset++] = Math.round(r * 255 / 7);
+          palette[offset++] = Math.round(g * 255 / 7);
+          palette[offset++] = Math.round(b * 255 / 3);
+        }
+      }
+    }
+    return palette;
+  }
+
+  const GIF_PALETTE = buildGifPalette();
+
+  function rgbaToPaletteIndexes(data) {
+    const pixels = new Uint8Array(data.length / 4);
+    for (let i = 0, p = 0; i < data.length; i += 4, p += 1) {
+      if (data[i + 3] < 128) {
+        pixels[p] = 255;
+        continue;
+      }
+      const r = data[i] >> 5;
+      const g = data[i + 1] >> 5;
+      const b = data[i + 2] >> 6;
+      pixels[p] = (r << 5) | (g << 2) | b;
+    }
+    return pixels;
+  }
+
+  function writeGifCode(bytes, state, code, size) {
+    state.bits |= code << state.count;
+    state.count += size;
+    while (state.count >= 8) {
+      bytes.push(state.bits & 0xff);
+      state.bits >>= 8;
+      state.count -= 8;
+    }
+  }
+
+  function lzwEncode(pixels, minCodeSize = 8) {
+    const clearCode = 1 << minCodeSize;
+    const endCode = clearCode + 1;
+    let nextCode = endCode + 1;
+    let codeSize = minCodeSize + 1;
+    const dictionary = new Map();
+    const bytes = [];
+    const state = { bits: 0, count: 0 };
+
+    const reset = () => {
+      dictionary.clear();
+      nextCode = endCode + 1;
+      codeSize = minCodeSize + 1;
+    };
+
+    writeGifCode(bytes, state, clearCode, codeSize);
+    if (pixels.length === 0) {
+      writeGifCode(bytes, state, endCode, codeSize);
+    } else {
+      let prefix = pixels[0];
+      for (let i = 1; i < pixels.length; i += 1) {
+        const value = pixels[i];
+        const key = `${prefix},${value}`;
+        if (dictionary.has(key)) {
+          prefix = dictionary.get(key);
+          continue;
+        }
+
+        writeGifCode(bytes, state, prefix, codeSize);
+        if (nextCode < 4096) {
+          dictionary.set(key, nextCode);
+          nextCode += 1;
+          if (nextCode === (1 << codeSize) && codeSize < 12) codeSize += 1;
+        } else {
+          writeGifCode(bytes, state, clearCode, codeSize);
+          reset();
+        }
+        prefix = value;
+      }
+      writeGifCode(bytes, state, prefix, codeSize);
+      writeGifCode(bytes, state, endCode, codeSize);
+    }
+
+    if (state.count > 0) bytes.push(state.bits & 0xff);
+    return bytes;
+  }
+
+  function pushWord(bytes, value) {
+    bytes.push(value & 0xff, (value >> 8) & 0xff);
+  }
+
+  function pushAscii(bytes, text) {
+    for (let i = 0; i < text.length; i += 1) bytes.push(text.charCodeAt(i));
+  }
+
+  function pushSubBlocks(bytes, data) {
+    for (let i = 0; i < data.length; i += 255) {
+      const size = Math.min(255, data.length - i);
+      bytes.push(size);
+      for (let j = 0; j < size; j += 1) bytes.push(data[i + j]);
+    }
+    bytes.push(0);
+  }
+
+  function encodeGif(frames, width, height, fps) {
+    const bytes = [];
+    pushAscii(bytes, "GIF89a");
+    pushWord(bytes, width);
+    pushWord(bytes, height);
+    bytes.push(0xf7, 255, 0);
+    for (const value of GIF_PALETTE) bytes.push(value);
+
+    bytes.push(0x21, 0xff, 0x0b);
+    pushAscii(bytes, "NETSCAPE2.0");
+    bytes.push(0x03, 0x01, 0x00, 0x00, 0x00);
+
+    const delay = Math.max(2, Math.round(100 / fps));
+    for (const frame of frames) {
+      bytes.push(0x21, 0xf9, 0x04, 0x04);
+      pushWord(bytes, delay);
+      bytes.push(0x00, 0x00);
+
+      bytes.push(0x2c);
+      pushWord(bytes, 0);
+      pushWord(bytes, 0);
+      pushWord(bytes, width);
+      pushWord(bytes, height);
+      bytes.push(0x00);
+
+      bytes.push(0x08);
+      pushSubBlocks(bytes, lzwEncode(frame, 8));
+    }
+
+    bytes.push(0x3b);
+    return new Blob([new Uint8Array(bytes)], { type: "image/gif" });
+  }
+
+  function captureGifFrame() {
+    if (!gifRecording) return;
+    const capture = document.createElement("canvas");
+    capture.width = gifWidth;
+    capture.height = gifHeight;
+    const captureCtx = capture.getContext("2d", { willReadFrequently: true });
+    captureCtx.fillStyle = "#ffffff";
+    captureCtx.fillRect(0, 0, gifWidth, gifHeight);
+    captureCtx.drawImage(canvas, 0, 0, gifWidth, gifHeight);
+    captureCtx.drawImage(motionCanvas, 0, 0, gifWidth, gifHeight);
+    const image = captureCtx.getImageData(0, 0, gifWidth, gifHeight);
+    gifFrames.push(rgbaToPaletteIndexes(image.data));
+
+    const elapsed = (performance.now() - gifStartedAt) / 1000;
+    recordStatus.textContent = `${elapsed.toFixed(1)} s · ${gifFrames.length} frames`;
+    if (elapsed >= GIF_MAX_SECONDS) stopGifRecording();
+  }
+
+  function startGifRecording() {
+    if (gifRecording) return;
+    const scale = Math.min(1, GIF_MAX_DIMENSION / Math.max(canvas.width, canvas.height));
+    gifWidth = Math.max(1, Math.round(canvas.width * scale));
+    gifHeight = Math.max(1, Math.round(canvas.height * scale));
+    gifFrames = [];
+    gifRecording = true;
+    gifStartedAt = performance.now();
+    recordStrip.hidden = false;
+    recordGifButton.classList.add("recording");
+    recordGifButton.textContent = "● Recording…";
+    captureGifFrame();
+    gifTimer = window.setInterval(captureGifFrame, 1000 / GIF_FPS);
+    say(`GIF recording started at ${gifWidth} × ${gifHeight}. Paint something that moves!`);
+  }
+
+  function stopGifRecording() {
+    if (!gifRecording) return;
+    gifRecording = false;
+    if (gifTimer) window.clearInterval(gifTimer);
+    gifTimer = null;
+    recordGifButton.classList.remove("recording");
+    recordGifButton.textContent = "● Record GIF";
+    recordStrip.hidden = true;
+
+    if (gifFrames.length === 0) {
+      say("No GIF frames were captured.");
+      return;
+    }
+
+    say(`Encoding ${gifFrames.length} GIF frames…`);
+    try {
+      const blob = encodeGif(gifFrames, gifWidth, gifHeight, GIF_FPS);
+      downloadBlob(blob, `draw-4-fun-${timestamp()}.gif`);
+      say(`GIF saved with ${gifFrames.length} frames. It lives!`);
+    } catch (error) {
+      console.error(error);
+      say("GIF encoding tripped over its own shoelaces.");
+    } finally {
+      gifFrames = [];
+    }
+  }
+
+  toolButtons.forEach((button) => button.addEventListener("click", () => setTool(button.dataset.tool)));
+
+  stampButtons.forEach((button, index) => {
+    if (index === 0) button.classList.add("selected");
+    button.addEventListener("click", () => {
+      selectedStamp = button.dataset.stamp;
+      stampButtons.forEach((candidate) => candidate.classList.toggle("selected", candidate === button));
+      say(`${selectedStamp} stamp selected.`);
+    });
+  });
+
+  sizeSlider.addEventListener("input", () => { sizeOutput.value = sizeSlider.value; });
+  canvas.addEventListener("pointerdown", onPointerDown);
+  canvas.addEventListener("pointermove", onPointerMove);
+  canvas.addEventListener("pointerup", finishPointer);
+  canvas.addEventListener("pointercancel", cancelPointer);
+
+  undoButton.addEventListener("click", undo);
+  redoButton.addEventListener("click", redo);
+  document.querySelector("#clearButton").addEventListener("click", clearCanvas);
+  document.querySelector("#newButton").addEventListener("click", newPicture);
+  document.querySelector("#saveButton").addEventListener("click", savePng);
+  document.querySelector("#openButton").addEventListener("click", () => fileInput.click());
+  fileInput.addEventListener("change", () => openImageFile(fileInput.files?.[0]));
+
+  document.querySelector("#chooseBrushImageButton").addEventListener("click", () => brushImageInput.click());
+  brushImageInput.addEventListener("change", () => loadBrushImage(brushImageInput.files?.[0]));
+
+  document.querySelector("#flipHButton").addEventListener("click", () => flip(true));
+  document.querySelector("#flipVButton").addEventListener("click", () => flip(false));
+  document.querySelector("#rotateButton").addEventListener("click", rotateClockwise);
+  document.querySelector("#invertButton").addEventListener("click", invert);
+  document.querySelector("#pixelateButton").addEventListener("click", pixelate);
+  document.querySelector("#waveShaderButton").addEventListener("click", () => applyShader("wave"));
+  document.querySelector("#glitchShaderButton").addEventListener("click", () => applyShader("glitch"));
+  document.querySelector("#swirlShaderButton").addEventListener("click", () => applyShader("swirl"));
+  document.querySelector("#posterizeShaderButton").addEventListener("click", () => applyShader("posterize"));
+  document.querySelector("#resizeButton").addEventListener("click", resizeCanvas);
+  document.querySelector("#halfSizeButton").addEventListener("click", () => scaleCanvas(0.5));
+  document.querySelector("#doubleSizeButton").addEventListener("click", () => scaleCanvas(2));
+
+  document.querySelector("#zoomOutButton").addEventListener("click", () => setZoom(zoom / 1.25));
+  document.querySelector("#zoomResetButton").addEventListener("click", () => setZoom(1));
+  document.querySelector("#zoomInButton").addEventListener("click", () => setZoom(zoom * 1.25));
+
+  recordGifButton.addEventListener("click", () => gifRecording ? stopGifRecording() : startGifRecording());
+  stopGifButton.addEventListener("click", stopGifRecording);
+
+  window.addEventListener("keydown", (event) => {
+    const command = event.ctrlKey || event.metaKey;
+    if (!command) return;
+    const key = event.key.toLowerCase();
+
+    if (key === "s") {
+      event.preventDefault();
+      savePng();
+    } else if (key === "z" && event.shiftKey) {
+      event.preventDefault();
+      redo();
+    } else if (key === "z") {
+      event.preventDefault();
+      undo();
+    } else if (key === "y") {
+      event.preventDefault();
+      redo();
+    } else if (key === "+" || key === "=") {
+      event.preventDefault();
+      setZoom(zoom * 1.25);
+    } else if (key === "-") {
+      event.preventDefault();
+      setZoom(zoom / 1.25);
+    }
+  });
+
+  fillWhite();
+  syncCanvasStage();
+  commitHistory();
+  updateHistoryButtons();
+  requestAnimationFrame(renderMotion);
+})();
+
+</script>
+  <script>
+(() => {
+  "use strict";
+
+  const canvas = document.querySelector("#drawingCanvas");
+  const motionCanvas = document.querySelector("#motionCanvas");
+  const motionCtx = motionCanvas?.getContext("2d");
+  const orbitButton = document.querySelector('[data-tool="orbit"]');
+  const colorPicker = document.querySelector("#colorPicker");
+  const sizeSlider = document.querySelector("#sizeSlider");
+  const status = document.querySelector("#status");
+  const topActions = document.querySelector(".top-actions");
+  const pencilButton = document.querySelector('[data-tool="pencil"]');
+
+  if (!canvas || !motionCanvas || !motionCtx || !orbitButton || !topActions) return;
+
+  let betaMode = false;
+  let orbitDrawing = false;
+  let lastOrbitPoint = null;
+  let betaOrbits = [];
+  let betaHue = 0;
+
+  const betaToggleButton = document.createElement("button");
+  betaToggleButton.type = "button";
+  betaToggleButton.id = "betaToggleButton";
+  betaToggleButton.textContent = "~ Beta";
+  betaToggleButton.title = "Press ~ to toggle Beta mode";
+  betaToggleButton.setAttribute("aria-pressed", "false");
+  topActions.append(betaToggleButton);
+
+  const style = document.createElement("style");
+  style.textContent = `
+    [data-beta-feature] { display: none !important; }
+    body.beta-mode [data-beta-feature] { display: revert !important; }
+    #betaToggleButton { background: #d9c4ff; }
+    body.beta-mode #betaToggleButton {
+      background: #ff8ac6;
+      box-shadow: 0 0 0 4px #fff36d, 3px 3px 0 #171717;
+    }
+    body.beta-mode .topbar::after {
+      content: "BETA";
+      position: absolute;
+      top: -12px;
+      left: 18px;
+      padding: 3px 9px;
+      border: 3px solid #171717;
+      border-radius: 999px;
+      background: #ff8ac6;
+      font-weight: 900;
+      letter-spacing: .08em;
+      transform: rotate(-3deg);
+    }
+    body.beta-mode .topbar { position: relative; }
+  `;
+  document.head.append(style);
+
+  function say(message) {
+    if (status) status.textContent = message;
+  }
+
+  function betaFeatures() {
+    return [...document.querySelectorAll("[data-beta-feature]")];
+  }
+
+  function syncBetaFeatureVisibility() {
+    for (const element of betaFeatures()) {
+      element.setAttribute("aria-hidden", betaMode ? "false" : "true");
+    }
+  }
+
+  function setBetaMode(enabled) {
+    betaMode = Boolean(enabled);
+    document.body.classList.toggle("beta-mode", betaMode);
+    betaToggleButton.textContent = betaMode ? "~ Beta ON" : "~ Beta";
+    betaToggleButton.setAttribute("aria-pressed", String(betaMode));
+    motionCanvas.dataset.betaMode = betaMode ? "on" : "off";
+    syncBetaFeatureVisibility();
+
+    if (!betaMode) {
+      orbitDrawing = false;
+      lastOrbitPoint = null;
+      const activeBetaOnlyTool = document.querySelector('.tool.active[data-beta-feature]');
+      if (activeBetaOnlyTool) pencilButton?.click();
+      say("Stable mode. Press ~ for the proposed Beta behavior.");
+    } else {
+      say("Beta mode ON. Press ~ again to compare with Stable without losing the picture.");
+    }
+  }
+
+  function toggleBetaMode() {
+    setBetaMode(!betaMode);
+  }
+
+  function pointFromEvent(event) {
+    const rect = canvas.getBoundingClientRect();
+    return {
+      x: (event.clientX - rect.left) * (canvas.width / rect.width),
+      y: (event.clientY - rect.top) * (canvas.height / rect.height)
+    };
+  }
+
+  function orbitIsActive() {
+    return betaMode && orbitButton.classList.contains("active");
+  }
+
+  function addOrbit(point) {
+    const brushSize = Math.max(1, Number(sizeSlider?.value) || 12);
+    const baseRadius = Math.max(10, brushSize * 0.9);
+    const color = colorPicker?.value || "#202020";
+    const now = performance.now();
+
+    for (let i = 0; i < 3; i += 1) {
+      betaOrbits.push({
+        cx: point.x,
+        cy: point.y,
+        radius: baseRadius * (0.72 + Math.random() * 0.65),
+        angle: Math.random() * Math.PI * 2,
+        speed: (Math.random() > 0.5 ? 1 : -1) * (1.3 + Math.random() * 2.8),
+        size: 2 + Math.random() * Math.max(3, brushSize * 0.22),
+        color: i === 0 ? color : `hsl(${(betaHue + i * 95 + Math.random() * 35) % 360} 95% 60%)`,
+        born: now
+      });
+    }
+    betaHue = (betaHue + 17) % 360;
+  }
+
+  function farEnough(point) {
+    if (!lastOrbitPoint) return true;
+    const brushSize = Math.max(1, Number(sizeSlider?.value) || 12);
+    return Math.hypot(point.x - lastOrbitPoint.x, point.y - lastOrbitPoint.y) >= Math.max(7, brushSize * 0.55);
+  }
+
+  function interceptPointerDown(event) {
+    if (!orbitIsActive()) return;
+    if (event.button !== undefined && event.button !== 0) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    const point = pointFromEvent(event);
+    orbitDrawing = true;
+    lastOrbitPoint = point;
+    canvas.setPointerCapture?.(event.pointerId);
+    addOrbit(point);
+    say("Beta Orbit: permanent motion only — no paint mark.");
+  }
+
+  function interceptPointerMove(event) {
+    if (!orbitIsActive() || !orbitDrawing) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    const point = pointFromEvent(event);
+    if (farEnough(point)) {
+      addOrbit(point);
+      lastOrbitPoint = point;
+    }
+  }
+
+  function interceptPointerEnd(event) {
+    if (!orbitIsActive() || !orbitDrawing) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    orbitDrawing = false;
+    lastOrbitPoint = null;
+    canvas.releasePointerCapture?.(event.pointerId);
+    say(`Beta Orbit: ${betaOrbits.length} orbiting particles are still alive.`);
+  }
+
+  function renderBetaOrbits(now) {
+    if (betaMode && betaOrbits.length) {
+      for (const orbit of betaOrbits) {
+        const seconds = (now - orbit.born) / 1000;
+        const angle = orbit.angle + orbit.speed * seconds;
+        const breathe = 1 + Math.sin(seconds * 1.7 + orbit.angle) * 0.08;
+        const radius = orbit.radius * breathe;
+        const x = orbit.cx + Math.cos(angle) * radius;
+        const y = orbit.cy + Math.sin(angle * 1.13) * radius * 0.76;
+
+        motionCtx.save();
+        motionCtx.globalAlpha = 1;
+        motionCtx.fillStyle = orbit.color;
+        motionCtx.shadowColor = orbit.color;
+        motionCtx.shadowBlur = orbit.size * 2.4;
+        motionCtx.beginPath();
+        motionCtx.arc(x, y, orbit.size, 0, Math.PI * 2);
+        motionCtx.fill();
+        motionCtx.restore();
+      }
+    }
+    requestAnimationFrame(renderBetaOrbits);
+  }
+
+  function clearBetaOrbits() {
+    betaOrbits = [];
+    orbitDrawing = false;
+    lastOrbitPoint = null;
+  }
+
+  betaToggleButton.addEventListener("click", toggleBetaMode);
+
+  window.addEventListener("keydown", (event) => {
+    if (event.key !== "`" && event.key !== "~") return;
+    if (event.ctrlKey || event.metaKey || event.altKey) return;
+    event.preventDefault();
+    toggleBetaMode();
+  });
+
+  canvas.addEventListener("pointerdown", interceptPointerDown, true);
+  canvas.addEventListener("pointermove", interceptPointerMove, true);
+  canvas.addEventListener("pointerup", interceptPointerEnd, true);
+  canvas.addEventListener("pointercancel", interceptPointerEnd, true);
+
+  document.querySelector("#clearButton")?.addEventListener("click", clearBetaOrbits);
+  document.querySelector("#newButton")?.addEventListener("click", clearBetaOrbits);
+  document.querySelector("#fileInput")?.addEventListener("change", (event) => {
+    if (event.currentTarget.files?.length) clearBetaOrbits();
+  });
+  document.querySelector("#rotateButton")?.addEventListener("click", clearBetaOrbits);
+  document.querySelector("#resizeButton")?.addEventListener("click", clearBetaOrbits);
+  document.querySelector("#halfSizeButton")?.addEventListener("click", clearBetaOrbits);
+  document.querySelector("#doubleSizeButton")?.addEventListener("click", clearBetaOrbits);
+  document.querySelector('[data-tool="crop"]')?.addEventListener("click", () => {
+    if (betaOrbits.length) say("Cropping will clear persistent Beta Orbit effects after the crop.");
+  });
+
+  setBetaMode(false);
+  requestAnimationFrame(renderBetaOrbits);
+})();
+
+</script>
+  <script>
+(() => {
+  "use strict";
+
+  const canvas = document.querySelector("#drawingCanvas");
+  const colorPicker = document.querySelector("#colorPicker");
+  const status = document.querySelector("#status");
+  const savePngButton = document.querySelector("#saveButton");
+  const recordGifButton = document.querySelector("#recordGifButton");
+  const toolGrid = document.querySelector("#toolGrid");
+
+  if (!canvas || !colorPicker || !status || !savePngButton) return;
+
+  const ctx = canvas.getContext("2d", { willReadFrequently: true });
+
+  function say(message) {
+    status.textContent = message;
+  }
+
+  function timestamp() {
+    return new Date().toISOString().replace(/[:.]/g, "-");
+  }
+
+  function downloadBlob(blob, extension) {
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.download = `draw-4-fun-${timestamp()}.${extension}`;
+    link.href = url;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  function flattenedCanvas() {
+    const copy = document.createElement("canvas");
+    copy.width = canvas.width;
+    copy.height = canvas.height;
+    const copyCtx = copy.getContext("2d");
+    copyCtx.fillStyle = "#ffffff";
+    copyCtx.fillRect(0, 0, copy.width, copy.height);
+    copyCtx.drawImage(canvas, 0, 0);
+    return copy;
+  }
+
+  function exportJpeg() {
+    flattenedCanvas().toBlob((blob) => {
+      if (!blob) {
+        say("JPEG export failed. The pixels staged a tiny revolt.");
+        return;
+      }
+      downloadBlob(blob, "jpg");
+      say("JPEG exported at high quality.");
+    }, "image/jpeg", 0.92);
+  }
+
+  function canvasToBmpBlob(sourceCanvas = canvas) {
+    const width = sourceCanvas.width;
+    const height = sourceCanvas.height;
+    const sourceCtx = sourceCanvas.getContext("2d", { willReadFrequently: true });
+    const rgba = sourceCtx.getImageData(0, 0, width, height).data;
+    const rowBytes = width * 3;
+    const padding = (4 - (rowBytes % 4)) % 4;
+    const stride = rowBytes + padding;
+    const pixelBytes = stride * height;
+    const headerBytes = 54;
+    const buffer = new ArrayBuffer(headerBytes + pixelBytes);
+    const view = new DataView(buffer);
+    const bytes = new Uint8Array(buffer);
+
+    bytes[0] = 0x42;
+    bytes[1] = 0x4d;
+    view.setUint32(2, buffer.byteLength, true);
+    view.setUint32(10, headerBytes, true);
+    view.setUint32(14, 40, true);
+    view.setInt32(18, width, true);
+    view.setInt32(22, height, true);
+    view.setUint16(26, 1, true);
+    view.setUint16(28, 24, true);
+    view.setUint32(30, 0, true);
+    view.setUint32(34, pixelBytes, true);
+    view.setInt32(38, 2835, true);
+    view.setInt32(42, 2835, true);
+    view.setUint32(46, 0, true);
+    view.setUint32(50, 0, true);
+
+    let output = headerBytes;
+    for (let y = height - 1; y >= 0; y -= 1) {
+      for (let x = 0; x < width; x += 1) {
+        const input = (y * width + x) * 4;
+        const alpha = rgba[input + 3] / 255;
+        const red = Math.round(rgba[input] * alpha + 255 * (1 - alpha));
+        const green = Math.round(rgba[input + 1] * alpha + 255 * (1 - alpha));
+        const blue = Math.round(rgba[input + 2] * alpha + 255 * (1 - alpha));
+        bytes[output++] = blue;
+        bytes[output++] = green;
+        bytes[output++] = red;
+      }
+      output += padding;
+    }
+
+    return new Blob([buffer], { type: "image/bmp" });
+  }
+
+  function exportBmp() {
+    try {
+      downloadBlob(canvasToBmpBlob(), "bmp");
+      say("Bitmap exported as a 24-bit BMP.");
+    } catch (error) {
+      console.error(error);
+      say("BMP export failed. The bitmap got stage fright.");
+    }
+  }
+
+  function canvasToSvgBlob(sourceCanvas = canvas) {
+    const width = sourceCanvas.width;
+    const height = sourceCanvas.height;
+    const png = sourceCanvas.toDataURL("image/png");
+    const svg = `<?xml version="1.0" encoding="UTF-8"?>\n` +
+      `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">\n` +
+      `  <image width="${width}" height="${height}" href="${png}"/>\n` +
+      `</svg>\n`;
+    return new Blob([svg], { type: "image/svg+xml;charset=utf-8" });
+  }
+
+  function exportSvg() {
+    try {
+      downloadBlob(canvasToSvgBlob(), "svg");
+      say("SVG exported with the canvas artwork embedded exactly as drawn.");
+    } catch (error) {
+      console.error(error);
+      say("SVG export failed. The vectors declined to vector.");
+    }
+  }
+
+  function addExportButton(id, label, title, handler) {
+    if (document.querySelector(`#${id}`)) return;
+    const button = document.createElement("button");
+    button.id = id;
+    button.type = "button";
+    button.className = "big-button";
+    button.textContent = label;
+    button.title = title;
+    button.addEventListener("click", handler);
+    savePngButton.parentElement.insertBefore(button, recordGifButton || null);
+  }
+
+  savePngButton.textContent = "Export PNG";
+  savePngButton.title = "Export the current picture as PNG";
+  addExportButton("exportJpegButton", "Export JPEG", "Export a high-quality JPEG with a white background", exportJpeg);
+  addExportButton("exportBmpButton", "Export BMP", "Export a 24-bit Windows bitmap (BMP)", exportBmp);
+  addExportButton("exportSvgButton", "Export SVG", "Export an SVG wrapper containing the exact canvas image", exportSvg);
+
+  let eyedropperActive = false;
+  let previousToolButton = null;
+  let previousCursor = "";
+  let eyedropperButton = null;
+
+  function setToolButtonVisual(button, active) {
+    if (!button) return;
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-pressed", String(active));
+  }
+
+  function deactivateEyedropper(restorePrevious = true) {
+    if (!eyedropperActive) return;
+    eyedropperActive = false;
+    setToolButtonVisual(eyedropperButton, false);
+    canvas.style.cursor = previousCursor;
+
+    const anotherToolIsActive = [...document.querySelectorAll("#toolGrid .tool")]
+      .some((button) => button !== eyedropperButton && button.classList.contains("active"));
+    if (restorePrevious && !anotherToolIsActive) setToolButtonVisual(previousToolButton, true);
+    say("Eyedropper put away. Your previous brush is still selected.");
+  }
+
+  function activateEyedropper() {
+    if (eyedropperActive) {
+      deactivateEyedropper(true);
+      return;
+    }
+    previousToolButton = document.querySelector("#toolGrid .tool.active:not(#eyedropperButton)");
+    document.querySelectorAll("#toolGrid .tool.active").forEach((button) => setToolButtonVisual(button, false));
+    eyedropperActive = true;
+    previousCursor = canvas.style.cursor;
+    canvas.style.cursor = "crosshair";
+    setToolButtonVisual(eyedropperButton, true);
+    say("Eyedropper ready. Click any canvas pixel to make it your paint color.");
+  }
+
+  function componentToHex(value) {
+    return Math.max(0, Math.min(255, Math.round(value))).toString(16).padStart(2, "0");
+  }
+
+  function sampleCanvasColor(event) {
+    if (!eyedropperActive) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+
+    const rect = canvas.getBoundingClientRect();
+    const x = Math.max(0, Math.min(canvas.width - 1, Math.floor((event.clientX - rect.left) * canvas.width / rect.width)));
+    const y = Math.max(0, Math.min(canvas.height - 1, Math.floor((event.clientY - rect.top) * canvas.height / rect.height)));
+    const pixel = ctx.getImageData(x, y, 1, 1).data;
+    const alpha = pixel[3] / 255;
+    const red = pixel[0] * alpha + 255 * (1 - alpha);
+    const green = pixel[1] * alpha + 255 * (1 - alpha);
+    const blue = pixel[2] * alpha + 255 * (1 - alpha);
+    const hex = `#${componentToHex(red)}${componentToHex(green)}${componentToHex(blue)}`;
+
+    colorPicker.value = hex;
+    colorPicker.dispatchEvent(new Event("input", { bubbles: true }));
+    colorPicker.dispatchEvent(new Event("change", { bubbles: true }));
+    deactivateEyedropper(true);
+    say(`Sampled ${hex.toUpperCase()}. That color is now loaded.`);
+  }
+
+  if (toolGrid) {
+    eyedropperButton = document.createElement("button");
+    eyedropperButton.id = "eyedropperButton";
+    eyedropperButton.type = "button";
+    eyedropperButton.className = "tool";
+    eyedropperButton.setAttribute("aria-pressed", "false");
+    eyedropperButton.textContent = "🎯 Eyedropper";
+    eyedropperButton.title = "Pick a color from the canvas";
+    eyedropperButton.addEventListener("click", activateEyedropper);
+    toolGrid.appendChild(eyedropperButton);
+
+    toolGrid.addEventListener("click", (event) => {
+      if (!eyedropperActive) return;
+      const clickedTool = event.target.closest(".tool");
+      if (clickedTool && clickedTool !== eyedropperButton) deactivateEyedropper(false);
+    }, true);
+
+    canvas.addEventListener("pointerdown", sampleCanvasColor, true);
+  }
+
+  window.Draw4FunExtras = Object.freeze({
+    canvasToBmpBlob,
+    canvasToSvgBlob,
+    exportJpeg,
+    exportBmp,
+    exportSvg,
+    activateEyedropper
+  });
+})();
+
+</script>
+  <script>
+(() => {
+  "use strict";
+
+  const canvas = document.querySelector("#drawingCanvas");
+  const colorPicker = document.querySelector("#colorPicker");
+  const status = document.querySelector("#status");
+  const fileInput = document.querySelector("#fileInput");
+  const topActions = document.querySelector(".top-actions");
+  const fillButton = document.querySelector('[data-tool="fill"]');
+
+  if (!canvas || !colorPicker || !status || !fileInput || !topActions || !fillButton) return;
+
+  const ctx = canvas.getContext("2d", { willReadFrequently: true });
+  const DB_NAME = "draw-4-fun";
+  const DB_VERSION = 1;
+  const STORE_NAME = "saved-drawings";
+
+  function say(message) {
+    status.textContent = message;
+  }
+
+  function clamp(value, min, max) {
+    return Math.max(min, Math.min(max, value));
+  }
+
+  function hexToRgba(hex) {
+    const value = hex.replace("#", "");
+    return [
+      parseInt(value.slice(0, 2), 16),
+      parseInt(value.slice(2, 4), 16),
+      parseInt(value.slice(4, 6), 16),
+      255
+    ];
+  }
+
+  function pixelMatches(data, index, target) {
+    return data[index] === target[0] &&
+      data[index + 1] === target[1] &&
+      data[index + 2] === target[2] &&
+      data[index + 3] === target[3];
+  }
+
+  function paintPixel(data, index, replacement) {
+    data[index] = replacement[0];
+    data[index + 1] = replacement[1];
+    data[index + 2] = replacement[2];
+    data[index + 3] = replacement[3];
+  }
+
+  function floodFillAt(x, y) {
+    x = clamp(Math.floor(x), 0, canvas.width - 1);
+    y = clamp(Math.floor(y), 0, canvas.height - 1);
+
+    const image = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const data = image.data;
+    const width = canvas.width;
+    const height = canvas.height;
+    const startIndex = (y * width + x) * 4;
+    const target = [data[startIndex], data[startIndex + 1], data[startIndex + 2], data[startIndex + 3]];
+    const replacement = hexToRgba(colorPicker.value);
+
+    if (target.every((value, index) => value === replacement[index])) {
+      say("Fill bucket found that color already there. Nothing spilled.");
+      return false;
+    }
+
+    const stack = [[x, y]];
+    let changed = 0;
+
+    while (stack.length) {
+      const [scanX, scanY] = stack.pop();
+      let currentY = scanY;
+      let index = (currentY * width + scanX) * 4;
+
+      while (currentY >= 0 && pixelMatches(data, index, target)) {
+        currentY -= 1;
+        index -= width * 4;
+      }
+
+      currentY += 1;
+      index += width * 4;
+      let spanLeft = false;
+      let spanRight = false;
+
+      while (currentY < height && pixelMatches(data, index, target)) {
+        paintPixel(data, index, replacement);
+        changed += 1;
+
+        if (scanX > 0) {
+          const leftIndex = index - 4;
+          if (pixelMatches(data, leftIndex, target)) {
+            if (!spanLeft) {
+              stack.push([scanX - 1, currentY]);
+              spanLeft = true;
+            }
+          } else {
+            spanLeft = false;
+          }
+        }
+
+        if (scanX < width - 1) {
+          const rightIndex = index + 4;
+          if (pixelMatches(data, rightIndex, target)) {
+            if (!spanRight) {
+              stack.push([scanX + 1, currentY]);
+              spanRight = true;
+            }
+          } else {
+            spanRight = false;
+          }
+        }
+
+        currentY += 1;
+        index += width * 4;
+      }
+    }
+
+    ctx.putImageData(image, 0, 0);
+    say(`Fill bucket recolored ${changed.toLocaleString()} pixels.`);
+    return true;
+  }
+
+  function pointFromEvent(event) {
+    const rect = canvas.getBoundingClientRect();
+    return {
+      x: (event.clientX - rect.left) * canvas.width / rect.width,
+      y: (event.clientY - rect.top) * canvas.height / rect.height
+    };
+  }
+
+  canvas.addEventListener("pointerdown", (event) => {
+    if (!fillButton.classList.contains("active")) return;
+    if (event.button !== undefined && event.button !== 0) return;
+    const point = pointFromEvent(event);
+    floodFillAt(point.x, point.y);
+  }, true);
+
+  function openDatabase() {
+    return new Promise((resolve, reject) => {
+      if (!window.indexedDB) {
+        reject(new Error("IndexedDB unavailable"));
+        return;
+      }
+      const request = indexedDB.open(DB_NAME, DB_VERSION);
+      request.onupgradeneeded = () => {
+        const db = request.result;
+        if (!db.objectStoreNames.contains(STORE_NAME)) {
+          const store = db.createObjectStore(STORE_NAME, { keyPath: "id" });
+          store.createIndex("updatedAt", "updatedAt");
+        }
+      };
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error || new Error("Could not open saved drawings"));
+    });
+  }
+
+  async function withStore(mode, action) {
+    const db = await openDatabase();
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction(STORE_NAME, mode);
+      const store = transaction.objectStore(STORE_NAME);
+      let result;
+      try {
+        result = action(store);
+      } catch (error) {
+        db.close();
+        reject(error);
+        return;
+      }
+      transaction.oncomplete = () => {
+        db.close();
+        resolve(result);
+      };
+      transaction.onerror = () => {
+        const error = transaction.error || new Error("Saved drawing operation failed");
+        db.close();
+        reject(error);
+      };
+      transaction.onabort = transaction.onerror;
+    });
+  }
+
+  function requestResult(request) {
+    return new Promise((resolve, reject) => {
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error || new Error("Saved drawing request failed"));
+    });
+  }
+
+  function canvasPngBlob() {
+    return new Promise((resolve, reject) => {
+      canvas.toBlob((blob) => blob ? resolve(blob) : reject(new Error("PNG creation failed")), "image/png");
+    });
+  }
+
+  function makeId() {
+    if (window.crypto?.randomUUID) return crypto.randomUUID();
+    return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  }
+
+  const gallery = document.createElement("span");
+  gallery.className = "saved-drawing-cluster";
+  gallery.setAttribute("aria-label", "Saved drawings");
+
+  const saveLocalButton = document.createElement("button");
+  saveLocalButton.type = "button";
+  saveLocalButton.id = "saveLocalButton";
+  saveLocalButton.className = "big-button";
+  saveLocalButton.textContent = "Save drawing";
+  saveLocalButton.title = "Save this drawing in this browser";
+
+  const savedSelect = document.createElement("select");
+  savedSelect.id = "savedDrawingSelect";
+  savedSelect.title = "Drawings saved in this browser";
+  savedSelect.setAttribute("aria-label", "Saved drawings");
+
+  const loadLocalButton = document.createElement("button");
+  loadLocalButton.type = "button";
+  loadLocalButton.id = "loadLocalButton";
+  loadLocalButton.textContent = "Load";
+
+  const deleteLocalButton = document.createElement("button");
+  deleteLocalButton.type = "button";
+  deleteLocalButton.id = "deleteLocalButton";
+  deleteLocalButton.textContent = "Delete";
+
+  gallery.append(saveLocalButton, savedSelect, loadLocalButton, deleteLocalButton);
+  topActions.insertBefore(gallery, document.querySelector("#recordGifButton"));
+
+  const style = document.createElement("style");
+  style.textContent = `
+    .saved-drawing-cluster {
+      display: inline-flex;
+      align-items: stretch;
+      gap: 4px;
+      flex-wrap: wrap;
+      padding: 3px;
+      border: 2px dashed #171717;
+      border-radius: 8px;
+      background: rgba(255,255,255,.45);
+    }
+    .saved-drawing-cluster select {
+      min-width: 150px;
+      max-width: 230px;
+      font: inherit;
+      font-weight: 700;
+      border: 2px solid #171717;
+      border-radius: 6px;
+      background: white;
+    }
+  `;
+  document.head.append(style);
+
+  async function listSavedDrawings() {
+    const db = await openDatabase();
+    try {
+      const transaction = db.transaction(STORE_NAME, "readonly");
+      const request = transaction.objectStore(STORE_NAME).getAll();
+      const drawings = await requestResult(request);
+      return drawings.sort((a, b) => b.updatedAt - a.updatedAt);
+    } finally {
+      db.close();
+    }
+  }
+
+  async function refreshSavedSelect(preferredId = "") {
+    try {
+      const drawings = await listSavedDrawings();
+      savedSelect.replaceChildren();
+      const placeholder = document.createElement("option");
+      placeholder.value = "";
+      placeholder.textContent = drawings.length ? "Saved drawings…" : "No saved drawings";
+      savedSelect.appendChild(placeholder);
+
+      for (const drawing of drawings) {
+        const option = document.createElement("option");
+        option.value = drawing.id;
+        const date = new Date(drawing.updatedAt).toLocaleString([], { dateStyle: "short", timeStyle: "short" });
+        option.textContent = `${drawing.name} · ${drawing.width}×${drawing.height} · ${date}`;
+        savedSelect.appendChild(option);
+      }
+
+      if (preferredId && drawings.some((drawing) => drawing.id === preferredId)) savedSelect.value = preferredId;
+      loadLocalButton.disabled = drawings.length === 0;
+      deleteLocalButton.disabled = drawings.length === 0;
+    } catch (error) {
+      console.error(error);
+      savedSelect.replaceChildren(new Option("Local saves unavailable", ""));
+      saveLocalButton.disabled = true;
+      loadLocalButton.disabled = true;
+      deleteLocalButton.disabled = true;
+      say("Browser-local saves are unavailable here. File exports still work normally.");
+    }
+  }
+
+  async function saveCurrentDrawing() {
+    const suggested = `Drawing ${new Date().toLocaleString([], { dateStyle: "short", timeStyle: "short" })}`;
+    const name = window.prompt("Name this saved drawing:", suggested)?.trim();
+    if (!name) return;
+
+    try {
+      const blob = await canvasPngBlob();
+      const id = makeId();
+      const record = {
+        id,
+        name,
+        width: canvas.width,
+        height: canvas.height,
+        updatedAt: Date.now(),
+        blob
+      };
+      await withStore("readwrite", (store) => store.put(record));
+      await refreshSavedSelect(id);
+      say(`Saved “${name}” in this browser.`);
+    } catch (error) {
+      console.error(error);
+      say("Could not save that drawing locally. Try exporting it as PNG instead.");
+    }
+  }
+
+  async function getSavedDrawing(id) {
+    if (!id) return null;
+    const db = await openDatabase();
+    try {
+      const transaction = db.transaction(STORE_NAME, "readonly");
+      return await requestResult(transaction.objectStore(STORE_NAME).get(id));
+    } finally {
+      db.close();
+    }
+  }
+
+  function handFileToExistingOpenFlow(file) {
+    try {
+      if (typeof DataTransfer !== "undefined") {
+        const transfer = new DataTransfer();
+        transfer.items.add(file);
+        fileInput.files = transfer.files;
+        fileInput.dispatchEvent(new Event("change", { bubbles: true }));
+        return true;
+      }
+    } catch (error) {
+      console.warn("DataTransfer file handoff unavailable", error);
+    }
+
+    try {
+      Object.defineProperty(fileInput, "files", { configurable: true, value: [file] });
+      fileInput.dispatchEvent(new Event("change", { bubbles: true }));
+      delete fileInput.files;
+      return true;
+    } catch (error) {
+      console.warn("Synthetic file handoff unavailable", error);
+      return false;
+    }
+  }
+
+  async function loadSelectedDrawing() {
+    const id = savedSelect.value;
+    if (!id) {
+      say("Choose a saved drawing first.");
+      return;
+    }
+
+    try {
+      const drawing = await getSavedDrawing(id);
+      if (!drawing?.blob) {
+        say("That saved drawing could not be found.");
+        await refreshSavedSelect();
+        return;
+      }
+      const safeName = drawing.name.replace(/[^a-z0-9._-]+/gi, "-").replace(/^-+|-+$/g, "") || "saved-drawing";
+      const file = new File([drawing.blob], `${safeName}.png`, { type: "image/png" });
+      if (!handFileToExistingOpenFlow(file)) {
+        say("This browser blocked local loading. Export/download still works.");
+        return;
+      }
+      say(`Loading “${drawing.name}”…`);
+    } catch (error) {
+      console.error(error);
+      say("Could not load that saved drawing.");
+    }
+  }
+
+  async function deleteSelectedDrawing() {
+    const id = savedSelect.value;
+    if (!id) {
+      say("Choose a saved drawing first.");
+      return;
+    }
+    const option = savedSelect.selectedOptions[0];
+    const label = option?.textContent?.split(" · ")[0] || "this drawing";
+    if (!window.confirm(`Delete “${label}” from this browser?`)) return;
+
+    try {
+      await withStore("readwrite", (store) => store.delete(id));
+      await refreshSavedSelect();
+      say(`Deleted “${label}” from local saves.`);
+    } catch (error) {
+      console.error(error);
+      say("Could not delete that saved drawing.");
+    }
+  }
+
+  saveLocalButton.addEventListener("click", saveCurrentDrawing);
+  loadLocalButton.addEventListener("click", loadSelectedDrawing);
+  deleteLocalButton.addEventListener("click", deleteSelectedDrawing);
+  savedSelect.addEventListener("dblclick", loadSelectedDrawing);
+
+  refreshSavedSelect();
+
+  window.Draw4FunStorageTools = Object.freeze({
+    floodFillAt,
+    refreshSavedSelect,
+    saveCurrentDrawing,
+    loadSelectedDrawing
+  });
+})();
+
+</script>
+  <script>
+(() => {
+  "use strict";
+  const button = document.querySelector("#gifStudioButton");
+  const canvas = document.querySelector("#drawingCanvas");
+  const fileInput = document.querySelector("#fileInput");
+  const status = document.querySelector("#status");
+  if (!button || !canvas || !fileInput) return;
+
+  button.addEventListener("click", () => {
+    try {
+      // Passing a PNG between two pages on this static origin works offline too.
+      sessionStorage.setItem("drawing-for-fun-seed", canvas.toDataURL("image/png"));
+    } catch (error) {
+      // In private browsing or file:// contexts, storage itself can be blocked.
+      try { sessionStorage.removeItem("drawing-for-fun-seed"); } catch (_) { /* ignore */ }
+    }
+    window.location.href = "gif-studio.html";
+  });
+
+  async function importReturnedFrame() {
+    let data;
+    try {
+      data = sessionStorage.getItem("drawing-for-fun-frame");
+      if (!data) return;
+      sessionStorage.removeItem("drawing-for-fun-frame");
+      if (!data.startsWith("data:image/png;base64,")) throw new Error("Invalid frame data");
+      const response = await fetch(data);
+      const blob = await response.blob();
+      const file = new File([blob], "gifs-for-fun-frame.png", { type: "image/png" });
+      if (typeof DataTransfer === "undefined") throw new Error("File transfer is unsupported");
+      const transfer = new DataTransfer();
+      transfer.items.add(file);
+      fileInput.files = transfer.files;
+      fileInput.dispatchEvent(new Event("change", { bubbles: true }));
+    } catch (error) {
+      if (status) status.textContent = "Could not transfer that frame. Export it as PNG and open the file here instead.";
+    }
+  }
+
+  importReturnedFrame();
+})();
+</script>
+</body>
+</html>
